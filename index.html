@@ -3,297 +3,527 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BAREDOT. | Gymwear</title>
+  <title>BAREDOT. | 1ST DROP</title>
+  <meta name="description" content="BAREDOT. 1ST DROP #I'm BARED gymwear landing page" />
   <style>
+    @font-face {
+      font-family: "Inter Display";
+      src: url("https://framerusercontent.com/assets/qITWJ2WdG0wrgQPDb8lvnYnTXDg.woff2") format("woff2");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
-      --bg: #0d0d0f;
-      --card: #17171b;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --accent: #6ee7b7;
-      --accent-2: #22d3ee;
-      --line: #2a2a32;
+      --ink: #050505;
+      --paper: #ffffff;
+      --ice: #dceaf5;
+      --blue: #0e222a;
+      --muted: #747474;
+      --line: rgba(255,255,255,0.34);
+      --dark-line: rgba(0,0,0,0.12);
+      --radius: 8px;
     }
 
     * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: "Pretendard", "Noto Sans KR", system-ui, -apple-system, sans-serif;
-      color: var(--text);
-      background: radial-gradient(1200px 600px at 80% -10%, rgba(34, 211, 238, 0.18), transparent),
-                  radial-gradient(800px 400px at 0% 0%, rgba(110, 231, 183, 0.14), transparent),
-                  var(--bg);
-      line-height: 1.6;
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Inter Display", Pretendard, "Noto Sans KR", system-ui, -apple-system, sans-serif;
+      letter-spacing: 0;
     }
 
-    .container { width: min(1120px, 92vw); margin: 0 auto; }
+    img, video { max-width: 100%; display: block; }
+    a { color: inherit; }
+    .wrap { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
 
-    header {
-      position: sticky;
-      top: 0;
-      backdrop-filter: blur(10px);
-      background: rgba(13,13,15,0.78);
-      border-bottom: 1px solid var(--line);
-      z-index: 50;
-    }
-
-    .nav {
+    .topbar {
+      position: fixed;
+      inset: 0 0 auto;
+      height: 92px;
+      z-index: 20;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 14px 0;
-      gap: 20px;
+      justify-content: center;
+      pointer-events: none;
     }
 
-    .brand { font-size: 1.2rem; font-weight: 800; letter-spacing: 0.08em; }
-
-    .tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+    .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: rgba(255,255,255,0.82);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      pointer-events: auto;
     }
-
-    .tabs a {
-      text-decoration: none;
-      color: var(--muted);
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.02);
-      border-radius: 999px;
-      padding: 8px 14px;
-      font-size: 0.92rem;
-      transition: 0.2s ease;
-    }
-
-    .tabs a:hover { color: var(--text); border-color: var(--accent-2); }
 
     .hero {
-      padding: 88px 0 72px;
+      position: relative;
+      min-height: 100svh;
+      overflow: hidden;
+      color: #fff;
+      isolation: isolate;
+    }
+
+    .hero video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      background: #000;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(0,0,0,0.18), rgba(0,0,0,0.38) 62%, rgba(0,0,0,0.72));
+    }
+
+    .hero-content {
+      min-height: 100svh;
       display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 34px;
+      align-content: end;
+      gap: 22px;
+      padding: 130px 0 62px;
+    }
+
+    .drop-title {
+      margin: 0;
+      max-width: 1050px;
+      font-size: clamp(52px, 8vw, 118px);
+      line-height: 0.92;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .stencil {
+      font-style: italic;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      margin: 0;
+      font-size: clamp(20px, 3vw, 42px);
+      font-weight: 800;
+      font-style: italic;
+      text-transform: lowercase;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       align-items: center;
+      margin-top: 8px;
     }
-
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 4rem);
-      line-height: 1.12;
-      margin: 0 0 14px;
-    }
-
-    .hero p {
-      color: var(--muted);
-      margin: 0 0 22px;
-      max-width: 58ch;
-    }
-
-    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     .btn {
-      text-decoration: none;
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-weight: 700;
-      border: 1px solid transparent;
-      transition: 0.2s ease;
-    }
-
-    .btn.primary { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color: #0a0a0a; }
-    .btn.secondary { color: var(--text); border-color: var(--line); }
-
-    .visual {
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      min-height: 360px;
-      background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
-      display: grid;
-      grid-template-rows: 1fr auto;
-      overflow: hidden;
-    }
-
-    .visual-top {
-      background: conic-gradient(from 110deg at 70% 40%, rgba(34,211,238,0.55), rgba(110,231,183,0.12), rgba(34,211,238,0.35));
-    }
-
-    .visual-copy { padding: 18px; border-top: 1px solid var(--line); color: var(--muted); }
-
-    section { padding: 56px 0; }
-    h2 { font-size: clamp(1.4rem, 3vw, 2rem); margin: 0 0 10px; }
-    .section-intro { color: var(--muted); margin: 0 0 26px; }
-
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .product { display: flex; flex-direction: column; gap: 10px; }
-    .eyebrow {
-      display: inline-block;
-      font-size: 0.74rem;
-      color: #0c0c0e;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-    }
-
-    .chip {
-      display: inline-block;
-      font-size: 0.74rem;
-      color: #0c0c0e;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-weight: 800;
-      letter-spacing: 0.03em;
-    }
-
-    .price { font-weight: 800; font-size: 1.05rem; }
-
-    .board-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .board-item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 12px;
+      display: inline-flex;
       align-items: center;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 14px;
+      justify-content: center;
+      min-height: 52px;
+      padding: 0 24px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 900;
+      border: 1px solid transparent;
+      transition: transform .2s ease, background .2s ease;
     }
 
-    .board-item small { color: var(--muted); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn.buy { background: var(--ice); color: var(--blue); }
+    .btn.outline { color: #fff; border-color: var(--line); background: rgba(0,0,0,0.18); }
 
-    form {
-      display: grid;
-      gap: 12px;
-      max-width: 680px;
-    }
+    .section { padding: 88px 0; }
+    .section.black { background: #000; color: #fff; }
+    .section.ice { background: var(--ice); }
 
-    input, textarea {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: #111116;
-      color: var(--text);
-      border-radius: 10px;
-      padding: 12px 14px;
-      font: inherit;
-    }
-
-    textarea { min-height: 140px; resize: vertical; }
-
-    footer {
-      border-top: 1px solid var(--line);
-      padding: 24px 0 38px;
+    .kicker {
+      margin: 0 0 12px;
       color: var(--muted);
-      font-size: 0.9rem;
+      font-size: 15px;
+      font-weight: 900;
+      text-transform: uppercase;
     }
 
-    @media (max-width: 900px) {
-      .hero { grid-template-columns: 1fr; padding-top: 52px; }
-      .card-grid { grid-template-columns: 1fr; }
+    .black .kicker { color: rgba(255,255,255,0.58); }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(42px, 7vw, 92px);
+      line-height: 0.95;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      margin: 20px 0 0;
+      max-width: 760px;
+      font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      font-size: clamp(18px, 2vw, 24px);
+      line-height: 1.55;
+      font-weight: 700;
+    }
+
+    .product-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 42px;
+    }
+
+    .media-tile {
+      position: relative;
+      overflow: hidden;
+      min-height: 560px;
+      background: #f5f5f5;
+      border-radius: var(--radius);
+    }
+
+    .media-tile img, .media-tile video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .media-label {
+      position: absolute;
+      left: 18px;
+      right: 18px;
+      bottom: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 900;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+    }
+
+    .open-card {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 16px;
+      margin-top: 42px;
+    }
+
+    .date-card, .benefit-card {
+      min-height: 270px;
+      border-radius: var(--radius);
+      padding: 26px;
+      background: rgba(220,235,245,0.26);
+      border: 2px solid rgba(220,235,245,0.65);
+      color: var(--ice);
+    }
+
+    .date-card strong {
+      display: block;
+      font-size: clamp(44px, 8vw, 112px);
+      line-height: 0.86;
+      font-style: italic;
+      color: #fff;
+    }
+
+    .date-card span {
+      display: block;
+      margin-top: 18px;
+      font-size: clamp(28px, 5vw, 58px);
+      font-weight: 900;
+      font-style: italic;
+    }
+
+    .benefit-card h3 {
+      margin: 0 0 18px;
+      font-size: clamp(28px, 4vw, 50px);
+      line-height: 1;
+      color: #fff;
+    }
+
+    .benefit-card ul {
+      margin: 0;
+      padding-left: 22px;
+      font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.8;
+    }
+
+    .reason-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 38px;
+    }
+
+    .reason {
+      min-height: 260px;
+      padding: 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--dark-line);
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .reason .num { font-size: 22px; font-weight: 900; color: var(--muted); }
+    .reason h3 { margin: 36px 0 12px; font-size: 32px; line-height: 1; }
+    .reason p {
+      margin: 0;
+      font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 40px;
+    }
+
+    .detail-copy {
+      position: sticky;
+      top: 106px;
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--dark-line);
+      background: #fff;
+    }
+
+    .detail-copy h3 { margin: 0 0 16px; font-size: clamp(34px, 5vw, 64px); line-height: .95; }
+    .detail-copy p {
+      margin: 0 0 14px;
+      font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+      font-weight: 700;
+      color: #333;
+    }
+
+    .stacked-media { display: grid; gap: 18px; }
+    .stacked-media img { width: 100%; border-radius: var(--radius); background: #eee; }
+
+    .size-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+      margin-top: 36px;
+      padding: 20px;
+      border-radius: var(--radius);
+      background: #f5f5f5;
+    }
+
+    .size-card img { border-radius: var(--radius); }
+    .size-card h3 { margin: 0 0 12px; font-size: clamp(34px, 5vw, 72px); line-height: .9; }
+    .size-card p { margin: 6px 0; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: 19px; font-weight: 800; }
+
+    .policy-grid {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 18px;
+      padding: 20px 0;
+      border-top: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .policy-grid h3 { margin: 0; font-size: 24px; color: #fff; }
+    .policy-grid ul { margin: 0; padding-left: 20px; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; color: rgba(255,255,255,0.78); line-height: 1.7; }
+
+    .notify {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 20px;
+      align-items: end;
+      padding: 36px 0 0;
+      border-top: 1px solid rgba(255,255,255,0.22);
+    }
+
+    .notify p { margin: 8px 0 0; color: rgba(255,255,255,0.72); font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-weight: 700; }
+
+    footer { padding: 34px 0; background: #000; color: rgba(255,255,255,0.52); font-size: 14px; }
+
+    @media (max-width: 860px) {
+      .topbar { height: 76px; }
+      .logo { width: 60px; height: 60px; }
+      .hero-content { padding-bottom: 42px; }
+      .product-showcase, .open-card, .reason-grid, .details, .size-card, .policy-grid, .notify { grid-template-columns: 1fr; }
+      .media-tile { min-height: 420px; }
+      .section { padding: 64px 0; }
+      .detail-copy { position: static; }
+      .benefit-card ul { font-size: 17px; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="container nav">
-      <div class="brand">BAREDOT.</div>
-      <nav class="tabs" aria-label="주요 섹션">
-        <a href="#brand">브랜드 소개</a>
-        <a href="#hero">Hero</a>
-        <a href="#products">제품 판매</a>
-        <a href="#contact">문의/게시판</a>
-      </nav>
-    </div>
+  <header class="topbar" aria-label="BAREDOT logo">
+    <a class="logo" href="#top" aria-label="맨 위로 이동">
+      <img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&amp;height=1080" alt="BAREDOT." />
+    </a>
   </header>
 
-  <main class="container">
-    <section class="hero" id="hero">
-      <div>
-        <p class="eyebrow">FOR STRONGER EVERYDAY</p>
-        <h1>움직임의 완성, <br />BAREDOT. 짐웨어</h1>
-        <p>기능성과 실루엣을 동시에 만족시키는 짐웨어 브랜드. 고강도 트레이닝부터 데일리 애슬레저까지, 몸의 움직임에 맞춰 설계된 핏과 소재를 제안합니다.</p>
+  <main id="top">
+    <section class="hero" aria-label="BAREDOT 1st drop">
+      <video src="https://framerusercontent.com/assets/bxEEWeqjXPfNQ95utZWiJF8kiw.mp4" autoplay muted loop playsinline preload="metadata"></video>
+      <div class="wrap hero-content">
+        <h1 class="drop-title">1ST DROP. <span class="stencil">#I'm BARED</span></h1>
+        <p class="tagline">nothing before performance</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#products">지금 쇼핑하기</a>
-          <a class="btn secondary" href="#brand">브랜드 스토리</a>
+          <a class="btn buy" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">구매하기</a>
+          <a class="btn outline" href="#reason">베어닷이 벌거벗은 이유</a>
         </div>
       </div>
-      <aside class="visual" aria-label="브랜드 비주얼 영역">
-        <div class="visual-top"></div>
-        <div class="visual-copy">기존 Framer 시안 톤을 반영하기 쉬운 하이-콘트라스트 스타일 가이드 섹션</div>
-      </aside>
     </section>
 
-    <section id="brand">
-      <h2>브랜드 소개</h2>
-      <p class="section-intro">BAREDOT.은 군더더기를 덜어낸 실루엣과 고기능 원단의 균형을 추구합니다. 퍼포먼스 중심의 디자인 언어로 브랜드 경험을 만듭니다.</p>
-      <div class="card-grid">
-        <article class="card"><h3>Identity</h3><p>심플한 구조, 강한 존재감. 점(dot)처럼 작지만 명확한 변화의 시작을 의미합니다.</p></article>
-        <article class="card"><h3>Material</h3><p>흡습속건, 4-way 스트레치, 복원력이 높은 원단 중심으로 시즌 컬렉션을 기획합니다.</p></article>
-        <article class="card"><h3>Community</h3><p>훈련 기록, 스타일 공유, 피드백 문화까지 연결된 커뮤니티를 지향합니다.</p></article>
+    <section class="section" id="drop">
+      <div class="wrap">
+        <p class="kicker">베어닷의 벌거벗은</p>
+        <h2>1ST DROP. <span class="stencil">#I'm BARED</span></h2>
+        <p class="lead">필요없는 건 다 빼고, 짐웨어로서의 본질만 남겼습니다. 움직임을 가리지 않는 구조와 선명한 실루엣으로 퍼포먼스에 먼저 집중합니다.</p>
+        <div class="product-showcase">
+          <figure class="media-tile">
+            <img src="https://framerusercontent.com/images/Z5sNWWSI3Ce3f6fiSxba4UOFbU.jpg?scale-down-to=2048&amp;width=3392&amp;height=5056" alt="BAREDOT halter top look" />
+            <figcaption class="media-label"><span>Top</span><span>halter top</span></figcaption>
+          </figure>
+          <figure class="media-tile">
+            <video src="https://framerusercontent.com/assets/Zxp6Xf03nJ3jbHSUXkXoMsEDIgY.mp4" autoplay muted loop playsinline preload="metadata"></video>
+            <figcaption class="media-label"><span>Bottom</span><span>#I'm BARED</span></figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
-    <section id="products">
-      <h2>제품 판매</h2>
-      <p class="section-intro">대표 상품 샘플입니다. 추후 상품 API 또는 쇼핑몰 솔루션과 연동 가능합니다.</p>
-      <div class="card-grid">
-        <article class="card product">
-          <span class="chip">BEST</span>
-          <h3>Compression Tee</h3>
-          <p>근육 서포트를 위한 압박 설계, 통기성 메쉬 패널 적용.</p>
-          <div class="price">₩49,000</div>
-        </article>
-        <article class="card product">
-          <span class="chip">NEW</span>
-          <h3>Hybrid Shorts 5&quot;</h3>
-          <p>러닝/웨이트 겸용 하이브리드 쇼츠, 가벼운 발수 기능.</p>
-          <div class="price">₩59,000</div>
-        </article>
-        <article class="card product">
-          <span class="chip">LIMITED</span>
-          <h3>Seamless Leggings</h3>
-          <p>봉제 자극 최소화, 하이웨이스트 안정감, 스쿼트 프루프 원단.</p>
-          <div class="price">₩69,000</div>
-        </article>
+    <section class="section black">
+      <div class="wrap">
+        <p class="kicker">Ready to BARED ?</p>
+        <h2>OPEN</h2>
+        <div class="open-card">
+          <article class="date-card">
+            <strong>05.11</strong>
+            <span>00:00</span>
+          </article>
+          <article class="benefit-card">
+            <h3>Pre-order benefit</h3>
+            <ul>
+              <li>프리오더가 10% 할인</li>
+              <li>10% 적립금</li>
+              <li>세트구매 시 무료배송</li>
+            </ul>
+          </article>
+        </div>
       </div>
     </section>
 
-    <section id="contact">
-      <h2>문의 및 게시판</h2>
-      <p class="section-intro">입점/협업/제품 문의를 남겨주세요. 게시판 기능은 백엔드 연동으로 확장 가능합니다.</p>
-      <form>
-        <input type="text" name="name" placeholder="이름" required />
-        <input type="email" name="email" placeholder="이메일" required />
-        <input type="text" name="subject" placeholder="제목" required />
-        <textarea name="message" placeholder="문의 내용을 입력해주세요." required></textarea>
-        <button class="btn primary" type="submit">문의 보내기</button>
-      </form>
+    <section class="section ice" id="reason">
+      <div class="wrap">
+        <p class="kicker">WE REMOVED EVERYTHING</p>
+        <h2>NOTHING BEFORE PERFORMANCE</h2>
+        <div class="reason-grid">
+          <article class="reason">
+            <span class="num">01 /</span>
+            <div>
+              <h3>Performance Support</h3>
+              <p>복압을 안정적으로 잡아 퍼포먼스를 끌어올리는 설계.</p>
+            </div>
+          </article>
+          <article class="reason">
+            <span class="num">02 /</span>
+            <div>
+              <h3>Fit &amp; comfort Design</h3>
+              <p>낮고 둥근 곡률 설계와 특수 고무밴드로 균형잡힌 힙 실루엣.</p>
+            </div>
+          </article>
+          <article class="reason">
+            <span class="num">03 /</span>
+            <div>
+              <h3>Move without limits</h3>
+              <p>견갑을 가리지 않는 스트랩 구조로 운동 중에도 편안한 움직임.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-      <div class="board-list" aria-label="공지 및 최근 게시글">
-        <div class="board-item"><span class="chip">공지</span><strong>배송/교환 안내 업데이트</strong><small>2026-05-13</small></div>
-        <div class="board-item"><span class="chip">FAQ</span><strong>사이즈 추천 가이드: 레깅스 핏 질문 모음</strong><small>2026-05-10</small></div>
-        <div class="board-item"><span class="chip">Q&amp;A</span><strong>하이브리드 쇼츠 재입고 일정 문의</strong><small>2026-05-08</small></div>
+    <section class="section" id="detail">
+      <div class="wrap">
+        <p class="kicker">styling tip</p>
+        <h2>How to be BARED ?</h2>
+        <div class="details">
+          <div class="detail-copy">
+            <h3>detail<br />Size detail</h3>
+            <p>바디 라인을 과하게 가리지 않고, 운동할 때 필요한 안정감만 남긴 핏입니다.</p>
+            <p>상의와 하의를 세트로 착용했을 때 가장 또렷한 BAREDOT. 실루엣이 완성됩니다.</p>
+            <a class="btn buy" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">제품 보러가기</a>
+          </div>
+          <div class="stacked-media">
+            <img src="https://framerusercontent.com/images/O4dQIcjYNKVAzRgpReNJHooJ94.webp?scale-down-to=2048&amp;width=1920&amp;height=2862" alt="BAREDOT product styling detail" />
+            <img src="https://framerusercontent.com/images/sUe6PM1Em5C95WXFauvY0IQjpbs.png?scale-down-to=2048&amp;width=4500&amp;height=5625" alt="BAREDOT activewear detail" />
+          </div>
+        </div>
+        <div class="size-card">
+          <img src="https://framerusercontent.com/images/apyNsg0RJf2z2dLNQyR16bIV0.png?width=1080&amp;height=1350" alt="BAREDOT model size reference" />
+          <div>
+            <h3>사이즈 디테일</h3>
+            <p>S-M 착용</p>
+            <p>165cm 54kg</p>
+            <p>Anne / TOP / BOTTOM</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section black" id="policy">
+      <div class="wrap">
+        <p class="kicker">refund &amp; exchange</p>
+        <h2>교환 및 반품</h2>
+        <div class="policy-grid">
+          <h3>접수 안내</h3>
+          <ul>
+            <li>상품 수령일로부터 7일 이내, 택을 자르지 않은 상태에서 접수해주세요.</li>
+            <li>제품 수거 완료 후 검수기간 3~4일 소요 후 처리됩니다.</li>
+            <li>교환/반품 배송비는 왕복 7,000원이며 도서산간 지역은 왕복 15,000원입니다.</li>
+          </ul>
+        </div>
+        <div class="policy-grid">
+          <h3>불가한 경우</h3>
+          <ul>
+            <li>택 제거, 제품 착용 후 오염 및 늘어짐, 구성품 분실/파손 등 재판매가 불가한 경우.</li>
+            <li>인위적인 수선, 세탁, 향수/화장품/생활 냄새가 밴 제품.</li>
+            <li>약간의 실밥, 잡사, 초크자국, 색상 차이는 불량 사유가 될 수 없습니다.</li>
+          </ul>
+        </div>
+        <div class="policy-grid">
+          <h3>주소</h3>
+          <ul>
+            <li>서울시 종로구 지봉로 29, 12층 베어닷</li>
+            <li>다른 주소로 발송하실 경우 분실 위험이 있으며 보상이 어렵습니다.</li>
+          </ul>
+        </div>
+        <div class="notify">
+          <div>
+            <p class="kicker">PRE-ORDER ALERT</p>
+            <p>오픈 및 재입고 소식은 인스타그램 DM으로 안내드립니다.</p>
+          </div>
+          <a class="btn outline" href="https://baredot.framer.website/%EC%95%8C%EB%A6%BC%EB%B0%9B%EA%B8%B0" rel="noopener">알림받기</a>
+        </div>
       </div>
     </section>
   </main>
 
   <footer>
-    <div class="container">© 2026 BAREDOT. All rights reserved.</div>
+    <div class="wrap">© 2026 BAREDOT. NOTHING BEFORE PERFORMANCE.</div>
   </footer>
 </body>
 </html>
