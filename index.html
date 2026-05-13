@@ -53,6 +53,7 @@
     .intro-video-through {
       position: absolute;
       inset: 0;
+      overflow: hidden;
       -webkit-mask-image: var(--logo-mask);
       mask-image: var(--logo-mask);
       -webkit-mask-repeat: no-repeat;
@@ -69,6 +70,28 @@
       height: 100%;
       max-width: none;
       object-fit: cover;
+      filter: brightness(1.48) contrast(1.14) saturate(1.08);
+    }
+
+    .intro-video-through::before,
+    .intro-video-through::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .intro-video-through::before {
+      background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(220,235,245,0.04) 42%, transparent 72%);
+      mix-blend-mode: screen;
+      opacity: 0.58;
+    }
+
+    .intro-video-through::after {
+      background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.1) 32%, rgba(255,255,255,0.78) 47%, rgba(220,235,245,0.36) 58%, transparent 74%);
+      mix-blend-mode: screen;
+      transform: translateX(-125%);
+      animation: logo-light-sweep 5s cubic-bezier(.24,.72,.22,1) forwards;
     }
 
     @keyframes intro-hide {
@@ -82,9 +105,18 @@
       100% { transform: scale(1.025); opacity: 0; }
     }
 
+    @keyframes logo-light-sweep {
+      0% { transform: translateX(-125%); opacity: 0; }
+      14% { opacity: 1; }
+      58% { transform: translateX(120%); opacity: 1; }
+      86% { transform: translateX(120%); opacity: 0.34; }
+      100% { transform: translateX(120%); opacity: 0; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .intro-overlay { animation-duration: 1.2s; }
       .intro-video-through { animation-duration: 1.2s; }
+      .intro-video-through::after { animation-duration: 1.2s; }
     }
 
     .topbar {
