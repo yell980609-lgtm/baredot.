@@ -121,6 +121,8 @@
     }
 
     .topbar {
+      --topbar-logo-size: 46px;
+      --topbar-logo-x: center;
       position: sticky;
       top: 0;
       height: 47px;
@@ -133,6 +135,10 @@
       pointer-events: none;
     }
 
+    .topbar.is-scrolled {
+      --topbar-logo-x: 18px;
+    }
+
     .topbar::before {
       content: "";
       position: absolute;
@@ -140,24 +146,33 @@
       background: rgba(0,0,0,.48);
       -webkit-mask-image: var(--logo-mask), linear-gradient(#000, #000);
       mask-image: var(--logo-mask), linear-gradient(#000, #000);
-      -webkit-mask-size: 45px 45px, 100% 100%;
-      mask-size: 45px 45px, 100% 100%;
-      -webkit-mask-position: center, center;
-      mask-position: center, center;
+      -webkit-mask-size: var(--topbar-logo-size) var(--topbar-logo-size), 100% 100%;
+      mask-size: var(--topbar-logo-size) var(--topbar-logo-size), 100% 100%;
+      -webkit-mask-position: var(--topbar-logo-x) center, center;
+      mask-position: var(--topbar-logo-x) center, center;
       -webkit-mask-repeat: no-repeat, no-repeat;
       mask-repeat: no-repeat, no-repeat;
       -webkit-mask-composite: xor;
       mask-composite: exclude;
+      transition: -webkit-mask-position .34s ease, mask-position .34s ease;
     }
 
     .logo {
-      position: relative;
-      width: 45px;
-      height: 45px;
+      position: absolute;
+      left: 50%;
+      width: var(--topbar-logo-size);
+      height: var(--topbar-logo-size);
       display: block;
       background: transparent;
       box-shadow: none;
       pointer-events: auto;
+      transform: translateX(-50%);
+      transition: left .34s ease, transform .34s ease;
+    }
+
+    .topbar.is-scrolled .logo {
+      left: 18px;
+      transform: translateX(0);
     }
 
     .logo img {
@@ -165,6 +180,37 @@
       height: 100%;
       opacity: 0;
     }
+
+    .topnav {
+      position: absolute;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: clamp(14px, 2.4vw, 34px);
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity .24s ease, transform .24s ease;
+    }
+
+    .topbar.is-scrolled .topnav {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .topnav a {
+      color: #fff;
+      font-size: clamp(11px, 1vw, 14px);
+      font-weight: 800;
+      line-height: 1;
+      text-decoration: none;
+      text-transform: uppercase;
+      opacity: .82;
+      transition: opacity .2s ease;
+    }
+
+    .topnav a:hover { opacity: 1; }
 
     .hero {
       position: relative;
@@ -276,9 +322,11 @@
     footer { padding: 34px 0; background: #000; color: rgba(255,255,255,.52); font-size: 14px; }
 
     @media (max-width: 860px) {
-      .topbar { height: 38px; margin-bottom: -38px; }
-      .topbar::before { -webkit-mask-size: 36px 36px, 100% 100%; mask-size: 36px 36px, 100% 100%; }
-      .logo { width: 36px; height: 36px; }
+      .topbar { --topbar-logo-size: 37px; --topbar-logo-x: center; height: 38px; margin-bottom: -38px; }
+      .topbar.is-scrolled { --topbar-logo-x: 12px; }
+      .topbar.is-scrolled .logo { left: 12px; }
+      .topnav { right: 12px; gap: 10px; }
+      .topnav a { font-size: 10px; }
       .intro-logo { width: min(86vw, 520px); }
       .hero-content { padding-bottom: 42px; }
       .product-showcase, .open-card, .reason-grid, .details, .size-card, .policy-grid, .notify { grid-template-columns: 1fr; }
@@ -294,10 +342,17 @@
     <div class="intro-logo"></div>
   </div>
 
-  <header class="topbar" aria-label="BAREDOT logo">
+  <header class="topbar" aria-label="BAREDOT navigation">
     <a class="logo" href="#top" aria-label="맨 위로 이동">
       <img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&amp;height=1080" alt="BAREDOT." />
     </a>
+    <nav class="topnav" aria-label="상품 카테고리">
+      <a href="#drop">Best</a>
+      <a href="#reason">Featured</a>
+      <a href="#detail">Men</a>
+      <a href="#detail">Women</a>
+      <a href="#policy">Acc</a>
+    </nav>
   </header>
 
   <main id="top">
@@ -390,5 +445,11 @@
   </main>
 
   <footer><div class="wrap">© 2026 BAREDOT. NOTHING BEFORE PERFORMANCE.</div></footer>
+  <script>
+    const topbar = document.querySelector('.topbar');
+    const syncTopbar = () => topbar?.classList.toggle('is-scrolled', window.scrollY > 8);
+    syncTopbar();
+    window.addEventListener('scroll', syncTopbar, { passive: true });
+  </script>
 </body>
 </html>
