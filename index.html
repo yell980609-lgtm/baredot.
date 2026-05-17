@@ -23,6 +23,7 @@
       --line: rgba(255,255,255,.34);
       --dark-line: rgba(0,0,0,.12);
       --radius: 8px;
+      --promo-height: 28px;
       --logo-mask: url("https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080");
     }
 
@@ -120,11 +121,33 @@
       .intro-overlay, .intro-logo, .intro-logo::before, .intro-logo::after { animation-duration: 1s; }
     }
 
+    .promo-bar {
+      position: sticky;
+      top: 0;
+      z-index: 21;
+      height: var(--promo-height);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 0 18px;
+      background: #111;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .promo-status { color: #ff2600; }
+    .promo-copy { color: rgba(255,255,255,.92); }
+
     .topbar {
       --topbar-logo-size: 46px;
       --topbar-logo-x: center;
       position: sticky;
-      top: 0;
+      top: var(--promo-height);
       height: 47px;
       z-index: 20;
       display: flex;
@@ -322,6 +345,8 @@
     footer { padding: 34px 0; background: #000; color: rgba(255,255,255,.52); font-size: 14px; }
 
     @media (max-width: 860px) {
+      :root { --promo-height: 26px; }
+      .promo-bar { gap: 10px; padding: 0 10px; font-size: 11px; }
       .topbar { --topbar-logo-size: 37px; --topbar-logo-x: center; height: 38px; margin-bottom: -38px; }
       .topbar.is-scrolled { --topbar-logo-x: 12px; }
       .topbar.is-scrolled .logo { left: 12px; }
@@ -340,6 +365,11 @@
 <body>
   <div class="intro-overlay" aria-hidden="true">
     <div class="intro-logo"></div>
+  </div>
+
+  <div class="promo-bar" role="status" aria-label="프리오더 할인 소식">
+    <span class="promo-status">프리오더 진행중</span>
+    <span class="promo-copy">해당 기간에만 10% 할인혜택</span>
   </div>
 
   <header class="topbar" aria-label="BAREDOT navigation">
