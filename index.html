@@ -129,24 +129,41 @@
       align-items: center;
       justify-content: center;
       margin-bottom: -47px;
-      background: rgba(0,0,0,.48);
+      background: transparent;
       pointer-events: none;
     }
 
+    .topbar::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.48);
+      -webkit-mask-image: var(--logo-mask), linear-gradient(#000, #000);
+      mask-image: var(--logo-mask), linear-gradient(#000, #000);
+      -webkit-mask-size: 45px 45px, 100% 100%;
+      mask-size: 45px 45px, 100% 100%;
+      -webkit-mask-position: center, center;
+      mask-position: center, center;
+      -webkit-mask-repeat: no-repeat, no-repeat;
+      mask-repeat: no-repeat, no-repeat;
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+    }
+
     .logo {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
+      position: relative;
+      width: 45px;
+      height: 45px;
+      display: block;
       background: transparent;
       box-shadow: none;
       pointer-events: auto;
     }
 
     .logo img {
-      opacity: .42;
-      mix-blend-mode: screen;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
     }
 
     .hero {
@@ -260,7 +277,8 @@
 
     @media (max-width: 860px) {
       .topbar { height: 38px; margin-bottom: -38px; }
-      .logo { width: 34px; height: 34px; }
+      .topbar::before { -webkit-mask-size: 36px 36px, 100% 100%; mask-size: 36px 36px, 100% 100%; }
+      .logo { width: 36px; height: 36px; }
       .intro-logo { width: min(86vw, 520px); }
       .hero-content { padding-bottom: 42px; }
       .product-showcase, .open-card, .reason-grid, .details, .size-card, .policy-grid, .notify { grid-template-columns: 1fr; }
