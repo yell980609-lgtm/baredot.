@@ -49,7 +49,7 @@
       background: #000;
       pointer-events: none;
       overflow: hidden;
-      animation: intro-hide 4.4s ease forwards;
+      animation: intro-hide 5.2s ease forwards;
     }
 
     .intro-logo {
@@ -65,11 +65,11 @@
       mask-position: center;
       -webkit-mask-size: contain;
       mask-size: contain;
-      background: rgba(255,255,255,.06);
-      filter: drop-shadow(0 0 32px rgba(255,255,255,.16));
+      background: transparent;
+      filter: drop-shadow(0 0 42px rgba(255,255,255,.24));
       opacity: 0;
       transform: scale(.98);
-      animation: logo-complete 4.4s ease forwards;
+      animation: logo-complete 5.2s ease forwards;
     }
 
     .intro-logo::before,
@@ -82,37 +82,37 @@
     .intro-logo::before {
       background: #fff;
       clip-path: inset(0 100% 0 0);
-      animation: logo-fill 4.4s cubic-bezier(.24,.72,.18,1) forwards;
+      animation: logo-fill 5.2s cubic-bezier(.22,.72,.16,1) forwards;
     }
 
     .intro-logo::after {
-      width: 42%;
-      background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.35) 28%, #fff 50%, rgba(220,235,245,.45) 66%, transparent 100%);
-      filter: blur(1px);
-      transform: translateX(-130%);
-      animation: logo-sweep 4.4s cubic-bezier(.24,.72,.18,1) forwards;
+      width: 34%;
+      background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.18) 22%, #fff 48%, rgba(255,255,255,.86) 58%, transparent 100%);
+      filter: blur(2px);
+      transform: translateX(-190%);
+      animation: logo-sweep 5.2s cubic-bezier(.22,.72,.16,1) forwards;
     }
 
     @keyframes logo-fill {
-      0%, 12% { clip-path: inset(0 100% 0 0); }
-      68%, 100% { clip-path: inset(0 0 0 0); }
+      0%, 18% { clip-path: inset(0 100% 0 0); }
+      66%, 100% { clip-path: inset(0 0 0 0); }
     }
 
     @keyframes logo-sweep {
-      0% { transform: translateX(-160%); opacity: 0; }
-      14% { opacity: 1; }
-      68% { transform: translateX(260%); opacity: 1; }
-      76%, 100% { transform: translateX(260%); opacity: 0; }
+      0%, 10% { transform: translateX(-190%); opacity: 0; }
+      18% { opacity: 1; }
+      66% { transform: translateX(300%); opacity: 1; }
+      74%, 100% { transform: translateX(300%); opacity: 0; }
     }
 
     @keyframes logo-complete {
-      0% { opacity: 0; transform: scale(.97); }
-      10%, 86% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(1.012); }
+      0% { opacity: 0; transform: scale(.965); }
+      10%, 88% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.01); }
     }
 
     @keyframes intro-hide {
-      0%, 86% { opacity: 1; visibility: visible; }
+      0%, 88% { opacity: 1; visibility: visible; }
       100% { opacity: 0; visibility: hidden; }
     }
 
