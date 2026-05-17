@@ -129,11 +129,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 13px;
       padding: 0 18px;
       background: #111;
       color: #fff;
-      font-size: 13px;
+      font-size: 9px;
       font-weight: 900;
       line-height: 1;
       text-align: center;
@@ -265,21 +265,22 @@
       min-height: 100svh;
       display: grid;
       align-content: end;
-      gap: 22px;
+      gap: 16px;
       padding: 130px 0 62px;
     }
 
     .drop-title {
       margin: 0;
-      max-width: 1050px;
-      font-size: clamp(52px, 8vw, 118px);
-      line-height: .92;
+      max-width: 760px;
+      font-size: clamp(36px, 5.6vw, 83px);
+      line-height: .95;
       font-weight: 900;
       text-transform: uppercase;
     }
 
+    .drop-title .stencil { display: block; }
     .stencil { font-style: italic; letter-spacing: -.02em; }
-    .tagline { margin: 0; font-size: clamp(20px, 3vw, 42px); font-weight: 800; font-style: italic; text-transform: lowercase; }
+    .tagline { margin: 0; font-size: clamp(14px, 2.1vw, 29px); font-weight: 800; font-style: italic; text-transform: lowercase; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
 
     .btn {
@@ -346,7 +347,7 @@
 
     @media (max-width: 860px) {
       :root { --promo-height: 26px; }
-      .promo-bar { gap: 10px; padding: 0 10px; font-size: 11px; }
+      .promo-bar { gap: 7px; padding: 0 10px; font-size: 8px; }
       .topbar { --topbar-logo-size: 37px; --topbar-logo-x: center; height: 38px; margin-bottom: -38px; }
       .topbar.is-scrolled { --topbar-logo-x: 12px; }
       .topbar.is-scrolled .logo { left: 12px; }
@@ -389,7 +390,7 @@
     <section class="hero" aria-label="BAREDOT 1st drop">
       <video src="https://framerusercontent.com/assets/bxEEWeqjXPfNQ95utZWiJF8kiw.mp4" autoplay muted loop playsinline preload="metadata"></video>
       <div class="wrap hero-content">
-        <h1 class="drop-title">1ST DROP. <span class="stencil">#I'm BARED</span></h1>
+        <h1 class="drop-title">1ST DROP. <span class="stencil">#I'M BARED</span></h1>
         <p class="tagline">nothing before performance</p>
         <div class="hero-actions">
           <a class="btn buy" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">구매하기</a>
