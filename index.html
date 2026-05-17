@@ -123,25 +123,30 @@
     .topbar {
       position: sticky;
       top: 0;
-      height: 94px;
+      height: 47px;
       z-index: 20;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: -94px;
+      margin-bottom: -47px;
       background: rgba(0,0,0,.48);
       pointer-events: none;
     }
 
     .logo {
-      width: 78px;
-      height: 78px;
+      width: 42px;
+      height: 42px;
       display: grid;
       place-items: center;
       overflow: hidden;
       background: transparent;
       box-shadow: none;
       pointer-events: auto;
+    }
+
+    .logo img {
+      opacity: .42;
+      mix-blend-mode: screen;
     }
 
     .hero {
@@ -254,8 +259,8 @@
     footer { padding: 34px 0; background: #000; color: rgba(255,255,255,.52); font-size: 14px; }
 
     @media (max-width: 860px) {
-      .topbar { height: 76px; margin-bottom: -76px; }
-      .logo { width: 60px; height: 60px; }
+      .topbar { height: 38px; margin-bottom: -38px; }
+      .logo { width: 34px; height: 34px; }
       .intro-logo { width: min(86vw, 520px); }
       .hero-content { padding-bottom: 42px; }
       .product-showcase, .open-card, .reason-grid, .details, .size-card, .policy-grid, .notify { grid-template-columns: 1fr; }
