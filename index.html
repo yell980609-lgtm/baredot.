@@ -21,7 +21,6 @@
       --blue: #0e222a;
       --muted: #747474;
       --line: rgba(255,255,255,.34);
-      --dark-line: rgba(0,0,0,.12);
       --radius: 8px;
       --promo-height: 28px;
       --logo-mask: url("https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080");
@@ -158,9 +157,7 @@
       pointer-events: none;
     }
 
-    .topbar.is-scrolled {
-      --topbar-logo-x: 18px;
-    }
+    .topbar.is-scrolled { --topbar-logo-x: 18px; }
 
     .topbar::before {
       content: "";
@@ -301,48 +298,125 @@
     .btn.buy { background: var(--ice); color: var(--blue); }
     .btn.outline { color: #fff; border-color: var(--line); background: rgba(0,0,0,.18); }
 
-    .section { padding: 88px 0; }
-    .section.black { background: #000; color: #fff; }
-    .section.ice { background: var(--ice); }
-    .kicker { margin: 0 0 12px; color: var(--muted); font-size: 15px; font-weight: 900; text-transform: uppercase; }
-    .black .kicker { color: rgba(255,255,255,.58); }
-    h2 { margin: 0; font-size: clamp(42px, 7vw, 92px); line-height: .95; font-weight: 900; text-transform: uppercase; }
-    .lead { margin: 20px 0 0; max-width: 760px; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: clamp(18px, 2vw, 24px); line-height: 1.55; font-weight: 700; }
+    .shop-section {
+      padding: 54px 0 72px;
+      background: #fff;
+      color: #101010;
+    }
 
-    .product-showcase { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: stretch; margin-top: 42px; }
-    .media-tile { position: relative; overflow: hidden; min-height: 560px; background: #f5f5f5; border-radius: var(--radius); }
-    .media-tile img, .media-tile video { width: 100%; height: 100%; object-fit: cover; }
-    .media-label { position: absolute; left: 18px; right: 18px; bottom: 18px; display: flex; justify-content: space-between; gap: 10px; color: #fff; font-size: 28px; font-weight: 900; text-shadow: 0 2px 20px rgba(0,0,0,.6); }
+    .shop-head {
+      display: flex;
+      align-items: center;
+      gap: clamp(22px, 4vw, 46px);
+      margin-bottom: 28px;
+    }
 
-    .open-card { display: grid; grid-template-columns: 1fr 1.1fr; gap: 16px; margin-top: 42px; }
-    .date-card, .benefit-card { min-height: 270px; border-radius: var(--radius); padding: 26px; background: rgba(220,235,245,.26); border: 2px solid rgba(220,235,245,.65); color: var(--ice); }
-    .date-card strong { display: block; font-size: clamp(44px, 8vw, 112px); line-height: .86; font-style: italic; color: #fff; }
-    .date-card span { display: block; margin-top: 18px; font-size: clamp(28px, 5vw, 58px); font-weight: 900; font-style: italic; }
-    .benefit-card h3 { margin: 0 0 18px; font-size: clamp(28px, 4vw, 50px); line-height: 1; color: #fff; }
-    .benefit-card ul { margin: 0; padding-left: 22px; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: 20px; font-weight: 800; line-height: 1.8; }
+    .shop-head h2 {
+      margin: 0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height: 1;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
 
-    .reason-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 38px; }
-    .reason { min-height: 260px; padding: 22px; border-radius: var(--radius); border: 1px solid var(--dark-line); background: #fff; display: flex; flex-direction: column; justify-content: space-between; }
-    .reason .num { font-size: 22px; font-weight: 900; color: var(--muted); }
-    .reason h3 { margin: 36px 0 12px; font-size: 32px; line-height: 1; }
-    .reason p { margin: 0; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.6; color: #333; }
+    .shop-tabs {
+      display: flex;
+      align-items: center;
+      gap: clamp(24px, 5vw, 56px);
+    }
 
-    .details { display: grid; grid-template-columns: .95fr 1.05fr; gap: 24px; align-items: start; margin-top: 40px; }
-    .detail-copy { position: sticky; top: 106px; padding: 24px; border-radius: var(--radius); border: 1px solid var(--dark-line); background: #fff; }
-    .detail-copy h3 { margin: 0 0 16px; font-size: clamp(34px, 5vw, 64px); line-height: .95; }
-    .detail-copy p { margin: 0 0 14px; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: 17px; line-height: 1.6; font-weight: 700; color: #333; }
-    .stacked-media { display: grid; gap: 18px; }
-    .stacked-media img { width: 100%; border-radius: var(--radius); background: #eee; }
-    .size-card { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; margin-top: 36px; padding: 20px; border-radius: var(--radius); background: #f5f5f5; }
-    .size-card img { border-radius: var(--radius); }
-    .size-card h3 { margin: 0 0 12px; font-size: clamp(34px, 5vw, 72px); line-height: .9; }
-    .size-card p { margin: 6px 0; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-size: 19px; font-weight: 800; }
+    .shop-tabs a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 0 16px;
+      color: #111;
+      font-size: 14px;
+      font-weight: 900;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
 
-    .policy-grid { display: grid; grid-template-columns: 260px 1fr; gap: 18px; padding: 20px 0; border-top: 1px solid rgba(255,255,255,.22); }
-    .policy-grid h3 { margin: 0; font-size: 24px; color: #fff; }
-    .policy-grid ul { margin: 0; padding-left: 20px; font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; color: rgba(255,255,255,.78); line-height: 1.7; }
-    .notify { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: end; padding: 36px 0 0; border-top: 1px solid rgba(255,255,255,.22); }
-    .notify p { margin: 8px 0 0; color: rgba(255,255,255,.72); font-family: Pretendard, "Noto Sans KR", system-ui, sans-serif; font-weight: 700; }
+    .shop-tabs a:first-child { border: 1px solid #111; }
+
+    .product-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .product-card {
+      min-width: 0;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .product-card figure { margin: 0; }
+
+    .product-image {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      background: #eee;
+    }
+
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .35s ease;
+    }
+
+    .product-card:hover .product-image img { transform: scale(1.025); }
+
+    .wish {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.14);
+      background: rgba(255,255,255,.3);
+    }
+
+    .wish::before {
+      content: "♡";
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      color: rgba(0,0,0,.35);
+      font-size: 19px;
+      line-height: 1;
+    }
+
+    .product-info {
+      display: grid;
+      gap: 7px;
+      padding: 12px 10px 0;
+      text-align: center;
+    }
+
+    .product-name {
+      overflow: hidden;
+      margin: 0;
+      color: #111827;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.25;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .product-price {
+      color: #111;
+      font-size: 15px;
+      font-weight: 900;
+    }
+
     footer { padding: 34px 0; background: #000; color: rgba(255,255,255,.52); font-size: 14px; }
 
     @media (max-width: 860px) {
@@ -355,11 +429,14 @@
       .topnav a { font-size: 10px; }
       .intro-logo { width: min(86vw, 520px); }
       .hero-content { padding-bottom: 42px; }
-      .product-showcase, .open-card, .reason-grid, .details, .size-card, .policy-grid, .notify { grid-template-columns: 1fr; }
-      .media-tile { min-height: 420px; }
-      .section { padding: 64px 0; }
-      .detail-copy { position: static; }
-      .benefit-card ul { font-size: 17px; }
+      .shop-section { padding: 38px 0 54px; }
+      .shop-head { align-items: flex-start; flex-direction: column; gap: 14px; margin-bottom: 22px; }
+      .shop-tabs { width: 100%; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
+      .shop-tabs a { flex: 0 0 auto; font-size: 12px; }
+      .product-row { display: flex; gap: 6px; margin-inline: -18px; overflow-x: auto; padding: 0 18px 4px; scroll-snap-type: x mandatory; }
+      .product-card { flex: 0 0 78%; scroll-snap-align: start; }
+      .product-name { font-size: 12px; }
+      .product-price { font-size: 14px; }
     }
   </style>
 </head>
@@ -378,11 +455,11 @@
       <img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&amp;height=1080" alt="BAREDOT." />
     </a>
     <nav class="topnav" aria-label="상품 카테고리">
-      <a href="#drop">Best</a>
-      <a href="#reason">Featured</a>
-      <a href="#detail">Men</a>
-      <a href="#detail">Women</a>
-      <a href="#policy">Acc</a>
+      <a href="#shop">Best</a>
+      <a href="#shop">Featured</a>
+      <a href="#shop">Men</a>
+      <a href="#shop">Women</a>
+      <a href="#shop">Acc</a>
     </nav>
   </header>
 
@@ -394,83 +471,62 @@
         <p class="tagline">nothing before performance</p>
         <div class="hero-actions">
           <a class="btn buy" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">구매하기</a>
-          <a class="btn outline" href="#reason">베어닷이 벌거벗은 이유</a>
+          <a class="btn outline" href="#shop">상품 보기</a>
         </div>
       </div>
     </section>
 
-    <section class="section" id="drop">
+    <section class="shop-section" id="shop" aria-label="BAREDOT products">
       <div class="wrap">
-        <p class="kicker">베어닷의 벌거벗은</p>
-        <h2>1ST DROP. <span class="stencil">#I'm BARED</span></h2>
-        <p class="lead">필요없는 건 다 빼고, 짐웨어로서의 본질만 남겼습니다. 움직임을 가리지 않는 구조와 선명한 실루엣으로 퍼포먼스에 먼저 집중합니다.</p>
-        <div class="product-showcase">
-          <figure class="media-tile">
-            <img src="https://framerusercontent.com/images/Z5sNWWSI3Ce3f6fiSxba4UOFbU.jpg?scale-down-to=2048&amp;width=3392&amp;height=5056" alt="BAREDOT halter top look" />
-            <figcaption class="media-label"><span>Top</span><span>halter top</span></figcaption>
-          </figure>
-          <figure class="media-tile">
-            <video src="https://framerusercontent.com/assets/Zxp6Xf03nJ3jbHSUXkXoMsEDIgY.mp4" autoplay muted loop playsinline preload="metadata"></video>
-            <figcaption class="media-label"><span>Bottom</span><span>#I'm BARED</span></figcaption>
-          </figure>
+        <div class="shop-head">
+          <h2>SHOP IN</h2>
+          <nav class="shop-tabs" aria-label="상품 정렬">
+            <a href="https://smartstore.naver.com/baredot" rel="noopener">New Arrivals</a>
+            <a href="https://smartstore.naver.com/baredot" rel="noopener">Best</a>
+            <a href="https://smartstore.naver.com/baredot" rel="noopener">Restock</a>
+          </nav>
         </div>
-      </div>
-    </section>
 
-    <section class="section black">
-      <div class="wrap">
-        <p class="kicker">Ready to BARED ?</p>
-        <h2>OPEN</h2>
-        <div class="open-card">
-          <article class="date-card"><strong>05.11</strong><span>00:00</span></article>
-          <article class="benefit-card"><h3>Pre-order benefit</h3><ul><li>프리오더가 10% 할인</li><li>10% 적립금</li><li>세트구매 시 무료배송</li></ul></article>
-        </div>
-      </div>
-    </section>
+        <div class="product-row">
+          <a class="product-card" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">
+            <figure>
+              <div class="product-image">
+                <img src="https://framerusercontent.com/images/Z5sNWWSI3Ce3f6fiSxba4UOFbU.jpg?scale-down-to=2048&amp;width=3392&amp;height=5056" alt="BAREDOT halter top" />
+                <span class="wish" aria-hidden="true"></span>
+              </div>
+              <figcaption class="product-info">
+                <p class="product-name">BAREDOT HALTER TOP</p>
+                <strong class="product-price">Smartstore</strong>
+              </figcaption>
+            </figure>
+          </a>
 
-    <section class="section ice" id="reason">
-      <div class="wrap">
-        <p class="kicker">WE REMOVED EVERYTHING</p>
-        <h2>NOTHING BEFORE PERFORMANCE</h2>
-        <div class="reason-grid">
-          <article class="reason"><span class="num">01 /</span><div><h3>Performance Support</h3><p>복압을 안정적으로 잡아 퍼포먼스를 끌어올리는 설계.</p></div></article>
-          <article class="reason"><span class="num">02 /</span><div><h3>Fit &amp; comfort Design</h3><p>낮고 둥근 곡률 설계와 특수 고무밴드로 균형잡힌 힙 실루엣.</p></div></article>
-          <article class="reason"><span class="num">03 /</span><div><h3>Move without limits</h3><p>견갑을 가리지 않는 스트랩 구조로 운동 중에도 편안한 움직임.</p></div></article>
-        </div>
-      </div>
-    </section>
+          <a class="product-card" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">
+            <figure>
+              <div class="product-image">
+                <img src="https://framerusercontent.com/images/sUe6PM1Em5C95WXFauvY0IQjpbs.png?scale-down-to=2048&amp;width=4500&amp;height=5625" alt="BAREDOT activewear bottom" />
+                <span class="wish" aria-hidden="true"></span>
+              </div>
+              <figcaption class="product-info">
+                <p class="product-name">BAREDOT BOTTOM</p>
+                <strong class="product-price">Smartstore</strong>
+              </figcaption>
+            </figure>
+          </a>
 
-    <section class="section" id="detail">
-      <div class="wrap">
-        <p class="kicker">styling tip</p>
-        <h2>How to be BARED ?</h2>
-        <div class="details">
-          <div class="detail-copy">
-            <h3>detail<br />Size detail</h3>
-            <p>바디 라인을 과하게 가리지 않고, 운동할 때 필요한 안정감만 남긴 핏입니다.</p>
-            <p>상의와 하의를 세트로 착용했을 때 가장 또렷한 BAREDOT. 실루엣이 완성됩니다.</p>
-            <a class="btn buy" href="https://smartstore.naver.com/baredot/products/13510137743" rel="noopener">제품 보러가기</a>
-          </div>
-          <div class="stacked-media">
-            <img src="https://framerusercontent.com/images/O4dQIcjYNKVAzRgpReNJHooJ94.webp?scale-down-to=2048&amp;width=1920&amp;height=2862" alt="BAREDOT product styling detail" />
-            <img src="https://framerusercontent.com/images/sUe6PM1Em5C95WXFauvY0IQjpbs.png?scale-down-to=2048&amp;width=4500&amp;height=5625" alt="BAREDOT activewear detail" />
-          </div>
+          <a class="product-card" href="https://smartstore.naver.com/baredot" rel="noopener">
+            <figure>
+              <div class="product-image">
+                <img src="https://framerusercontent.com/images/O4dQIcjYNKVAzRgpReNJHooJ94.webp?scale-down-to=2048&amp;width=1920&amp;height=2862" alt="BAREDOT set-up styling" />
+                <span class="wish" aria-hidden="true"></span>
+              </div>
+              <figcaption class="product-info">
+                <p class="product-name">BAREDOT SET-UP</p>
+                <strong class="product-price">Smartstore</strong>
+              </figcaption>
+            </figure>
+          </a>
         </div>
-        <div class="size-card">
-          <img src="https://framerusercontent.com/images/apyNsg0RJf2z2dLNQyR16bIV0.png?width=1080&amp;height=1350" alt="BAREDOT model size reference" />
-          <div><h3>사이즈 디테일</h3><p>S-M 착용</p><p>165cm 54kg</p><p>Anne / TOP / BOTTOM</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section black" id="policy">
-      <div class="wrap">
-        <p class="kicker">refund &amp; exchange</p>
-        <h2>교환 및 반품</h2>
-        <div class="policy-grid"><h3>접수 안내</h3><ul><li>상품 수령일로부터 7일 이내, 택을 자르지 않은 상태에서 접수해주세요.</li><li>제품 수거 완료 후 검수기간 3~4일 소요 후 처리됩니다.</li><li>교환/반품 배송비는 왕복 7,000원이며 도서산간 지역은 왕복 15,000원입니다.</li></ul></div>
-        <div class="policy-grid"><h3>불가한 경우</h3><ul><li>택 제거, 제품 착용 후 오염 및 늘어짐, 구성품 분실/파손 등 재판매가 불가한 경우.</li><li>인위적인 수선, 세탁, 향수/화장품/생활 냄새가 밴 제품.</li><li>약간의 실밥, 잡사, 초크자국, 색상 차이는 불량 사유가 될 수 없습니다.</li></ul></div>
-        <div class="policy-grid"><h3>주소</h3><ul><li>서울시 종로구 지봉로 29, 12층 베어닷</li><li>다른 주소로 발송하실 경우 분실 위험이 있으며 보상이 어렵습니다.</li></ul></div>
-        <div class="notify"><div><p class="kicker">PRE-ORDER ALERT</p><p>오픈 및 재입고 소식은 인스타그램 DM으로 안내드립니다.</p></div><a class="btn outline" href="https://baredot.framer.website/%EC%95%8C%EB%A6%BC%EB%B0%9B%EA%B8%B0" rel="noopener">알림받기</a></div>
       </div>
     </section>
   </main>
