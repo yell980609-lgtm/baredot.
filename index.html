@@ -49,7 +49,7 @@
       background: #000;
       pointer-events: none;
       overflow: hidden;
-      animation: intro-hide 3s ease forwards;
+      animation: intro-hide 4.4s ease forwards;
     }
 
     .intro-logo {
@@ -65,9 +65,11 @@
       mask-position: center;
       -webkit-mask-size: contain;
       mask-size: contain;
+      background: rgba(255,255,255,.06);
+      filter: drop-shadow(0 0 32px rgba(255,255,255,.16));
       opacity: 0;
       transform: scale(.98);
-      animation: logo-complete 3s ease forwards;
+      animation: logo-complete 4.4s ease forwards;
     }
 
     .intro-logo::before,
@@ -80,7 +82,7 @@
     .intro-logo::before {
       background: #fff;
       clip-path: inset(0 100% 0 0);
-      animation: logo-fill 3s cubic-bezier(.2,.75,.2,1) forwards;
+      animation: logo-fill 4.4s cubic-bezier(.24,.72,.18,1) forwards;
     }
 
     .intro-logo::after {
@@ -88,30 +90,29 @@
       background: linear-gradient(100deg, transparent 0%, rgba(255,255,255,.35) 28%, #fff 50%, rgba(220,235,245,.45) 66%, transparent 100%);
       filter: blur(1px);
       transform: translateX(-130%);
-      animation: logo-sweep 3s cubic-bezier(.22,.72,.2,1) forwards;
+      animation: logo-sweep 4.4s cubic-bezier(.24,.72,.18,1) forwards;
     }
 
     @keyframes logo-fill {
-      0% { clip-path: inset(0 100% 0 0); }
-      18% { clip-path: inset(0 100% 0 0); }
-      72%, 100% { clip-path: inset(0 0 0 0); }
+      0%, 12% { clip-path: inset(0 100% 0 0); }
+      68%, 100% { clip-path: inset(0 0 0 0); }
     }
 
     @keyframes logo-sweep {
-      0% { transform: translateX(-130%); opacity: 0; }
-      16% { opacity: 1; }
-      72% { transform: translateX(240%); opacity: 1; }
-      100% { transform: translateX(240%); opacity: 0; }
+      0% { transform: translateX(-160%); opacity: 0; }
+      14% { opacity: 1; }
+      68% { transform: translateX(260%); opacity: 1; }
+      76%, 100% { transform: translateX(260%); opacity: 0; }
     }
 
     @keyframes logo-complete {
       0% { opacity: 0; transform: scale(.97); }
-      12%, 82% { opacity: 1; transform: scale(1); }
-      100% { opacity: 0; transform: scale(1.015); }
+      10%, 86% { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.012); }
     }
 
     @keyframes intro-hide {
-      0%, 82% { opacity: 1; visibility: visible; }
+      0%, 86% { opacity: 1; visibility: visible; }
       100% { opacity: 0; visibility: hidden; }
     }
 
