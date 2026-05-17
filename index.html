@@ -38,6 +38,7 @@
 
     img, video { max-width: 100%; display: block; }
     a { color: inherit; }
+    button { font: inherit; }
     .wrap { width: min(1120px, calc(100% - 36px)); margin: 0 auto; }
 
     .intro-overlay {
@@ -219,7 +220,9 @@
       pointer-events: auto;
     }
 
-    .topnav a {
+    .topnav a,
+    .nav-trigger {
+      position: relative;
       color: #fff;
       font-size: clamp(11px, 1vw, 14px);
       font-weight: 800;
@@ -230,7 +233,119 @@
       transition: opacity .2s ease;
     }
 
-    .topnav a:hover { opacity: 1; }
+    .nav-trigger {
+      border: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .topnav a:hover,
+    .nav-trigger:hover,
+    .nav-trigger.is-active {
+      opacity: 1;
+    }
+
+    .nav-trigger.is-active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -8px;
+      height: 1px;
+      background: #fff;
+    }
+
+    .mega-menu {
+      position: absolute;
+      top: 100%;
+      right: 18px;
+      width: min(520px, calc(100vw - 36px));
+      padding: 18px 20px 20px;
+      background: #fff;
+      color: #111;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity .18s ease, transform .18s ease;
+      visibility: hidden;
+      box-shadow: 0 16px 34px rgba(0,0,0,.16);
+    }
+
+    .mega-menu.is-open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+      visibility: visible;
+    }
+
+    .mega-tabs {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      margin-bottom: 14px;
+      color: #111;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .mega-tabs a {
+      color: #111;
+      text-decoration: none;
+    }
+
+    .mega-tabs a.is-active {
+      color: #0b00ff;
+      border-bottom: 2px solid #0b00ff;
+      padding-bottom: 7px;
+    }
+
+    .mega-body {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .mega-categories {
+      display: grid;
+      gap: 7px;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .mega-categories a {
+      color: #111;
+      text-decoration: none;
+    }
+
+    .mega-feature {
+      display: block;
+      width: 158px;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .mega-feature img {
+      width: 158px;
+      height: 122px;
+      object-fit: cover;
+      background: #eee;
+    }
+
+    .mega-feature strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 13px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-transform: uppercase;
+    }
 
     .hero {
       position: relative;
@@ -426,7 +541,14 @@
       .topbar.is-scrolled { --topbar-logo-x: 12px; }
       .topbar.is-scrolled .logo { left: 12px; }
       .topnav { right: 12px; gap: 10px; }
-      .topnav a { font-size: 10px; }
+      .topnav a, .nav-trigger { font-size: 10px; }
+      .mega-menu { right: 8px; width: calc(100vw - 16px); padding: 14px; }
+      .mega-tabs { gap: 17px; overflow-x: auto; padding-bottom: 6px; font-size: 13px; }
+      .mega-body { grid-template-columns: 92px 1fr; gap: 16px; }
+      .mega-categories { font-size: 13px; }
+      .mega-feature, .mega-feature img { width: 136px; }
+      .mega-feature img { height: 104px; }
+      .mega-feature strong { font-size: 12px; }
       .intro-logo { width: min(86vw, 520px); }
       .hero-content { padding-bottom: 42px; }
       .shop-section { padding: 38px 0 54px; }
@@ -457,10 +579,54 @@
     <nav class="topnav" aria-label="상품 카테고리">
       <a href="#shop">Best</a>
       <a href="#shop">Featured</a>
-      <a href="#shop">Men</a>
-      <a href="#shop">Women</a>
+      <button class="nav-trigger" type="button" data-menu="men" aria-expanded="false">MEN</button>
+      <button class="nav-trigger" type="button" data-menu="women" aria-expanded="false">WOMEN</button>
       <a href="#shop">Acc</a>
     </nav>
+
+    <div class="mega-menu" data-menu-panel="men" aria-hidden="true">
+      <div class="mega-tabs" aria-label="MEN category tabs">
+        <a href="#shop">FEATURED</a>
+        <a class="is-active" href="#shop">MEN</a>
+        <a href="#shop">WOMEN</a>
+        <a href="#shop">BRN(active)</a>
+        <a href="#shop">GEAR</a>
+      </div>
+      <div class="mega-body">
+        <nav class="mega-categories" aria-label="MEN categories">
+          <a href="#shop">ALL</a>
+          <a href="#shop">OUTER</a>
+          <a href="#shop">TOP</a>
+          <a href="#shop">BOTTOM</a>
+        </nav>
+        <a class="mega-feature" href="#shop">
+          <img src="https://framerusercontent.com/images/O4dQIcjYNKVAzRgpReNJHooJ94.webp?scale-down-to=2048&amp;width=1920&amp;height=2862" alt="1ST DROP #I'M BARED" />
+          <strong>1ST DROP. #I'M BARED</strong>
+        </a>
+      </div>
+    </div>
+
+    <div class="mega-menu" data-menu-panel="women" aria-hidden="true">
+      <div class="mega-tabs" aria-label="WOMEN category tabs">
+        <a href="#shop">FEATURED</a>
+        <a href="#shop">MEN</a>
+        <a class="is-active" href="#shop">WOMEN</a>
+        <a href="#shop">BRN(active)</a>
+        <a href="#shop">GEAR</a>
+      </div>
+      <div class="mega-body">
+        <nav class="mega-categories" aria-label="WOMEN categories">
+          <a href="#shop">ALL</a>
+          <a href="#shop">OUTER</a>
+          <a href="#shop">TOP</a>
+          <a href="#shop">BOTTOM</a>
+        </nav>
+        <a class="mega-feature" href="#shop">
+          <img src="https://framerusercontent.com/images/sUe6PM1Em5C95WXFauvY0IQjpbs.png?scale-down-to=2048&amp;width=4500&amp;height=5625" alt="1ST DROP #I'M BARED" />
+          <strong>1ST DROP. #I'M BARED</strong>
+        </a>
+      </div>
+    </div>
   </header>
 
   <main id="top">
@@ -534,9 +700,44 @@
   <footer><div class="wrap">© 2026 BAREDOT. NOTHING BEFORE PERFORMANCE.</div></footer>
   <script>
     const topbar = document.querySelector('.topbar');
-    const syncTopbar = () => topbar?.classList.toggle('is-scrolled', window.scrollY > 8);
+    const triggers = document.querySelectorAll('.nav-trigger');
+    const panels = document.querySelectorAll('.mega-menu');
+    const closeMenus = () => {
+      triggers.forEach((trigger) => {
+        trigger.classList.remove('is-active');
+        trigger.setAttribute('aria-expanded', 'false');
+      });
+      panels.forEach((panel) => {
+        panel.classList.remove('is-open');
+        panel.setAttribute('aria-hidden', 'true');
+      });
+    };
+    const syncTopbar = () => {
+      topbar?.classList.toggle('is-scrolled', window.scrollY > 8);
+      if (window.scrollY <= 8) closeMenus();
+    };
     syncTopbar();
     window.addEventListener('scroll', syncTopbar, { passive: true });
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const target = trigger.dataset.menu;
+        const panel = document.querySelector(`[data-menu-panel="${target}"]`);
+        const isOpen = panel?.classList.contains('is-open');
+        closeMenus();
+        if (!isOpen && panel) {
+          trigger.classList.add('is-active');
+          trigger.setAttribute('aria-expanded', 'true');
+          panel.classList.add('is-open');
+          panel.setAttribute('aria-hidden', 'false');
+        }
+      });
+    });
+    panels.forEach((panel) => panel.addEventListener('click', (event) => event.stopPropagation()));
+    document.addEventListener('click', closeMenus);
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenus();
+    });
   </script>
 </body>
 </html>
