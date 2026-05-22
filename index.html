@@ -10,6 +10,7 @@
 <style>
 .how-bared{margin-top:38px;padding-top:18px;border-top:1px solid #e0e0e0}.how-bared-head{display:flex;align-items:end;justify-content:space-between;gap:14px;margin-bottom:12px}.how-bared-kicker{display:block;margin-bottom:4px;color:#8a8a8a;font:900 9px/1 InterDisplay,Pretendard,sans-serif;letter-spacing:0;text-transform:uppercase}.how-bared h3{margin:0;font-size:18px;font-style:italic;font-weight:900;line-height:.92}.how-bared-tag{flex:0 0 auto;color:#777;font:900 9px/1 InterDisplay,Pretendard,sans-serif;text-transform:uppercase}.how-bared-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;align-items:start}.how-bared-card{position:relative;display:block;aspect-ratio:var(--thumb-ratio,3/4);background:#050505;color:#fff;text-decoration:none;overflow:hidden}.how-bared-card img{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(.88) contrast(1.03);transition:.28s}.how-bared-card:hover img{transform:scale(1.02)}@media(max-width:860px){.how-bared{margin-top:30px}}
 .collection-route .home-view{display:none}.collection-route .topbar{--logo-x:18px;margin-bottom:0}.collection-route .logo{left:18px;transform:none}.collection-route .topnav{opacity:1;pointer-events:auto}.collection-view{display:none;min-height:calc(100svh - var(--promo-height) - var(--topbar-height));padding:78px 0 96px;background:#f7f7f7}.collection-route .collection-view{display:block}.collection-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:28px}.collection-title{margin:0;font-size:clamp(24px,3vw,34px);line-height:1;text-transform:uppercase}.collection-back{font-size:13px;text-decoration:none;text-transform:uppercase}.collection-empty{display:none;min-height:calc(100svh - var(--promo-height) - var(--topbar-height) - 280px);place-items:center;font-size:clamp(28px,4vw,54px);font-style:italic;font-weight:900;line-height:1;text-transform:lowercase}.collection-empty.is-visible{display:grid}@media(max-width:860px){.collection-route .topbar{--logo-x:12px}.collection-route .logo{left:12px}.collection-view{padding:42px 0 72px}.collection-head{align-items:start;flex-direction:column;margin-bottom:20px}.collection-empty{min-height:calc(100svh - var(--promo-height) - var(--topbar-height) - 214px)}}
+.product-summary.has-no-spin{grid-template-columns:1fr}.spin-media.is-hidden{display:none}.spin-video[src]+.spin-placeholder{display:none}
 </style>
 </head>
 <body>
@@ -32,6 +33,12 @@ const topbar=document.querySelector('.topbar'),triggers=document.querySelectorAl
 <script>
 const howBaredMarkup='<section class="how-bared" aria-label="How to be Bared review photos"><div class="how-bared-head"><div><span class="how-bared-kicker">베어닷의 실제핏을 확인해보세요</span><h3>How to be Bared ?</h3></div><span class="how-bared-tag">review</span></div><div class="how-bared-grid"></div></section>';
 document.querySelector('.total-row')?.insertAdjacentHTML('afterend',howBaredMarkup);if(isDetailRoute())renderDetail();
+</script>
+<script>
+productData['#product-halter-70000'].spin='assets/halter-top-spin.m4v';
+productData['#product-halter-69000'].spin='assets/leggings-spin.m4v';
+function renderSpin(data){const summary=document.querySelector('.product-summary'),media=document.querySelector('.spin-media'),video=document.querySelector('.spin-video');const show=Boolean(data.spin);summary.classList.toggle('has-no-spin',!show);media.classList.toggle('is-hidden',!show);video.autoplay=true;video.poster=data.main;if(show){video.src=data.spin;video.load();video.play().catch(()=>{})}else{video.pause();video.removeAttribute('src');video.load()}}
+const renderDetailWithSpin=renderDetail;renderDetail=function(){renderDetailWithSpin();renderSpin(activeProduct)};if(isDetailRoute())renderSpin(activeProduct);
 </script>
 </body>
 </html>
