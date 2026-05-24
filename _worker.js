@@ -2,45 +2,11 @@ const menuPromoStyle = `
 <style id="codex-deploy-menu-promo">
 :root{--promo-height:38px}.promo-bar{gap:18px;font-size:13px}.mega-menu{width:min(132px,calc(100vw - 36px));padding:16px 18px}.mega-title,.mega-feature{display:none!important}.mega-body{display:block!important}.mega-categories{gap:11px;font-size:13px}.mega-categories a{display:block;text-decoration:none}@media(max-width:860px){:root{--promo-height:34px}.promo-bar{gap:12px;font-size:11px}.mega-menu{right:8px;width:min(132px,calc(100vw - 16px));padding:14px}.mega-body{display:block!important}}
 </style>`;
-
 const reviewPatchStyle = `
 <style id="codex-review-refine">
-.detail-tabs{padding-top:42px!important;margin-top:42px!important}.review-title{margin-bottom:12px!important;font-size:clamp(20px,2.1vw,30px)!important;line-height:1!important}.review-score{margin:0 0 12px!important;padding:10px 0!important;gap:10px!important}.review-score-main{gap:7px!important}.review-score-main strong{font-size:clamp(26px,3vw,38px)!important}.review-count-pill{min-height:28px!important;padding:0 12px!important;font-size:11px!important}.review-satisfaction{margin:0 0 16px!important;padding:12px 0!important;font-size:12px!important}.review-toolbar{gap:7px!important;margin-bottom:10px!important}.review-filter{min-height:30px!important;padding:0 11px!important;font-size:11px!important}.review-sort{margin:8px 0 12px!important;font-size:11px!important}.review-card{padding:22px 0!important}.review-author{font-size:12px!important}.review-date,.review-option,.review-profile{font-size:10px!important}.review-card-stars,.review-stars,.review-blue{color:#050505!important;letter-spacing:1px!important}.review-card-stars{font-size:14px!important}.review-body{font-size:12px!important;line-height:1.62!important}.review-help{font-size:10px!important}.review-help button{font-size:10px!important}@media(max-width:860px){.detail-tabs{padding-top:34px!important;margin-top:34px!important}.review-title{font-size:22px!important}.review-score{padding:8px 0!important}.review-card{padding:18px 0!important}.review-body{font-size:11px!important}}
+.detail-tabs{padding-top:42px!important;margin-top:42px!important}.review-title{margin-bottom:12px!important;font-size:clamp(20px,2.1vw,30px)!important;line-height:1!important}.review-score{margin:0 0 12px!important;padding:10px 0!important;gap:10px!important}.review-card{padding:22px 0!important}.review-author{font-size:12px!important}.review-date,.review-option,.review-profile{font-size:10px!important}.review-card-stars,.review-stars,.review-blue{color:#050505!important;letter-spacing:1px!important}.review-card-stars{font-size:14px!important}.review-body{font-size:12px!important;line-height:1.62!important}@media(max-width:860px){.detail-tabs{padding-top:34px!important;margin-top:34px!important}.review-title{font-size:22px!important}.review-card{padding:18px 0!important}.review-body{font-size:11px!important}}
 </style>`;
-
+const aboutPage = `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>ABOUT | BARE.</title><style>@font-face{font-family:InterDisplay;src:url(https://framerusercontent.com/assets/qITWJ2WdG0wrgQPDb8lvnYnTXDg.woff2) format('woff2');font-weight:700;font-display:swap}*{box-sizing:border-box}body{margin:0;background:#fff;color:#050505;font-family:InterDisplay,Pretendard,'Noto Sans KR',system-ui,sans-serif}.wrap{width:min(1080px,calc(100% - 36px));margin:auto}.top{display:flex;justify-content:space-between;align-items:center;padding:24px 0;border-bottom:1px solid #050505}.brand,.back{color:#050505;text-decoration:none}.brand{font-size:18px}.back{font-size:12px;text-transform:uppercase}.hero{padding:92px 0 70px}.kicker{margin:0 0 14px;font-size:12px;text-transform:uppercase}.title{margin:0;max-width:900px;font-size:clamp(46px,8vw,120px);line-height:.92;text-transform:uppercase}.body{display:grid;grid-template-columns:minmax(0,.8fr) minmax(320px,1fr);gap:clamp(34px,6vw,90px);padding:0 0 110px}.body h2{margin:0;font-size:clamp(24px,3vw,42px);line-height:1.1;text-transform:uppercase}.copy{display:grid;gap:18px;color:#1e1e1e;font:700 clamp(15px,1.45vw,19px)/1.8 Pretendard,'Noto Sans KR',sans-serif}.copy p{margin:0}.note{margin-top:18px;color:#777;font-size:13px}@media(max-width:760px){.hero{padding:64px 0 46px}.body{grid-template-columns:1fr;padding-bottom:72px}.title{font-size:48px}}</style></head><body><header class="wrap top"><a class="brand" href="/">BARE.</a><a class="back" href="/">Back to shop</a></header><main><section class="wrap hero"><p class="kicker">ABOUT BARE.</p><h1 class="title">Bare moves with you.</h1></section><section class="wrap body"><h2>Brand Story</h2><div class="copy"><p>베어닷은 움직이는 순간에도 몸의 선과 편안함이 자연스럽게 살아나는 애슬레저를 지향합니다.</p><p>불필요한 장식은 덜어내고, 소재와 핏, 작은 디테일에 집중해 일상과 운동 사이를 부드럽게 이어갑니다.</p><p>이 페이지는 임시 브랜드 소개 문구입니다. 추후 원하는 톤과 내용으로 자유롭게 수정할 수 있습니다.</p><p class="note">관리자 수정용 임시 페이지입니다.</p></div></section></main></body></html>`;
 const menuHeader = `<header class="topbar" aria-label="BAREDOT navigation"><a class="logo" href="#top" aria-label="맨 위로 이동"><img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080" alt="BAREDOT."></a><nav class="topnav"><a href="about.html" target="_blank" rel="noopener">ABOUT</a><button class="nav-trigger" type="button" data-menu="men">MEN</button><button class="nav-trigger" type="button" data-menu="women">WOMEN</button><a href="#shop">Acc</a></nav><div class="mega-menu" data-menu-panel="men" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#men-all">ALL</a><a href="#men-top">TOP</a><a href="#men-bottom">BOTTOM</a></nav></div></div><div class="mega-menu" data-menu-panel="women" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#women-all">ALL</a><a href="#women-top">TOP</a><a href="#women-bottom">BOTTOM</a></nav></div></div></header>`;
-
-function patchHtml(html) {
-  const headerPattern = /<header class="topbar" aria-label="BAREDOT navigation">[\s\S]*?<\/header>/;
-  let patched = html
-    .replace(/<style id="codex-deploy-menu-promo">[\s\S]*?<\/style>/, '')
-    .replace(/<style id="codex-review-refine">[\s\S]*?<\/style>/, '')
-    .replace(/<script id="codex-review-lightbox">[\s\S]*?<\/script>/, '')
-    .replace(/<script type="module" id="codex-journal-firebase">[\s\S]*?<\/script>/, '')
-    .replace(/<section class="journal-section" id="journal"[\s\S]*?<\/section><div class="journal-modal"[\s\S]*?<\/div><\/article><\/div>/, '')
-    .replace(/<section class="about-section" id="about"[\s\S]*?<\/section>/, '');
-  patched = patched.replace('</head>', `${menuPromoStyle}\n${reviewPatchStyle}\n</head>`);
-  patched = patched.replace(headerPattern, menuHeader);
-  return patched;
-}
-
-export default {
-  async fetch(request, env) {
-    const response = await env.ASSETS.fetch(request);
-    const type = response.headers.get('content-type') || '';
-
-    if (!type.includes('text/html')) {
-      return response;
-    }
-
-    const headers = new Headers(response.headers);
-    headers.delete('content-length');
-    headers.set('cache-control', 'no-cache');
-
-    return new Response(patchHtml(await response.text()), {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
-  },
-};
+function patchHtml(html){const headerPattern=/<header class="topbar" aria-label="BAREDOT navigation">[\s\S]*?<\/header>/;let patched=html.replace(/<style id="codex-deploy-menu-promo">[\s\S]*?<\/style>/,'').replace(/<style id="codex-review-refine">[\s\S]*?<\/style>/,'').replace(/<script id="codex-review-lightbox">[\s\S]*?<\/script>/,'').replace(/<script type="module" id="codex-journal-firebase">[\s\S]*?<\/script>/,'').replace(/<section class="journal-section" id="journal"[\s\S]*?<\/section><div class="journal-modal"[\s\S]*?<\/div><\/article><\/div>/,'').replace(/<section class="about-section" id="about"[\s\S]*?<\/section>/,'');patched=patched.replace('</head>',`${menuPromoStyle}\n${reviewPatchStyle}\n</head>`);return patched.replace(headerPattern,menuHeader);}
+export default{async fetch(request,env){const url=new URL(request.url);if(url.pathname==='/about.html'||url.pathname==='/about'){return new Response(aboutPage,{headers:{'content-type':'text/html;charset=utf-8','cache-control':'no-cache'}})}const response=await env.ASSETS.fetch(request);const type=response.headers.get('content-type')||'';if(!type.includes('text/html'))return response;const headers=new Headers(response.headers);headers.delete('content-length');headers.set('cache-control','no-cache');return new Response(patchHtml(await response.text()),{status:response.status,statusText:response.statusText,headers});}};
