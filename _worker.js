@@ -1,6 +1,6 @@
 const menuPromoStyle = `
 <style id="codex-deploy-menu-promo">
-:root{--promo-height:38px}.promo-bar{gap:18px;font-size:13px}.mega-menu{width:min(132px,calc(100vw - 36px));padding:16px 18px}.mega-title,.mega-feature{display:none!important}.mega-body{display:block!important}.mega-categories{gap:11px;font-size:13px}.mega-categories a{display:block;text-decoration:none}@media(max-width:860px){:root{--promo-height:34px}.promo-bar{gap:12px;font-size:11px}.mega-menu{right:8px;width:min(132px,calc(100vw - 16px));padding:14px}.mega-body{display:block!important}}
+:root{--promo-height:38px}.promo-bar{gap:18px;font-size:13px}.mega-menu{width:min(132px,calc(100vw - 36px));padding:16px 18px}.mega-title,.mega-feature{display:none!important}.mega-body{display:block!important}.mega-categories{gap:11px;font-size:13px}.mega-categories a{display:block;text-decoration:none}.about-section{padding:74px 0 82px;background:#fff;color:#050505}.about-section .wrap{display:grid;grid-template-columns:minmax(0,.8fr) minmax(320px,1fr);gap:clamp(32px,6vw,88px);align-items:start}.about-kicker{margin:0 0 12px;font:900 11px/1 InterDisplay,Pretendard,sans-serif;text-transform:uppercase}.about-title{margin:0;font-size:clamp(32px,5vw,72px);line-height:.95;text-transform:uppercase}.about-copy{display:grid;gap:18px;margin:0;color:#1d1d1d;font:700 clamp(14px,1.4vw,18px)/1.75 Pretendard,'Noto Sans KR',sans-serif}.about-copy p{margin:0}@media(max-width:860px){:root{--promo-height:34px}.promo-bar{gap:12px;font-size:11px}.mega-menu{right:8px;width:min(132px,calc(100vw - 16px));padding:14px}.mega-body{display:block!important}.about-section{padding:54px 0 62px}.about-section .wrap{grid-template-columns:1fr;gap:26px}.about-title{font-size:36px}.about-copy{font-size:13px}}
 </style>`;
 
 const reviewPatchStyle = `
@@ -84,16 +84,20 @@ const reviewPatchScript = `
 })();
 </script>`;
 
-const menuHeader = `<header class="topbar" aria-label="BAREDOT navigation"><a class="logo" href="#top" aria-label="맨 위로 이동"><img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080" alt="BAREDOT."></a><nav class="topnav"><a href="#shop">Best</a><a href="#shop">Featured</a><button class="nav-trigger" type="button" data-menu="men">MEN</button><button class="nav-trigger" type="button" data-menu="women">WOMEN</button><a href="#shop">Acc</a></nav><div class="mega-menu" data-menu-panel="men" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#men-all">ALL</a><a href="#men-top">TOP</a><a href="#men-bottom">BOTTOM</a></nav></div></div><div class="mega-menu" data-menu-panel="women" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#women-all">ALL</a><a href="#women-top">TOP</a><a href="#women-bottom">BOTTOM</a></nav></div></div></header>`;
+const aboutMarkup = `<section class="about-section" id="about" aria-label="About BARE."><div class="wrap"><div><p class="about-kicker">ABOUT BARE.</p><h2 class="about-title">Bare moves with you.</h2></div><div class="about-copy"><p>베어닷은 움직이는 순간에도 몸의 선과 편안함이 자연스럽게 살아나는 애슬레저를 지향합니다.</p><p>불필요한 장식은 덜어내고, 소재와 핏, 작은 디테일에 집중해 일상과 운동 사이를 부드럽게 이어갑니다.</p><p>이 영역은 임시 브랜드 소개 문구입니다. 추후 원하는 톤과 내용으로 자유롭게 수정할 수 있습니다.</p></div></div></section>`;
+
+const menuHeader = `<header class="topbar" aria-label="BAREDOT navigation"><a class="logo" href="#top" aria-label="맨 위로 이동"><img src="https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080" alt="BAREDOT."></a><nav class="topnav"><button class="nav-trigger" type="button" data-menu="men">MEN</button><button class="nav-trigger" type="button" data-menu="women">WOMEN</button><a href="#about">ABOUT</a><a href="#shop">Acc</a></nav><div class="mega-menu" data-menu-panel="men" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#men-all">ALL</a><a href="#men-top">TOP</a><a href="#men-bottom">BOTTOM</a></nav></div></div><div class="mega-menu" data-menu-panel="women" aria-hidden="true"><div class="mega-body"><nav class="mega-categories"><a href="#women-all">ALL</a><a href="#women-top">TOP</a><a href="#women-bottom">BOTTOM</a></nav></div></div></header>`;
 
 function patchHtml(html) {
   const headerPattern = /<header class="topbar" aria-label="BAREDOT navigation">[\s\S]*?<\/header>/;
   let patched = html
     .replace(/<style id="codex-deploy-menu-promo">[\s\S]*?<\/style>/, '')
     .replace(/<style id="codex-review-refine">[\s\S]*?<\/style>/, '')
-    .replace(/<script id="codex-review-lightbox">[\s\S]*?<\/script>/, '');
+    .replace(/<script id="codex-review-lightbox">[\s\S]*?<\/script>/, '')
+    .replace(/<section class="about-section" id="about"[\s\S]*?<\/section>/, '');
   patched = patched.replace('</head>', `${menuPromoStyle}\n${reviewPatchStyle}\n</head>`);
   patched = patched.replace(headerPattern, menuHeader);
+  patched = patched.replace('</footer>', `</footer>\n${aboutMarkup}`);
   patched = patched.replace('</body>', `${reviewPatchScript}\n</body>`);
   return patched;
 }
