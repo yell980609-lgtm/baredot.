@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BARE. Admin</title>
+<style>
+@font-face{font-family:InterDisplay;src:url(https://framerusercontent.com/assets/qITWJ2WdG0wrgQPDb8lvnYnTXDg.woff2) format('woff2');font-weight:700;font-display:swap}
+*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#050505;font-family:InterDisplay,Pretendard,'Noto Sans KR',system-ui,sans-serif}.wrap{width:min(960px,calc(100% - 32px));margin:auto;padding:42px 0 68px}header{display:flex;justify-content:space-between;gap:20px;align-items:center;margin-bottom:28px}h1{margin:0;font-size:clamp(28px,4vw,52px);line-height:1;text-transform:uppercase}.home{color:#050505;font-size:12px;text-transform:uppercase}.panel{background:#fff;border:1px solid #e4e4e4;padding:24px;margin-bottom:18px}.status{margin:0;color:#555;font:800 13px/1.6 Pretendard,'Noto Sans KR',sans-serif}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}button{min-height:42px;padding:0 16px;border:1px solid #050505;background:#050505;color:#fff;font:900 13px/1 InterDisplay,Pretendard,sans-serif;cursor:pointer}button.secondary{background:#fff;color:#050505}button:disabled{opacity:.45;cursor:default}form{display:grid;gap:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:grid;gap:7px;font:900 11px/1 InterDisplay,Pretendard,sans-serif;text-transform:uppercase}input,select,textarea{width:100%;border:1px solid #d9d9d9;background:#fff;color:#050505;padding:12px;font:700 14px/1.5 Pretendard,'Noto Sans KR',sans-serif}textarea{min-height:170px;resize:vertical}.check{display:flex;align-items:center;gap:8px;font:800 13px/1 Pretendard,'Noto Sans KR',sans-serif;text-transform:none}.check input{width:auto}.posts{display:grid;gap:10px}.post{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;border:1px solid #e1e1e1;background:#fff}.post strong{display:block;margin-bottom:5px}.post span{color:#777;font:800 12px/1.4 Pretendard,'Noto Sans KR',sans-serif}@media(max-width:720px){header{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}.panel{padding:18px}.post{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header><h1>Journal Admin</h1><a class="home" href="index.html">Back to site</a></header>
+<section class="panel"><p class="status" id="status">Firebase 설정을 확인하는 중입니다.</p><div class="toolbar"><button type="button" id="login">Google 로그인</button><button type="button" id="logout" class="secondary">로그아웃</button></div></section>
+<section class="panel">
+<form id="post-form">
+<div class="grid"><label>Category<select name="category"><option>PROLOGUE</option><option>DETAIL</option><option>BEHIND</option><option>NOTICE</option></select></label><label>Image URL<input name="imageUrl" placeholder="https://..." autocomplete="off"></label></div>
+<label>Title<input name="title" required placeholder="글 제목"></label>
+<label>Excerpt<input name="excerpt" required placeholder="목록에 보일 짧은 설명"></label>
+<label>Body<textarea name="body" required placeholder="본문을 입력하세요"></textarea></label>
+<label class="check"><input type="checkbox" name="published" checked> 공개하기</label>
+<div class="toolbar"><button type="submit" id="save">글 저장</button><button type="button" class="secondary" id="reset">비우기</button></div>
+</form>
+</section>
+<section class="panel"><h2>Posts</h2><div class="posts" id="posts"></div></section>
+</main>
+<script type="module">
+import { firebaseConfig, adminEmails } from './firebase-config.js';
+const statusEl=document.querySelector('#status');
+const loginButton=document.querySelector('#login');
+const logoutButton=document.querySelector('#logout');
+const form=document.querySelector('#post-form');
+const postsEl=document.querySelector('#posts');
+const ready=firebaseConfig?.apiKey&&!String(firebaseConfig.apiKey).startsWith('YOUR_');
+let auth,db,user=null;
+function setStatus(text){statusEl.textContent=text;}
+function requireConfig(){if(!ready){setStatus('firebase-config.js에 Firebase 웹 앱 설정값과 관리자 이메일을 먼저 넣어주세요.');form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);loginButton.disabled=true;logoutButton.disabled=true;return false}return true}
+function isAdmin(){return user&&adminEmails.includes(user.email)}
+function setFormEnabled(enabled){form.querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=!enabled)}
+function dataFromForm(){const data=new FormData(form);return{category:data.get('category'),title:data.get('title').trim(),excerpt:data.get('excerpt').trim(),body:data.get('body').trim(),imageUrl:data.get('imageUrl').trim(),published:data.get('published')==='on'}}
+function renderPosts(docs){postsEl.innerHTML=docs.map(doc=>{const post=doc.data();return'<article class="post"><div><strong>'+post.title+'</strong><span>'+post.category+' · '+(post.published?'공개':'비공개')+'</span></div><button type="button" class="secondary" data-delete="'+doc.id+'">삭제</button></article>'}).join('')||'<p class="status">아직 글이 없습니다.</p>'}
+async function boot(){if(!requireConfig())return;const appMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');const authMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js');const fsMod=await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js');const app=appMod.initializeApp(firebaseConfig);auth=authMod.getAuth(app);db=fsMod.getFirestore(app);loginButton.addEventListener('click',()=>authMod.signInWithPopup(auth,new authMod.GoogleAuthProvider()));logoutButton.addEventListener('click',()=>authMod.signOut(auth));authMod.onAuthStateChanged(auth,current=>{user=current;if(!user){setStatus('Google 로그인 후 글을 작성할 수 있습니다.');setFormEnabled(false);return}if(!isAdmin()){setStatus(user.email+' 계정은 관리자 이메일 목록에 없습니다.');setFormEnabled(false);return}setStatus(user.email+' 계정으로 로그인했습니다.');setFormEnabled(true);fsMod.onSnapshot(fsMod.query(fsMod.collection(db,'brandPosts'),fsMod.orderBy('createdAt','desc')),snapshot=>renderPosts(snapshot.docs))});form.addEventListener('submit',async event=>{event.preventDefault();if(!isAdmin())return;const payload=dataFromForm();await fsMod.addDoc(fsMod.collection(db,'brandPosts'),{...payload,createdAt:fsMod.serverTimestamp(),updatedAt:fsMod.serverTimestamp()});form.reset();form.published.checked=true});document.querySelector('#reset').addEventListener('click',()=>{form.reset();form.published.checked=true});postsEl.addEventListener('click',async event=>{const button=event.target.closest('[data-delete]');if(!button||!isAdmin())return;if(confirm('이 글을 삭제할까요?'))await fsMod.deleteDoc(fsMod.doc(db,'brandPosts',button.dataset.delete))});setFormEnabled(false)}
+boot().catch(error=>setStatus('초기화 오류: '+error.message));
+</script>
+</body>
+</html>
