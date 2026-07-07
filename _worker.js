@@ -85,7 +85,7 @@ const baseModernCheckoutPage=modernCheckoutPage;
 modernCheckoutPage=function(){return baseModernCheckoutPage()
   .replace(
     'const shipping=items.length?0:0;',
-    "const singleShippingTitles=[\"#I'M BARED halter top\",\"#I'M BARED high-up leggings\"];const singleItemsOnly=items.length>0&&items.every(item=>singleShippingTitles.includes(item.title));const shipping=singleItemsOnly?3000:0;"
+    "const singleShippingTitles=[\"#I'M BARED halter top\",\"#I'M BARED high-up leggings\",\"T-libbed sleeveless\"];const singleItemsOnly=items.length>0&&items.every(item=>singleShippingTitles.includes(item.title));const shipping=singleItemsOnly?3000:0;"
   )
   .replace("money(shipping)+' (무료)</strong>","money(shipping)+(shipping?'':' (무료)')+'</strong>")};
 
