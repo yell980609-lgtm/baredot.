@@ -179,3 +179,103 @@ const couponPopup=document.querySelector('.coupon-popup'),couponClaim=document.q
 
 
 
+
+
+<script id="men-sleeveless-option-availability">
+(() => {
+  const menHash = '#product-t-libbed-sleeveless';
+  const menOptions = [
+    { color: '네이비', back: '기본형', size: 'L' },
+    { color: '블랙', back: '기본형', size: '2XL' },
+    { color: '블랙', back: '기본형', size: 'L' },
+    { color: '블랙', back: '기본형', size: 'XL' },
+    { color: '챠콜', back: 'T-back', size: 'L' }
+  ];
+  const optionLabels = {
+    color: '색상',
+    back: 'BACK',
+    size: 'SIZE'
+  };
+  const optionValues = {
+    color: ['네이비', '블랙', '챠콜'],
+    back: ['기본형', 'T-back'],
+    size: ['L', 'XL', '2XL']
+  };
+
+  const selectedMenOption = (group) => document.querySelector(`.option-block[data-option-group="${group}"] .size-button.is-selected`)?.dataset.value || '';
+  const isMenRoute = () => location.hash === menHash;
+  const isAllowedCombo = (selection) => menOptions.some((combo) => Object.keys(selection).every((key) => !selection[key] || combo[key] === selection[key]));
+
+  const menOptionBlock = (group) => {
+    const values = optionValues[group];
+    return '<div class="option-block men-option-block" data-option-group="' + group + '">' +
+      '<label>' + optionLabels[group] + '</label>' +
+      '<div class="size-buttons" role="radiogroup" aria-label="' + optionLabels[group] + ' 선택">' +
+      values.map((value) => '<button class="size-button" type="button" data-value="' + value + '" data-option="' + group + '">' + value + '</button>').join('') +
+      '</div><span class="option-help">[필수] ' + optionLabels[group] + ' 선택</span></div>';
+  };
+
+  const originalRenderOptions = window.renderOptions;
+  window.renderOptions = function(hash) {
+    if (hash !== menHash) {
+      originalRenderOptions(hash);
+      return;
+    }
+    const options = document.querySelector('.product-options');
+    document.querySelector('.set-panel').classList.remove('is-set');
+    options.innerHTML = menOptionBlock('color') + menOptionBlock('back') + menOptionBlock('size');
+    updateMenOptionAvailability();
+  };
+
+  const originalSyncTotal = window.syncTotal;
+  window.syncTotal = function() {
+    if (!isMenRoute()) {
+      originalSyncTotal();
+      return;
+    }
+    const selection = {
+      color: selectedMenOption('color'),
+      back: selectedMenOption('back'),
+      size: selectedMenOption('size')
+    };
+    const complete = Boolean(selection.color && selection.back && selection.size && isAllowedCombo(selection));
+    document.querySelector('#set-qty').textContent = complete ? '1' : '0';
+    document.querySelector('#set-total').textContent = complete ? formatWon(currentDetailPrice()) : '0';
+  };
+
+  function updateMenOptionAvailability() {
+    if (!isMenRoute()) return;
+    const selection = {
+      color: selectedMenOption('color'),
+      back: selectedMenOption('back'),
+      size: selectedMenOption('size')
+    };
+
+    ['color', 'back', 'size'].forEach((group) => {
+      document.querySelectorAll(`.option-block[data-option-group="${group}"] .size-button`).forEach((button) => {
+        const testSelection = { ...selection, [group]: button.dataset.value };
+        const enabled = isAllowedCombo(testSelection);
+        button.disabled = !enabled;
+        button.classList.toggle('is-disabled', !enabled);
+        if (!enabled && button.classList.contains('is-selected')) {
+          button.classList.remove('is-selected');
+        }
+      });
+    });
+    window.syncTotal();
+  }
+
+  document.querySelector('.product-options')?.addEventListener('click', () => {
+    requestAnimationFrame(updateMenOptionAvailability);
+  });
+
+  if (isMenRoute()) {
+    window.renderOptions(menHash);
+    window.syncTotal();
+  }
+})();
+</script>
+<style id="men-sleeveless-option-style">
+.men-option-block .size-button.is-disabled,
+.men-option-block .size-button:disabled{opacity:.28;cursor:not-allowed;text-decoration:line-through;background:#f4f4f4;color:#888;border-color:#ddd}
+</style>
