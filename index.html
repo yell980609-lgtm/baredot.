@@ -279,3 +279,31 @@ const couponPopup=document.querySelector('.coupon-popup'),couponClaim=document.q
 .men-option-block .size-button.is-disabled,
 .men-option-block .size-button:disabled{opacity:.28;cursor:not-allowed;text-decoration:line-through;background:#f4f4f4;color:#888;border-color:#ddd}
 </style>
+
+
+﻿<script id="men-sleeveless-buy-compat">
+(() => {
+  const menHash = '#product-t-libbed-sleeveless';
+  function syncMenOptionDataset() {
+    if (location.hash !== menHash) return;
+    document.querySelectorAll('.men-option-block .size-button[data-value]').forEach((button) => {
+      button.dataset.size = button.dataset.value;
+    });
+  }
+  const previousRenderOptions = window.renderOptions;
+  if (typeof previousRenderOptions === 'function') {
+    window.renderOptions = function(hash) {
+      previousRenderOptions(hash);
+      requestAnimationFrame(syncMenOptionDataset);
+    };
+  }
+  document.addEventListener('click', (event) => {
+    if (event.target.closest('.men-option-block .size-button')) {
+      requestAnimationFrame(syncMenOptionDataset);
+    }
+  });
+  addEventListener('hashchange', () => setTimeout(syncMenOptionDataset, 80));
+  syncMenOptionDataset();
+})();
+</script>
+
