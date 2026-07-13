@@ -118,6 +118,7 @@ const checkoutDraftModernCheckoutPage=modernCheckoutPage;
 modernCheckoutPage=function(){return checkoutDraftModernCheckoutPage()
   .replace('</body>',checkoutDraftScript+checkoutPaymentGuardScript+'</body>')
   .replace("const selected=document.querySelector('input[name=\"payMethod\"]:checked')?.value||'CARD';let method=selected;const request={method,amount:", "const selected='CARD';const request={method:'CARD',amount:")
+  .replace("submit.disabled=false;notice.textContent='토스페이먼츠 결제창으로 결제를 진행합니다.';if(error?.code==='USER_CANCEL')return;alert(error?.message||'결제를 시작하지 못했습니다.')", "submit.disabled=false;const detail=[error?.code,error?.message].filter(Boolean).join(' - ')||'결제를 시작하지 못했습니다.';notice.textContent='결제창 오류: '+detail;alert(detail)")
   .replace("localStorage.removeItem('bare_checkout_items');","localStorage.removeItem('bare_checkout_items');localStorage.removeItem('bare_checkout_draft');")};
 
 const basePatchHtml=patchHtml;
