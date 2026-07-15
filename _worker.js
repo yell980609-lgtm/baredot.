@@ -389,10 +389,146 @@ async function readProductBody(request){
     updated_at:new Date().toISOString()
   };
 }
+function seedImage(url,gap=24){
+  return {url,path:null,name:String(url).split('/').pop()?.split('?')[0]||'image',gap};
+}
+function currentStorefrontProducts(){
+  const tLibbedImages=[
+    'https://baredot.pages.dev/assets/t-libbed-sleeveless.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/01-intro.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/02-wadiz-special.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/02-option-navy.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/03-navy-front.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/04-navy-side.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/05-navy-back.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/06-detail-points.jpeg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/07-option-charcoal.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/08-charcoal-front.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/09-charcoal-side.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/10-charcoal-back.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/11-option-black.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/12-black-front.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/13-black-back.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/14-camo-limited.jpeg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/15-camo-fit-front.jpg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/16-camo-fit-back.png',
+    'https://baredot.pages.dev/assets/t-libbed-detail/17-size.jpeg',
+    'https://baredot.pages.dev/assets/t-libbed-detail/18-refund-exchange.jpeg'
+  ];
+  const rows=[
+    {
+      slug:'im-bared-set-up',
+      sku:'BD-SET-001',
+      name:"[Set] #I'M BARED set up",
+      category:'SET',
+      status:'published',
+      price:125100,
+      compare_price:139000,
+      stock:0,
+      description:'Current storefront product imported from the live shop.',
+      sizes:['S-M','M-L'],
+      colors:[],
+      tags:['set','10% off'],
+      images:[
+        'https://shop-phinf.pstatic.net/20260511_96/1778465879550SK7ul_JPEG/image-8.jpg?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_127/1778394617335c9YN1_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-05.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260511_127/1778465879778YbfS3_JPEG/image-9.jpg?type=w848',
+        'https://shop-phinf.pstatic.net/20260511_192/1778465879708rnJwR_JPEG/image-7.jpg?type=w848',
+        'https://shop-phinf.pstatic.net/20260511_167/1778466837668yB5og_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EC%B6%94%EA%B0%80%EB%94%94%ED%85%8C%EC%9D%BC-01.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260511_94/1778466860456PcRDU_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EC%B6%94%EA%B0%80%EB%94%94%ED%85%8C%EC%9D%BC-06.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260512_100/1778561893381iYHxL_PNG/SE-8de921ed-9b30-4d7b-97c2-2d867397f76d.jpg?type=w848',
+        'https://shop-phinf.pstatic.net/20260512_284/1778561977810IBy9d_PNG/SE-5e8d9381-c525-4e7b-b09a-db60c6352cdc.jpg?type=w848'
+      ].map(seedImage),
+      sort_order:10
+    },
+    {
+      slug:'im-bared-halter-top',
+      sku:'BD-WT-001',
+      name:"#I'M BARED halter top",
+      category:'WOMEN',
+      status:'published',
+      price:66500,
+      compare_price:70000,
+      stock:0,
+      description:'Current storefront product imported from the live shop.',
+      sizes:['S-M','M-L'],
+      colors:[],
+      tags:['halter top','5% off'],
+      images:[
+        'https://shop-phinf.pstatic.net/20260510_80/1778395793811MbSLH_JPEG/112528597587931990_1106622545.jpg?type=o1000',
+        'https://shop-phinf.pstatic.net/20260510_294/1778395844701HK2Es_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-04.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_230/17783958682985EvYd_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-01.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_205/1778395883196WzNJ6_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-02.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_116/1778397291288S4972_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-07.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_228/1778395910846G0en0_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-05.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260512_186/1778562012887uSpSs_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EC%82%AC%EC%9D%B4%EC%A6%88-06.png?type=w848'
+      ].map(seedImage),
+      sort_order:20
+    },
+    {
+      slug:'im-bared-high-up-leggings',
+      sku:'BD-WB-001',
+      name:"#I'M BARED high-up leggings",
+      category:'WOMEN',
+      status:'published',
+      price:65550,
+      compare_price:69000,
+      stock:0,
+      description:'Current storefront product imported from the live shop.',
+      sizes:['S-M','M-L'],
+      colors:[],
+      tags:['leggings','5% off'],
+      images:[
+        'https://shop-phinf.pstatic.net/20260514_299/17787381562510SFCd_JPEG/57535494600578401_1343151862.jpg?type=o1000',
+        'https://shop-phinf.pstatic.net/20260510_222/1778397162766kraAk_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%A0%88%EA%B9%85%EC%8A%A4.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_180/1778394600241OsykR_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%A0%88%EA%B9%85%EC%8A%A4-02.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_248/1778394609035NkNMd_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EB%A0%88%EA%B9%85%EC%8A%A4-03.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_268/17783946138296dHEx_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-08.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260510_127/1778394617335c9YN1_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80-05.png?type=w848',
+        'https://shop-phinf.pstatic.net/20260512_103/17785620467076gBqP_PNG/%EC%83%81%EC%84%B8%ED%8E%98%EC%9D%B4%EC%A7%80_%EC%82%AC%EC%9D%B4%EC%A6%88-09.png?type=w848'
+      ].map(seedImage),
+      sort_order:30
+    },
+    {
+      slug:'t-libbed-sleeveless',
+      sku:'BD-MT-001',
+      name:'T-libbed sleeveless',
+      category:'MEN',
+      status:'published',
+      price:29900,
+      compare_price:35000,
+      stock:0,
+      description:'Current storefront product imported from the live shop.',
+      sizes:['L','XL','2XL'],
+      colors:['네이비','블랙','챠콜'],
+      tags:['sleeveless','back:기본형','back:T-back','5,000 coupon'],
+      images:tLibbedImages.map(seedImage),
+      sort_order:40
+    }
+  ];
+  const now=new Date().toISOString();
+  return rows.map(row=>({...row,published_at:row.status==='published'?now:null,updated_at:now}));
+}
+async function seedCurrentProducts(env){
+  const seeded=[];
+  for(const row of currentStorefrontProducts()){
+    const exists=await supabaseRest(env,'products?select=id&slug=eq.'+encodeURIComponent(row.slug)+'&limit=1');
+    const data=Array.isArray(exists)&&exists.length
+      ? await supabaseRest(env,'products?id=eq.'+encodeURIComponent(exists[0].id),{method:'PATCH',body:JSON.stringify(row)})
+      : await supabaseRest(env,'products',{method:'POST',body:JSON.stringify(row)});
+    seeded.push(data?.[0]||row);
+  }
+  return seeded;
+}
 const bareAdminApiForProducts=adminApi;
 adminApi=async function(request,env,url){
   try{
     await requireAdmin(request,env);
+    if(url.pathname==='/api/admin/products/seed-current'){
+      if(request.method!=='POST')return jsonResponse({message:'Method not allowed'},405);
+      const products=await seedCurrentProducts(env);
+      return jsonResponse({ok:true,products,count:products.length});
+    }
     if(url.pathname==='/api/admin/products'){
       if(request.method==='GET'){
         const products=await supabaseRest(env,'products?select=*&order=created_at.desc&limit=300');
@@ -429,7 +565,7 @@ function adminProductsPage(env={}){
   return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PRODUCT CENTER | BARE.</title><style>
 @font-face{font-family:InterDisplay;src:url(https://framerusercontent.com/assets/qITWJ2WdG0wrgQPDb8lvnYnTXDg.woff2) format('woff2');font-weight:700;font-display:swap}
 *{box-sizing:border-box}body{margin:0;background:#f4f5f7;color:#121417;font-family:InterDisplay,Pretendard,"Noto Sans KR",system-ui,sans-serif}button,input,select,textarea{font:inherit}.shell{display:grid;grid-template-columns:226px minmax(0,1fr);min-height:100svh}.side{background:#0f141a;color:#fff;padding:22px 16px}.brand{display:flex;align-items:center;gap:10px;margin-bottom:26px}.brand img{width:42px;filter:invert(1)}.brand strong{font-size:18px}.nav{display:grid;gap:7px}.nav a{display:flex;align-items:center;height:42px;border-radius:5px;color:#b9c1cb;text-decoration:none;padding:0 12px;font-weight:900}.nav a.is-active,.nav a:hover{background:#24303c;color:#fff}.main{padding:24px;min-width:0}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}.top h1{margin:0;font-size:28px}.sub{margin:7px 0 0;color:#667085;font:800 12px/1.5 Pretendard,sans-serif}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{height:36px;border:1px solid #111;background:#111;color:#fff;border-radius:4px;padding:0 12px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}.btn.secondary{background:#fff;color:#111}.login{width:min(430px,100%);margin:80px auto;background:#fff;border:1px solid #dde2e8;border-radius:8px;padding:24px}.login h2{margin:0 0 16px}.hidden{display:none!important}.layout{display:grid;grid-template-columns:minmax(0,1fr)360px;gap:16px;align-items:start}.card{background:#fff;border:1px solid #dde2e8;border-radius:8px;overflow:hidden}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid #eaecf0}.card-head h2{margin:0;font-size:16px}.card-body{padding:16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:7px;margin-bottom:12px}.field.full{grid-column:1/-1}.field span{font:900 12px/1 Pretendard,sans-serif;color:#475467}.field input,.field select,.field textarea{width:100%;min-height:40px;border:1px solid #cfd6df;border-radius:4px;background:#fff;padding:9px 10px}.field textarea{min-height:108px;resize:vertical}.chips{display:flex;flex-wrap:wrap;gap:8px}.chip{position:relative}.chip input{position:absolute;opacity:0}.chip span{display:inline-flex;align-items:center;justify-content:center;min-height:32px;border:1px solid #cfd6df;border-radius:999px;background:#fff;padding:0 12px;font:900 12px/1 Pretendard,sans-serif;cursor:pointer}.chip input:checked+span{background:#111;color:#fff;border-color:#111}.drop{display:grid;place-items:center;min-height:142px;border:1px dashed #98a2b3;border-radius:7px;background:#f8fafc;text-align:center;padding:16px;cursor:pointer}.drop strong{display:block;margin-bottom:6px}.thumbs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}.thumb{position:relative;aspect-ratio:1/1.18;border:1px solid #dde2e8;border-radius:6px;overflow:hidden;background:#eef0f3}.thumb img{width:100%;height:100%;object-fit:cover}.thumb button{position:absolute;top:5px;right:5px;width:24px;height:24px;border:0;border-radius:999px;background:rgba(0,0,0,.72);color:#fff;cursor:pointer}.image-tools{display:grid;grid-template-columns:180px minmax(0,1fr);gap:10px;align-items:end;margin-top:12px}.blog-images{display:grid;margin-top:16px;border-top:1px solid #eaecf0;padding-top:16px}.blog-image{border:1px solid #dde2e8;border-radius:7px;background:#fff;overflow:hidden}.blog-image img{display:block;width:100%;height:auto;background:#eef0f3}.blog-image-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 12px;background:#f8fafc;border-top:1px solid #eaecf0}.blog-image-tools label{display:flex;align-items:center;gap:7px;color:#475467;font:900 12px/1 Pretendard,sans-serif}.blog-image-tools input{width:92px;min-height:32px;border:1px solid #cfd6df;border-radius:4px;padding:0 8px}.blog-image-gap{height:var(--gap);background:linear-gradient(90deg,transparent,#e5e7eb,transparent)}.product-list{display:grid;gap:8px;max-height:560px;overflow:auto}.product-row{display:grid;grid-template-columns:54px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px;border:1px solid #eaecf0;border-radius:6px;cursor:pointer}.product-row:hover{background:#f8fafc}.product-row img{width:54px;height:64px;object-fit:cover;background:#eee}.product-row strong{display:block;font:900 13px/1.35 Pretendard,sans-serif}.product-row small{display:block;margin-top:4px;color:#667085;font:800 11px/1.4 Pretendard,sans-serif}.badge{display:inline-flex;align-items:center;min-height:24px;border-radius:999px;padding:0 9px;background:#fff7ed;color:#c2410c;font:900 11px/1 Pretendard,sans-serif}.badge.published{background:#ecfdf5;color:#047857}.badge.soldout{background:#f3f4f6;color:#374151}.preview{position:sticky;top:18px}.preview-media{aspect-ratio:4/5;background:#eef0f3;display:grid;place-items:center;color:#667085;font-weight:900}.preview-media img{width:100%;height:100%;object-fit:cover}.preview-body{display:grid;gap:8px;padding:14px}.preview-name{font-size:18px;font-weight:900}.notice{color:#667085;font:800 12px/1.55 Pretendard,sans-serif}.json{background:#101820;color:#f8fafc;border-radius:5px;padding:12px;min-height:150px;overflow:auto;font:800 12px/1.45 Consolas,monospace;white-space:pre-wrap}.file{display:none}@media(max-width:1080px){.layout{grid-template-columns:1fr}.preview{position:static}}@media(max-width:760px){.shell{grid-template-columns:1fr}.side{position:static}.main{padding:16px}.grid{grid-template-columns:1fr}.thumbs{grid-template-columns:repeat(2,minmax(0,1fr))}.top{flex-direction:column}}
-</style></head><body><main class="shell"><aside class="side"><div class="brand"><img src="${logoUrl}" alt=""><strong>BARE. ADMIN</strong></div><nav class="nav"><a href="/admin/orders">주문관리</a><a class="is-active" href="/admin/products">상품관리</a><a href="/">SHOP</a></nav></aside><section class="main"><div class="top"><div><h1>PRODUCT CENTER</h1><p class="sub" id="status">관리자 로그인을 확인하고 있습니다.</p></div><div class="actions"><a class="btn secondary" href="/admin/orders">주문센터</a><button class="btn secondary" id="refresh" type="button">새로고침</button><button class="btn" id="logout" type="button">로그아웃</button></div></div><section class="login" id="login-card"><h2>관리자 로그인</h2><label class="field"><span>이메일</span><input id="email" type="email" autocomplete="email"></label><label class="field"><span>비밀번호</span><input id="password" type="password" autocomplete="current-password"></label><button class="btn" id="login" type="button">로그인</button><p class="notice">Supabase Auth 관리자 계정으로 로그인합니다.</p></section><section id="app" class="hidden"><div class="layout"><section class="card"><div class="card-head"><h2>상품 등록/수정</h2><div class="actions"><button class="btn secondary" id="reset" type="button">초기화</button><button class="btn secondary" id="draft" type="button">임시저장</button><button class="btn" id="save" type="button">상품 저장</button></div></div><div class="card-body"><form id="form" autocomplete="off"><div class="grid"><label class="field full"><span>상품명</span><input id="name" required placeholder="예: T-libbed sleeveless"></label><label class="field"><span>슬러그</span><input id="slug" placeholder="t-libbed-sleeveless"></label><label class="field"><span>카테고리</span><select id="category"><option>MEN</option><option>WOMEN</option><option>TOP</option><option>BOTTOM</option><option>ACC</option><option>SET</option></select></label><label class="field"><span>판매 상태</span><select id="state"><option value="draft">비공개</option><option value="published">판매중</option><option value="soldout">품절</option></select></label><label class="field"><span>판매가</span><input id="price" inputmode="numeric" placeholder="29900"></label><label class="field"><span>정가</span><input id="compare" inputmode="numeric" placeholder="39900"></label><label class="field"><span>상품 코드</span><input id="sku" placeholder="BD-MN-001"></label><label class="field"><span>재고 수량</span><input id="stock" inputmode="numeric" placeholder="100"></label><label class="field full"><span>상품 설명</span><textarea id="description" placeholder="소재, 핏, 착용감, 세탁 안내 등을 입력하세요."></textarea></label><div class="field full"><span>이미지</span><label class="drop" for="file"><input class="file" id="file" type="file" accept="image/*" multiple><span><strong>이미지를 클릭해서 추가</strong><small>JPG, PNG, WEBP 여러 장 등록 가능</small></span></label><div class="image-tools"><label class="field"><span>기본 이미지 간격(px)</span><input id="image-gap" inputmode="numeric" value="24" placeholder="24"></label><p class="notice">아래 블로그 미리보기에서 이미지별 간격을 따로 조정할 수 있어요.</p></div><div class="thumbs" id="thumbs"></div><div class="blog-images" id="blog-images"></div></div><div class="field full"><span>사이즈</span><div class="chips" id="sizes">${['XS','S','M','L','XL','2XL','FREE'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><div class="field full"><span>컬러</span><div class="chips" id="colors">${['네이비','블랙','챠콜','화이트','그레이'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><div class="field full"><span>BACK</span><div class="chips" id="backs">${['기본형','T-back'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><label class="field full"><span>태그</span><input id="tags" placeholder="new, men, sleeveless"></label></div></form><pre class="json" id="json"></pre></div></section><aside class="card preview"><div class="preview-media" id="preview-media">이미지 미리보기</div><div class="preview-body"><div class="notice" id="preview-category">MEN</div><div class="preview-name" id="preview-name">상품명</div><strong id="preview-price">₩0</strong><span class="badge" id="preview-status">비공개</span><p class="notice" id="preview-desc">상품 설명이 여기에 표시됩니다.</p></div></aside><section class="card"><div class="card-head"><h2>등록 상품</h2><span class="notice" id="count">0개</span></div><div class="card-body"><div class="product-list" id="list"></div></div></section></div></section></section></main><script type="module">
+</style></head><body><main class="shell"><aside class="side"><div class="brand"><img src="${logoUrl}" alt=""><strong>BARE. ADMIN</strong></div><nav class="nav"><a href="/admin/orders">주문관리</a><a class="is-active" href="/admin/products">상품관리</a><a href="/">SHOP</a></nav></aside><section class="main"><div class="top"><div><h1>PRODUCT CENTER</h1><p class="sub" id="status">관리자 로그인을 확인하고 있습니다.</p></div><div class="actions"><a class="btn secondary" href="/admin/orders">주문센터</a><button class="btn secondary" id="seed-products" type="button">기존 상품 불러오기</button><button class="btn secondary" id="refresh" type="button">새로고침</button><button class="btn" id="logout" type="button">로그아웃</button></div></div><section class="login" id="login-card"><h2>관리자 로그인</h2><label class="field"><span>이메일</span><input id="email" type="email" autocomplete="email"></label><label class="field"><span>비밀번호</span><input id="password" type="password" autocomplete="current-password"></label><button class="btn" id="login" type="button">로그인</button><p class="notice">Supabase Auth 관리자 계정으로 로그인합니다.</p></section><section id="app" class="hidden"><div class="layout"><section class="card"><div class="card-head"><h2>상품 등록/수정</h2><div class="actions"><button class="btn secondary" id="reset" type="button">초기화</button><button class="btn secondary" id="draft" type="button">임시저장</button><button class="btn" id="save" type="button">상품 저장</button></div></div><div class="card-body"><form id="form" autocomplete="off"><div class="grid"><label class="field full"><span>상품명</span><input id="name" required placeholder="예: T-libbed sleeveless"></label><label class="field"><span>슬러그</span><input id="slug" placeholder="t-libbed-sleeveless"></label><label class="field"><span>카테고리</span><select id="category"><option>MEN</option><option>WOMEN</option><option>TOP</option><option>BOTTOM</option><option>ACC</option><option>SET</option></select></label><label class="field"><span>판매 상태</span><select id="state"><option value="draft">비공개</option><option value="published">판매중</option><option value="soldout">품절</option></select></label><label class="field"><span>판매가</span><input id="price" inputmode="numeric" placeholder="29900"></label><label class="field"><span>정가</span><input id="compare" inputmode="numeric" placeholder="39900"></label><label class="field"><span>상품 코드</span><input id="sku" placeholder="BD-MN-001"></label><label class="field"><span>재고 수량</span><input id="stock" inputmode="numeric" placeholder="100"></label><label class="field full"><span>상품 설명</span><textarea id="description" placeholder="소재, 핏, 착용감, 세탁 안내 등을 입력하세요."></textarea></label><div class="field full"><span>이미지</span><label class="drop" for="file"><input class="file" id="file" type="file" accept="image/*" multiple><span><strong>이미지를 클릭해서 추가</strong><small>JPG, PNG, WEBP 여러 장 등록 가능</small></span></label><div class="image-tools"><label class="field"><span>기본 이미지 간격(px)</span><input id="image-gap" inputmode="numeric" value="24" placeholder="24"></label><p class="notice">아래 블로그 미리보기에서 이미지별 간격을 따로 조정할 수 있어요.</p></div><div class="thumbs" id="thumbs"></div><div class="blog-images" id="blog-images"></div></div><div class="field full"><span>사이즈</span><div class="chips" id="sizes">${['XS','S','M','L','XL','2XL','FREE'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><div class="field full"><span>컬러</span><div class="chips" id="colors">${['네이비','블랙','챠콜','화이트','그레이'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><div class="field full"><span>BACK</span><div class="chips" id="backs">${['기본형','T-back'].map(v=>`<label class="chip"><input type="checkbox" value="${v}"><span>${v}</span></label>`).join('')}</div></div><label class="field full"><span>태그</span><input id="tags" placeholder="new, men, sleeveless"></label></div></form><pre class="json" id="json"></pre></div></section><aside class="card preview"><div class="preview-media" id="preview-media">이미지 미리보기</div><div class="preview-body"><div class="notice" id="preview-category">MEN</div><div class="preview-name" id="preview-name">상품명</div><strong id="preview-price">₩0</strong><span class="badge" id="preview-status">비공개</span><p class="notice" id="preview-desc">상품 설명이 여기에 표시됩니다.</p></div></aside><section class="card"><div class="card-head"><h2>등록 상품</h2><span class="notice" id="count">0개</span></div><div class="card-body"><div class="product-list" id="list"></div></div></section></div></section></section></main><script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 const supabase=createClient('https://adltmckypuqwzbcuvuuh.supabase.co','sb_publishable_ZDEvoNTASICy-Z2hqqTOGA_EHFz2Yv1');
 let session=null,products=[],editing=null,images=[];
@@ -443,13 +579,14 @@ function renderImages(){const first=images[0]?.url,defaultGap=Number($('#image-g
 function renderPreview(){const data=formData();$('#preview-category').textContent=data.category;$('#preview-name').textContent=data.name||'상품명';$('#preview-price').textContent=money(data.price);$('#preview-desc').textContent=data.description||'상품 설명이 여기에 표시됩니다.';$('#preview-status').textContent={published:'판매중',draft:'비공개',soldout:'품절'}[data.status];$('#preview-status').className='badge '+data.status;$('#json').textContent=JSON.stringify(data,null,2);renderImages()}
 function renderList(){ $('#count').textContent=products.length+'개'; $('#list').innerHTML=products.length?products.map(p=>{const img=(p.images||[])[0]?.url||'';return '<article class="product-row" data-id="'+esc(p.id)+'"><img src="'+esc(img)+'" alt=""><div><strong>'+esc(p.name)+'</strong><small>'+esc(p.category)+' / '+money(p.price)+' / '+esc(p.slug)+'</small></div><span class="badge '+esc(p.status)+'">'+esc({published:'판매중',draft:'비공개',soldout:'품절'}[p.status]||p.status)+'</span></article>'}).join(''):'<p class="notice">등록된 상품이 없습니다.</p>'}
 async function load(){status('상품을 불러오는 중입니다.');const data=await api('/api/admin/products');products=data.products||[];renderList();status((session.user.email||'관리자')+' 계정으로 로그인했습니다.')}
+async function seedProducts(){if(!confirm('현재 쇼핑몰에 올라가 있는 기존 상품 4개를 상품관리 목록으로 불러올까요? 같은 슬러그가 있으면 새로 만들지 않고 업데이트합니다.'))return;status('기존 상품을 불러오는 중입니다.');const data=await api('/api/admin/products/seed-current',{method:'POST'});await load();status((data.count||0)+'개 기존 상품을 불러왔습니다. 목록에서 상품을 클릭하면 수정할 수 있어요.')}
 function resetForm(){editing=null;images=[];$('#form').reset();$('#state').value='draft';setChecked('#sizes',[]);setChecked('#colors',[]);setChecked('#backs',[]);renderPreview();status('새 상품을 입력할 수 있습니다.')}
 function editProduct(p){editing=p.id;images=(Array.isArray(p.images)?p.images:[]).map(img=>({...img,gap:Number(img.gap??24)||0}));if(images[0])$('#image-gap').value=images[0].gap??24;$('#name').value=p.name||'';$('#slug').value=p.slug||'';$('#category').value=p.category||'MEN';$('#state').value=p.status||'draft';$('#price').value=p.price||'';$('#compare').value=p.compare_price||'';$('#sku').value=p.sku||'';$('#stock').value=p.stock||'';$('#description').value=p.description||'';setChecked('#sizes',p.sizes||[]);setChecked('#colors',p.colors||[]);const normalTags=(p.tags||[]).filter(t=>!String(t).startsWith('back:'));const backs=(p.tags||[]).filter(t=>String(t).startsWith('back:')).map(t=>String(t).slice(5));$('#tags').value=normalTags.join(', ');setChecked('#backs',backs);renderPreview();status('상품을 수정 중입니다.')}
 async function uploadFiles(files){for(const file of files){const path='products/'+Date.now()+'-'+slug(file.name).slice(0,80);status(file.name+' 업로드 중입니다.');const {error}=await supabase.storage.from('product-images').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;const {data}=supabase.storage.from('product-images').getPublicUrl(path);images.push({url:data.publicUrl,path,name:file.name,gap:Number($('#image-gap')?.value||24)||0})}renderPreview();status('이미지를 추가했습니다.')}
 async function save(forceDraft=false){const data=formData();if(forceDraft)data.status='draft';if(!data.name){status('상품명을 입력해주세요.');return}status('상품을 저장하는 중입니다.');const path=editing?'/api/admin/products/'+encodeURIComponent(editing):'/api/admin/products';const method=editing?'PATCH':'POST';const result=await api(path,{method,body:JSON.stringify(data)});editing=result.product?.id||editing;await load();status('상품이 저장되었습니다.')}
 $('#login').addEventListener('click',async()=>{status('로그인 중입니다.');const {data,error}=await supabase.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error){status('로그인 실패: '+error.message);return}session=data.session;$('#login-card').classList.add('hidden');$('#app').classList.remove('hidden');await load()});
 $('#logout').addEventListener('click',async()=>{await supabase.auth.signOut();session=null;$('#login-card').classList.remove('hidden');$('#app').classList.add('hidden');status('로그아웃했습니다.')});
-$('#refresh').addEventListener('click',()=>session&&load());$('#reset').addEventListener('click',resetForm);$('#draft').addEventListener('click',()=>save(true).catch(e=>status(e.message)));$('#save').addEventListener('click',()=>save(false).catch(e=>status(e.message)));$('#file').addEventListener('change',e=>uploadFiles([...e.target.files]).catch(err=>status('이미지 업로드 실패: '+err.message)));$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b)return;images.splice(Number(b.dataset.remove),1);renderPreview()});$('#blog-images').addEventListener('input',e=>{const input=e.target.closest('[data-gap-index]');if(!input)return;const index=Number(input.dataset.gapIndex);if(images[index])images[index].gap=Math.max(0,Number(input.value||0)||0);renderPreview()});$('#image-gap').addEventListener('input',()=>{images=images.map(img=>({...img,gap:Number(img.gap??$('#image-gap').value)||0}));renderPreview()});$('#list').addEventListener('click',e=>{const row=e.target.closest('[data-id]');if(!row)return;const p=products.find(x=>x.id===row.dataset.id);if(p)editProduct(p)});document.addEventListener('input',e=>{if(e.target.closest('#form')){if(e.target.id==='name'&&!$('#slug').value)$('#slug').value=slug(e.target.value);renderPreview()}},true);document.addEventListener('change',e=>{if(e.target.closest('#form'))renderPreview()},true);
+$('#seed-products')?.addEventListener('click',()=>seedProducts().catch(e=>status(e.message)));$('#refresh').addEventListener('click',()=>session&&load());$('#reset').addEventListener('click',resetForm);$('#draft').addEventListener('click',()=>save(true).catch(e=>status(e.message)));$('#save').addEventListener('click',()=>save(false).catch(e=>status(e.message)));$('#file').addEventListener('change',e=>uploadFiles([...e.target.files]).catch(err=>status('이미지 업로드 실패: '+err.message)));$('#thumbs').addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b)return;images.splice(Number(b.dataset.remove),1);renderPreview()});$('#blog-images').addEventListener('input',e=>{const input=e.target.closest('[data-gap-index]');if(!input)return;const index=Number(input.dataset.gapIndex);if(images[index])images[index].gap=Math.max(0,Number(input.value||0)||0);renderPreview()});$('#image-gap').addEventListener('input',()=>{images=images.map(img=>({...img,gap:Number(img.gap??$('#image-gap').value)||0}));renderPreview()});$('#list').addEventListener('click',e=>{const row=e.target.closest('[data-id]');if(!row)return;const p=products.find(x=>x.id===row.dataset.id);if(p)editProduct(p)});document.addEventListener('input',e=>{if(e.target.closest('#form')){if(e.target.id==='name'&&!$('#slug').value)$('#slug').value=slug(e.target.value);renderPreview()}},true);document.addEventListener('change',e=>{if(e.target.closest('#form'))renderPreview()},true);
 supabase.auth.getSession().then(async({data})=>{session=data.session;if(session){$('#login-card').classList.add('hidden');$('#app').classList.remove('hidden');await load()}else{status('관리자 계정으로 로그인해주세요.')}renderPreview()}).catch(e=>status(e.message));
 </script></body></html>`;
 }
