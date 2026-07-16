@@ -713,5 +713,6 @@ const bareProductStockPatchHtml=patchHtml;
 patchHtml=function(html){
   return bareProductStockPatchHtml(html)
     .replace(/<script id="bare-product-stock-sync">[\s\S]*?<\/script><style id="bare-product-stock-style">[\s\S]*?<\/style>/g,'')
+    .replace('</head>','<style id="bare-product-image-gap-style">.men-product-route .detail-images{gap:0!important}</style></head>')
     .replace('</body>',productStockSyncScript+'</body>');
 };
