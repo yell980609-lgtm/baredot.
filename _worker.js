@@ -712,6 +712,6 @@ const bareProductStockPatchHtml=patchHtml;
 patchHtml=function(html){
   return bareProductStockPatchHtml(html)
     .replace(/<script id="bare-product-stock-sync">[\s\S]*?<\/script><style id="bare-product-stock-style">[\s\S]*?<\/style>/g,'')
-    .replace('</head>','<style id="bare-product-image-gap-style">.men-product-route .detail-images{gap:0!important}.men-product-route .detail-images img{margin:0!important}.bare-detail-image-frame{display:block;width:100%}.bare-detail-image-frame img{display:block;width:100%;height:auto}</style></head>')
+    .replace('</head>','<style id="bare-product-image-gap-style">.men-product-route .detail-images{gap:0!important}.men-product-route .detail-images img{margin:0!important}.bare-detail-image-frame{display:block;width:100%}.bare-detail-image-frame img{display:block;width:100%;height:auto}</style><style id="bare-mobile-login-top-style">@media(max-width:860px){.mobile-login-access,body.detail-route .mobile-login-access{top:calc(var(--promo-height) + 11px)!important;right:14px!important;bottom:auto!important;z-index:171!important}}</style></head>')
     .replace('</body>',productStockSyncScript+productImageGapScript+'</body>');
 };
