@@ -706,13 +706,12 @@ adminOrdersPage=function(env={}){
     .replace('<button type="button" id="go-shop">SHOP</button>','<button type="button" id="go-products">상품관리</button><button type="button" id="go-shop">SHOP</button>')
     .replace("$('#refresh').addEventListener('click',()=>session&&load());", "$('#go-products')?.addEventListener('click',()=>location.href='/admin/products');$('#refresh').addEventListener('click',()=>session&&load());");
 };
-
-
+const productImageGapScript=`<script id="bare-product-image-gap-script">(()=>{const escapeText=value=>String(value??'');function render(product){if(location.hash!=='#product-t-libbed-sleeveless')return;const detail=document.querySelector('.detail-images'),images=Array.isArray(product?.images)?product.images.filter(item=>item&&item.url):[];if(!detail||!images.length)return;detail.replaceChildren(...images.map((item,index)=>{const frame=document.createElement('div'),img=document.createElement('img');frame.className='bare-detail-image-frame';frame.style.paddingBottom=Math.max(0,Number(item.gap||0)||0)+'px';img.src=item.url;img.alt=escapeText((product.name||'BARE. product')+' '+(index+1));frame.appendChild(img);return frame}))}document.addEventListener('bare-product-updated',event=>render(event.detail));})();</script>`;
 
 const bareProductStockPatchHtml=patchHtml;
 patchHtml=function(html){
   return bareProductStockPatchHtml(html)
     .replace(/<script id="bare-product-stock-sync">[\s\S]*?<\/script><style id="bare-product-stock-style">[\s\S]*?<\/style>/g,'')
-    .replace('</head>','<style id="bare-product-image-gap-style">.men-product-route .detail-images{gap:0!important}</style></head>')
-    .replace('</body>',productStockSyncScript+'</body>');
+    .replace('</head>','<style id="bare-product-image-gap-style">.men-product-route .detail-images{gap:0!important}.men-product-route .detail-images img{margin:0!important}.bare-detail-image-frame{display:block;width:100%}.bare-detail-image-frame img{display:block;width:100%;height:auto}</style></head>')
+    .replace('</body>',productStockSyncScript+productImageGapScript+'</body>');
 };
