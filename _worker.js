@@ -211,6 +211,11 @@ const enhancedMyPageBase=myPage;
 function myOrderEnhancement(){return `<style id="bare-my-order-detail-style">.order-detail-toggle{height:34px;border:1px solid #111;background:#fff;color:#111;padding:0 12px;font:900 12px/1 Pretendard,sans-serif;cursor:pointer}.order-detail{display:none;grid-column:1/-1;margin-top:12px;padding:16px;background:#fafafa;border:1px solid #eee;color:#333;font:800 12px/1.7 Pretendard,sans-serif}.order-row.is-open .order-detail{display:block}.order-detail dl{display:grid;grid-template-columns:88px minmax(0,1fr);gap:6px 14px;margin:0}.order-detail dt{font-weight:900;color:#111}.order-detail dd{margin:0}.admin-link{position:absolute;left:0;top:7px;color:#777;text-decoration:none;font:900 11px/1 InterDisplay,sans-serif}@media(max-width:900px){.admin-link{position:static;display:inline-block;margin-top:14px}.order-detail-toggle{grid-column:2}.order-detail dl{grid-template-columns:1fr}}</style><script id="bare-my-order-detail-script">(()=>{const money=value=>'₩'+Number(value||0).toLocaleString('ko-KR'),escapeHtml=value=>String(value||'').replace(/[&<>"']/g,char=>'&#'+char.charCodeAt(0)+';'),read=key=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}},orders=read('bare_order_items'),list=document.getElementById('my-order-list');document.querySelector('.my-head')?.insertAdjacentHTML('beforeend','<a class="admin-link" href="/admin/orders">ADMIN</a>');if(!orders.length||!list)return;list.innerHTML=orders.slice(0,10).map((order,index)=>'<article class="order-row" data-order-row="'+index+'"><img src="'+escapeHtml(order.image||'')+'" alt=""><div><div class="order-title">'+escapeHtml(order.title||'BARE. product')+'</div><div class="order-meta">'+escapeHtml(order.option||'')+'</div><div class="order-meta">'+escapeHtml(order.orderId||'')+'</div></div><strong class="order-price">'+money(order.price||order.amount)+'</strong><span class="order-status">'+escapeHtml(order.status||'배송준비중')+'</span><button class="order-detail-toggle" type="button">주문서 보기</button><div class="order-detail"><dl><dt>주문번호</dt><dd>'+escapeHtml(order.orderId||'-')+'</dd><dt>주문자</dt><dd>'+escapeHtml(order.buyer||'-')+'</dd><dt>연락처</dt><dd>'+escapeHtml(order.phone||'-')+'</dd><dt>배송지</dt><dd>'+escapeHtml(order.address||'-')+'</dd><dt>배송메모</dt><dd>'+escapeHtml(order.memo||'-')+'</dd><dt>결제키</dt><dd>'+escapeHtml(order.paymentKey||'-')+'</dd></dl></div></article>').join('');list.addEventListener('click',event=>{const button=event.target.closest('.order-detail-toggle');if(!button)return;button.closest('.order-row')?.classList.toggle('is-open')})})();</script>`}
 myPage=function(){return enhancedMyPageBase().replace('</body>',myOrderEnhancement()+'</body>')};
 
+const customerServerOrdersScript=`<script type="module" id="bare-customer-server-orders">import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';const supabase=createClient('https://adltmckypuqwzbcuvuuh.supabase.co','sb_publishable_ZDEvoNTASICy-Z2hqqTOGA_EHFz2Yv1');const{data:{session}}=await supabase.auth.getSession();if(session){const response=await fetch('/api/admin/customer-orders',{headers:{Authorization:'Bearer '+session.access_token}}),data=await response.json().catch(()=>({}));if(response.ok){const orders=data.orders||[],money=value=>'₩'+Number(value||0).toLocaleString('ko-KR'),esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),labels={paid:'결제완료',confirmed:'발주확인',ready:'배송준비중',shipping:'배송중',done:'배송완료',cancel_requested:'취소요청',cancelled:'취소완료',exchange_requested:'교환요청',return_requested:'반품요청'},status=order=>labels[order.fulfillment_status]||order.fulfillment_status||'결제완료',recent=orders.filter(order=>Date.now()-new Date(order.created_at).getTime()<=90*24*60*60*1000),list=document.getElementById('my-order-list');document.getElementById('order-total').textContent=money(recent.reduce((sum,order)=>sum+Number(order.amount||0),0));document.getElementById('count-pending').textContent=0;document.getElementById('count-ready').textContent=recent.filter(order=>['paid','confirmed','ready'].includes(order.fulfillment_status)).length;document.getElementById('count-shipping').textContent=recent.filter(order=>order.fulfillment_status==='shipping').length;document.getElementById('count-complete').textContent=recent.filter(order=>order.fulfillment_status==='done').length;document.getElementById('count-cancel').textContent=recent.filter(order=>['cancel_requested','cancelled'].includes(order.fulfillment_status)).length;if(list)list.innerHTML=recent.length?recent.slice(0,10).map(order=>{const item=(order.items||[])[0]||{},titles=(order.items||[]).map(value=>value.product_title).filter(Boolean).join(', ')||'BARE. product',options=(order.items||[]).map(value=>value.option_text).filter(Boolean).join(', ');return '<article class="order-row"><img src="'+esc(item.image_url||'')+'" alt=""><div><div class="order-title">'+esc(titles)+'</div><div class="order-meta">'+esc(options)+'</div><div class="order-meta">'+esc(order.order_id)+'</div></div><strong class="order-price">'+money(order.amount)+'</strong><span class="order-status">'+esc(status(order))+'</span><button class="order-detail-toggle" type="button">주문서 보기</button><div class="order-detail"><dl><dt>주문번호</dt><dd>'+esc(order.order_id)+'</dd><dt>주문자</dt><dd>'+esc(order.buyer_name||'-')+'</dd><dt>연락처</dt><dd>'+esc(order.phone||'-')+'</dd><dt>배송지</dt><dd>'+esc(order.address||'-')+'</dd><dt>배송메모</dt><dd>'+esc(order.memo||'-')+'</dd><dt>결제수단</dt><dd>'+esc(order.payment_method||'-')+'</dd></dl></div></article>'}).join(''):'<p class="empty-orders">주문 내역이 없습니다.</p>';list?.addEventListener('click',event=>{const button=event.target.closest('.order-detail-toggle');if(button)button.closest('.order-row')?.classList.toggle('is-open')})}}</script>`;
+const customerServerOrdersBaseMyPage=myPage;
+const customerOrderToggleGuardScript=`<script id="bare-customer-order-toggle">document.getElementById('my-order-list')?.addEventListener('click',event=>{const button=event.target.closest('.order-detail-toggle');if(!button)return;event.stopImmediatePropagation();button.closest('.order-row')?.classList.toggle('is-open')},true);</script>`;
+myPage=function(){return customerServerOrdersBaseMyPage().replace('</body>',customerServerOrdersScript+customerOrderToggleGuardScript+'</body>')};
+
 function adminOrdersPage(){return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ADMIN ORDERS | BARE.</title><style>@font-face{font-family:InterDisplay;src:url(https://framerusercontent.com/assets/qITWJ2WdG0wrgQPDb8lvnYnTXDg.woff2) format('woff2');font-weight:700;font-display:swap}*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#111;font-family:InterDisplay,Pretendard,"Noto Sans KR",system-ui,sans-serif}.admin{width:min(1180px,calc(100% - 34px));margin:0 auto;padding:34px 0 90px}.admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}.admin h1{margin:0;font:900 32px/1 InterDisplay,sans-serif}.admin a{color:#111;text-decoration:none;font:900 12px/1 InterDisplay,sans-serif}.admin-list{display:grid;gap:12px}.admin-row{display:grid;grid-template-columns:72px minmax(0,1fr) 160px 150px;gap:16px;align-items:center;background:#fff;border:1px solid #e2e2e2;padding:14px}.admin-row img{width:72px;height:84px;object-fit:cover;background:#eee}.admin-title{font:900 14px/1.35 Pretendard,sans-serif}.admin-meta{color:#666;font:800 12px/1.5 Pretendard,sans-serif}.admin-row select{height:40px;border:1px solid #111;background:#fff;padding:0 10px;font:900 12px/1 Pretendard,sans-serif}.admin-empty{display:grid;place-items:center;min-height:220px;background:#fff;border:1px solid #e2e2e2;color:#777;font:900 14px/1.6 Pretendard,sans-serif}.admin-note{margin:0 0 22px;color:#666;font:800 12px/1.6 Pretendard,sans-serif}@media(max-width:760px){.admin-row{grid-template-columns:60px 1fr}.admin-row img{width:60px;height:72px}.admin-row select{grid-column:2}}</style></head><body><main class="admin"><header class="admin-head"><h1>ORDERS</h1><a href="/my-page">MY PAGE</a></header><p class="admin-note">현재 브라우저 주문 데이터 기준 관리자 화면입니다. 상태 변경은 마이페이지 주문내역에 바로 반영됩니다.</p><section class="admin-list" id="admin-list"></section></main><script>const money=value=>'₩'+Number(value||0).toLocaleString('ko-KR'),escapeHtml=value=>String(value||'').replace(/[&<>"']/g,char=>'&#'+char.charCodeAt(0)+';'),read=()=>{try{return JSON.parse(localStorage.getItem('bare_order_items')||'[]')}catch{return[]}},write=value=>localStorage.setItem('bare_order_items',JSON.stringify(value));const statuses=['배송준비중','배송중','배송완료','취소'];function render(){const orders=read(),list=document.getElementById('admin-list');if(!orders.length){list.innerHTML='<p class="admin-empty">관리할 주문이 없습니다.</p>';return}list.innerHTML=orders.map((order,index)=>'<article class="admin-row"><img src="'+escapeHtml(order.image||'')+'" alt=""><div><div class="admin-title">'+escapeHtml(order.title||'BARE. product')+'</div><div class="admin-meta">'+escapeHtml(order.option||'')+'</div><div class="admin-meta">'+escapeHtml(order.orderId||'-')+'</div><div class="admin-meta">'+escapeHtml(order.buyer||'-')+' / '+escapeHtml(order.phone||'-')+'</div><div class="admin-meta">'+escapeHtml(order.address||'-')+'</div></div><strong>'+money(order.price||order.amount)+'</strong><select data-index="'+index+'">'+statuses.map(status=>'<option '+(status===(order.status||'배송준비중')?'selected':'')+'>'+status+'</option>').join('')+'</select></article>').join('')}document.addEventListener('change',event=>{const select=event.target.closest('select[data-index]');if(!select)return;const orders=read();orders[Number(select.dataset.index)].status=select.value;write(orders);render()});render();</script></body></html>`}
 
 
@@ -318,8 +323,8 @@ saveOrderToSupabase=async function(env,payload,payment){
     order_id:payload.orderId,
     payment_key:payload.paymentKey,
     buyer_name:payload.buyer||'',
-    phone:payload.phone||'',
-    email:payload.email||'',
+    phone:String(payload.phone||'').replace(/[^0-9]/g,''),
+    email:String(payload.email||'').trim().toLowerCase(),
     address:payload.address||'',
     memo:payload.memo||'',
     amount:Number(payload.amount||0),
@@ -731,7 +736,7 @@ adminApi=async function(request,env,url){
         payment_key:String(body.payment_key||'').trim()||null,
         buyer_name:String(body.buyer_name||body.buyer||'').trim(),
         phone:String(body.phone||'').replace(/[^0-9]/g,''),
-        email:String(body.email||'').trim(),
+        email:String(body.email||'').trim().toLowerCase(),
         address:String(body.address||'').trim(),
         memo:String(body.memo||'').trim(),
         amount,
@@ -751,6 +756,46 @@ adminApi=async function(request,env,url){
     }
   }
   return bareAdminApiWithManualCreate(request,env,url);
+};
+
+async function authenticatedCustomer(request,env){
+  const token=String(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,'').trim();
+  if(!token)throw new Error('로그인이 필요합니다.');
+  const response=await fetch(supabaseUrl(env)+'/auth/v1/user',{headers:{apikey:supabasePublicKey(env),Authorization:'Bearer '+token}});
+  const user=await response.json().catch(()=>null);
+  if(!response.ok||!user?.id||!user?.email)throw new Error('로그인 세션을 확인할 수 없습니다.');
+  return user;
+}
+async function customerOrdersApi(request,env){
+  try{
+    if(request.method!=='GET')return jsonResponse({message:'Method not allowed'},405);
+    const user=await authenticatedCustomer(request,env),profile=user.user_metadata||{};
+    const emails=[user.email,profile.email,profile.contact_email].map(value=>String(value||'').trim().toLowerCase()).filter((value,index,list)=>value&&list.indexOf(value)===index);
+    const phoneDigits=String(profile.phone||'').replace(/[^0-9]/g,'');
+    const matches=[];
+    for(const email of emails){
+      const rows=await supabaseRest(env,'orders?select=order_id,buyer_name,phone,email,address,memo,amount,payment_method,payment_status,fulfillment_status,created_at&email=eq.'+encodeURIComponent(email)+'&order=created_at.desc&limit=100');
+      if(Array.isArray(rows))matches.push(...rows);
+    }
+    if(phoneDigits){
+      const candidates=[phoneDigits,phoneDigits.length===11?phoneDigits.replace(/^(\d{3})(\d{4})(\d{4})$/,'$1-$2-$3'):''].filter(Boolean);
+      for(const phone of candidates){
+        const rows=await supabaseRest(env,'orders?select=order_id,buyer_name,phone,email,address,memo,amount,payment_method,payment_status,fulfillment_status,created_at&phone=eq.'+encodeURIComponent(phone)+'&order=created_at.desc&limit=100');
+        if(Array.isArray(rows))matches.push(...rows);
+      }
+    }
+    const unique=[...new Map(matches.map(order=>[order.order_id,order])).values()].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    if(!unique.length)return jsonResponse({orders:[]});
+    const ids=unique.map(order=>order.order_id).filter(id=>/^[A-Za-z0-9_-]+$/.test(id));
+    const items=ids.length?await supabaseRest(env,'order_items?select=order_id,product_title,option_text,price,quantity,image_url&order_id=in.('+ids.join(',')+')&order=created_at.asc'):[];
+    const grouped=(Array.isArray(items)?items:[]).reduce((map,item)=>{(map[item.order_id]||=[]).push(item);return map},{});
+    return jsonResponse({orders:unique.map(order=>({...order,items:grouped[order.order_id]||[]}))});
+  }catch(error){return jsonResponse({message:error.message||'주문 내역을 불러오지 못했습니다.'},401)}
+}
+const adminApiWithCustomerOrders=adminApi;
+adminApi=async function(request,env,url){
+  if(url.pathname==='/api/admin/customer-orders')return customerOrdersApi(request,env);
+  return adminApiWithCustomerOrders(request,env,url);
 };
 
 const bareAdminOrdersWithManualCreate=adminOrdersPage;
