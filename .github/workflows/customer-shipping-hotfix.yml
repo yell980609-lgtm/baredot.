@@ -2,6 +2,7 @@ name: Customer shipping hotfix
 on:
   push:
     paths:
+      - .github/customer-shipping-hotfix.cjs
       - .github/workflows/customer-shipping-hotfix.yml
 permissions:
   contents: write
@@ -10,34 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch customer order tracking
-        shell: bash
-        run: |
-          node <<'NODE'
-          const fs=require('fs');
-          const file='_worker.js';
-          let s=fs.readFileSync(file,'utf8');
-          if(!s.includes('bare-customer-orders-v1')){
-            const needle="if(url.pathname.startsWith('/api/admin/'))return adminApi(request,env,url);";
-            if(!s.includes(needle))throw new Error('router insertion point not found');
-            s=s.replace(needle,"if(url.pathname==='/api/customer/orders')return customerOrdersApi(request,env);"+needle);
-            s+=String.raw`
-
-/* bare-customer-orders-v1 */
-async function requireCustomer(request,env){const header=request.headers.get('authorization')||'',token=header.replace(/^Bearer\s+/i,'').trim();if(!token)throw new Error('로그인이 필요합니다.');const response=await fetch(supabaseUrl(env)+'/auth/v1/user',{headers:{apikey:supabasePublicKey(env),Authorization:'Bearer '+token}});const user=await response.json().catch(()=>null);if(!response.ok||!user?.email)throw new Error('로그인 세션을 확인할 수 없습니다.');return user}
-async function customerOrdersApi(request,env){if(request.method!=='GET')return jsonResponse({message:'Method not allowed'},405);try{const user=await requireCustomer(request,env),email=String(user.email||'').trim().toLowerCase();const rows=await supabaseRest(env,'orders?select=order_id,created_at,amount,payment_status,fulfillment_status,tracking_company,tracking_number,shipped_at,completed_at&email=ilike.'+encodeURIComponent(email)+'&order=created_at.desc&limit=100');const ids=(Array.isArray(rows)?rows:[]).map(order=>order.order_id).filter(Boolean);let items=[];if(ids.length)items=await supabaseRest(env,'order_items?select=order_id,product_title,option_text,price,quantity,image_url&order_id=in.('+ids.map(id=>encodeURIComponent('"'+id+'"')).join(',')+')&order=created_at.asc&limit=500');const grouped=(Array.isArray(items)?items:[]).reduce((map,item)=>{(map[item.order_id]||=[]).push(item);return map},{});return jsonResponse({orders:(Array.isArray(rows)?rows:[]).map(order=>({...order,items:grouped[order.order_id]||[]}))})}catch(error){return jsonResponse({message:error.message||'주문 배송정보를 불러오지 못했습니다.'},401)}}
-const bareMyPageWithCustomerShipping=myPage;
-myPage=function(){const html=bareMyPageWithCustomerShipping();const customerScript=\`<script type="module">import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-const supabase=createClient('https://adltmckypuqwzbcuvuuh.supabase.co','sb_publishable_ZDEvoNTASICy-Z2hqqTOGA_EHFz2Yv1');const{data}=await supabase.auth.getSession(),session=data?.session,user=session?.user;if(!user){location.replace('/member/login.html?returnUrl='+encodeURIComponent('/my-page'))}else{const profile=user.user_metadata||{},money=value=>'₩'+Number(value||0).toLocaleString('ko-KR'),esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),labels={paid:'결제완료',confirmed:'발주확인',ready:'상품준비중',shipping:'배송중',done:'배송완료',cancel_requested:'취소요청',cancelled:'취소완료',exchange_requested:'교환요청',return_requested:'반품요청'},read=key=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch{return[]}};let orders=[];try{const r=await fetch('/api/customer/orders',{headers:{Authorization:'Bearer '+session.access_token},cache:'no-store'}),d=await r.json();if(!r.ok)throw new Error(d.message);orders=d.orders||[]}catch(e){orders=read('bare_order_items').map(o=>({order_id:o.orderId,created_at:new Date(o.createdAt||Date.now()).toISOString(),amount:o.price||o.amount,fulfillment_status:o.status,items:[{product_title:o.title,option_text:o.option,price:o.price,image_url:o.image}]}))}const status=o=>labels[o.fulfillment_status]||String(o.fulfillment_status||o.status||'결제완료'),recent=orders.filter(o=>new Date(o.created_at||Date.now()).getTime()>=Date.now()-90*86400000);document.getElementById('member-name').textContent=profile.name||user.email?.split('@')[0]||'회원';document.getElementById('member-email').textContent=profile.contact_email||profile.email||user.email||'-';document.getElementById('member-phone').textContent=profile.phone||'-';document.getElementById('member-address').textContent=[profile.postcode,profile.address1||profile.address,profile.address2].filter(Boolean).join(' ')||'-';document.getElementById('order-total').textContent=money(recent.reduce((sum,o)=>sum+Number(o.amount||0),0));document.getElementById('count-pending').textContent=recent.filter(o=>/입금전|대기|결제완료/.test(status(o))).length;document.getElementById('count-ready').textContent=recent.filter(o=>/발주|준비/.test(status(o))).length;document.getElementById('count-shipping').textContent=recent.filter(o=>/배송중/.test(status(o))).length;document.getElementById('count-complete').textContent=recent.filter(o=>/배송완료/.test(status(o))).length;document.getElementById('count-cancel').textContent=recent.filter(o=>/취소/.test(status(o))).length;const list=document.getElementById('my-order-list');list.innerHTML=recent.length?recent.slice(0,20).map(o=>{const item=(o.items||[])[0]||{},more=Math.max(0,(o.items||[]).length-1),tracking=o.tracking_number?'<div class="tracking-info"><strong>배송정보</strong><span>'+esc(o.tracking_company||'택배사')+'</span><button type="button" class="tracking-number" data-copy-tracking="'+esc(o.tracking_number)+'" title="운송장번호 복사">'+esc(o.tracking_number)+'</button></div>':'';return '<article class="order-row"><img src="'+esc(item.image_url||'')+'" alt=""><div><div class="order-title">'+esc(item.product_title||'BARE. product')+(more?' 외 '+more+'건':'')+'</div><div class="order-meta">'+esc(item.option_text||'')+'</div><div class="order-meta">'+esc(o.order_id||'')+'</div>'+tracking+'</div><strong class="order-price">'+money(o.amount)+'</strong><span class="order-status">'+esc(status(o))+'</span></article>'}).join(''):'<p class="empty-orders">최근 주문 내역이 없습니다.</p>';list.addEventListener('click',async e=>{const b=e.target.closest('[data-copy-tracking]');if(!b)return;try{await navigator.clipboard.writeText(b.dataset.copyTracking);const original=b.textContent;b.textContent='복사됨';setTimeout(()=>b.textContent=original,1000)}catch{}});document.querySelectorAll('.my-nav button').forEach(b=>b.addEventListener('click',()=>{if(b.dataset.link){location.href=b.dataset.link;return}document.getElementById(b.dataset.target)?.scrollIntoView({behavior:'smooth',block:'start'})}));document.getElementById('mypage-logout').addEventListener('click',async()=>{await supabase.auth.signOut();location.href='/'})}</script>\`;return html.replace('@media(max-width:900px){','.tracking-info{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px;color:#333;font:800 11px/1.4 Pretendard,sans-serif}.tracking-info strong{color:#111}.tracking-number{border:0;border-bottom:1px solid #111;background:transparent;padding:0 0 2px;color:#111;font:900 11px/1 Pretendard,sans-serif;cursor:pointer}@media(max-width:900px){').replace(/<script type="module">[\s\S]*?<\\/script><\\/body>/,customerScript+'</body>')};
-`;
-            fs.writeFileSync(file,s);
-          }
-          fs.rmSync('.github/workflows/customer-shipping-hotfix.yml');
-          NODE
-      - name: Commit hotfix
-        run: |
+      - run: node .github/customer-shipping-hotfix.cjs
+      - run: |
           git config user.name "bare-dot-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add _worker.js .github/workflows/customer-shipping-hotfix.yml
+          git add -A
           git commit -m "Show shipping tracking in customer account"
           git push
