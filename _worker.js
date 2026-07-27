@@ -1025,3 +1025,8 @@ patchHtml=function(html){return bareHomeHeroStableBase(html).replace('</body>',b
 // bare-restore-original-hero-video-v1
 const bareOriginalHeroVideoBase=patchHtml;
 patchHtml=function(html){return bareOriginalHeroVideoBase(html).replace(/assets\/hero-comp-1-21\.mp4/g,'assets/hero-original-web.mp4')};
+
+
+// bare-restore-kakao-hero-video-v1
+const bareKakaoHeroVideoBase=patchHtml;
+patchHtml=function(html){return bareKakaoHeroVideoBase(html).replace(/assets\/hero-original-web\.mp4/g,'assets/KakaoTalk_20260525_182952322.mp4').replace(/assets\/hero-comp-1-21\.mp4/g,'assets/KakaoTalk_20260525_182952322.mp4')};
