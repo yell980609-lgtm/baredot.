@@ -1,0 +1,22 @@
+name: Fix product welcome timing
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-product-welcome-timing.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/fix-product-welcome-timing.cjs
+      - run: node --check _worker.js
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _worker.js .github
+          git commit -m "Keep product welcome banner attached after render"
+          git push
