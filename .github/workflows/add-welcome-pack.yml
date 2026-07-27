@@ -1,0 +1,24 @@
+name: Add welcome pack
+
+on:
+  push:
+    paths:
+      - .github/add-welcome-pack.cjs
+      - .github/workflows/add-welcome-pack.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/add-welcome-pack.cjs
+      - run: node --check _worker.js
+      - run: |
+          git config user.name "bare-dot-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git commit -m "Add first-purchase welcome pack"
+          git push
