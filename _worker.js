@@ -1009,3 +1009,8 @@ const bareLoginSplitStyle='<style id="bare-login-split-style">body{background:#f
 const bareLoginSplitScript='<script id="bare-login-split-script">(()=>{const main=document.querySelector("main.login-wrap"),banner=main?.querySelector(":scope > .member-welcome-banner");if(!main||!banner||main.querySelector(":scope > .login-panel"))return;const panel=document.createElement("section");panel.className="login-panel";panel.setAttribute("aria-label","베어닷 로그인");panel.innerHTML="<a class=\\"login-brand\\" href=\\"/\\" aria-label=\\"베어닷 홈\\"><img src=\\"'+logoUrl+'\\" alt=\\"BARE.\\"><span>MEMBER LOGIN</span></a>";[...main.children].filter(el=>el!==banner).forEach(el=>panel.appendChild(el));panel.insertAdjacentHTML("beforeend","<p class=\\"login-panel-note\\">신규회원은 회원가입 후 쿠폰함에서<br>첫 구매 10% 할인과 무료배송 쿠폰을 확인할 수 있습니다.</p>");main.insertBefore(banner,main.firstChild);main.appendChild(panel)})();</script>';
 const bareLoginSplitBase=simpleLoginPage;
 simpleLoginPage=function(){return bareLoginSplitBase().replace('</head>',bareLoginSplitStyle+'</head>').replace('</body>',bareLoginSplitScript+'</body>')};
+
+
+// bare-signup-remove-welcome-banner-v1
+const bareSignupNoWelcomeBase=signupPage;
+signupPage=function(){return bareSignupNoWelcomeBase().replace(/<style id="bare-member-welcome-style">[\s\S]*?<\/style>/g,'').replace(/<a class="member-welcome-banner"[\s\S]*?<\/a>/g,'')};
