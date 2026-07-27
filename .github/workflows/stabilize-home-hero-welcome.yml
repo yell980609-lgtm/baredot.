@@ -1,0 +1,22 @@
+name: Stabilize home hero welcome
+on:
+  push:
+    paths:
+      - '.github/workflows/stabilize-home-hero-welcome.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/stabilize-home-hero-welcome.cjs
+      - run: node --check _worker.js
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _worker.js .github
+          git commit -m "Keep video then welcome pack hero transition"
+          git push
