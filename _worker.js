@@ -1030,3 +1030,11 @@ patchHtml=function(html){return bareOriginalHeroVideoBase(html).replace(/assets\
 // bare-restore-kakao-hero-video-v1
 const bareKakaoHeroVideoBase=patchHtml;
 patchHtml=function(html){return bareKakaoHeroVideoBase(html).replace(/assets\/hero-original-web\.mp4/g,'assets/KakaoTalk_20260525_182952322.mp4').replace(/assets\/hero-comp-1-21\.mp4/g,'assets/KakaoTalk_20260525_182952322.mp4')};
+
+
+// bare-restore-legacy-women-reviews-v1
+const bareLegacyWomenReviewsBase=patchHtml;
+patchHtml=function(html){return bareLegacyWomenReviewsBase(html)
+.replace("function renderManagedReviews(data){const reviews=Array.isArray(data?.reviews)?data.reviews:[],list=","function renderManagedReviews(data){const isLegacyWomenReview=/#product-db-im-bared-(halter-top|high-up-leggings)$/.test(location.hash),managedReviews=Array.isArray(data?.reviews)?data.reviews:[],reviews=managedReviews.length?managedReviews:(isLegacyWomenReview&&Array.isArray(customerReviews)?customerReviews:[]),list=")
+.replace("safe(review.author||'구매자')+'</strong>","safe(review.author||'구매자')+(review.best?'<span class=\"review-badge\">BEST</span>':'')+'</strong>")
+.replace("safe(review.option||'')+'</div></div><div class=\"review-card-stars\">'","safe(review.option||'')+'</div>'+(review.profile?'<div class=\"review-profile\">'+safe(review.profile)+'</div>':'')+'</div><div class=\"review-card-stars\">'")};
