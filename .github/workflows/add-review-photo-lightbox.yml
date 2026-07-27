@@ -1,0 +1,22 @@
+name: Add review photo lightbox
+on:
+  push:
+    paths:
+      - '.github/workflows/add-review-photo-lightbox.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node .github/add-review-photo-lightbox.cjs
+      - run: node --check _worker.js
+      - name: Commit update
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _worker.js .github
+          git commit -m "Add navigable review photo lightbox"
+          git push
