@@ -1070,3 +1070,83 @@ adminProductsPage=function(env={}){
     .replace('이미지를 클릭해서 추가','이미지·GIF를 클릭해서 추가')
     .replace('JPG, PNG, WEBP 여러 장 등록 가능','JPG, PNG, WEBP, GIF 여러 장 등록 가능');
 };
+
+
+// bare-product-media-upload-v2
+async function ensureProductMediaBucket(env){
+  const key=String(env.SUPABASE_SERVICE_ROLE_KEY||'').replace(/\s/g,'');
+  if(!key)throw new Error('상품 이미지 저장소 키가 설정되지 않았습니다.');
+  const headers={apikey:key,Authorization:'Bearer '+key};
+  const bucketUrl=supabaseUrl(env)+'/storage/v1/bucket/product-images';
+  const current=await fetch(bucketUrl,{headers});
+  if(current.ok)return;
+  const created=await fetch(supabaseUrl(env)+'/storage/v1/bucket',{
+    method:'POST',
+    headers:{...headers,'Content-Type':'application/json'},
+    body:JSON.stringify({
+      id:'product-images',
+      name:'product-images',
+      public:true,
+      file_size_limit:52428800,
+      allowed_mime_types:['image/jpeg','image/png','image/webp','image/gif']
+    })
+  });
+  if(!created.ok&&created.status!==409){
+    const data=await created.json().catch(()=>({}));
+    throw new Error(data.message||data.error||'상품 이미지 저장소를 만들지 못했습니다.');
+  }
+}
+
+async function adminMediaUpload(request,env){
+  try{
+    await requireAdmin(request,env);
+    if(request.method!=='POST')return jsonResponse({message:'Method not allowed'},405);
+    const form=await request.formData();
+    const file=form.get('file');
+    if(!file||typeof file.arrayBuffer!=='function')return jsonResponse({message:'업로드할 파일을 선택해주세요.'},400);
+    const type=String(file.type||'').toLowerCase();
+    const allowed=new Set(['image/jpeg','image/png','image/webp','image/gif']);
+    if(!allowed.has(type))return jsonResponse({message:'JPG, PNG, WEBP, GIF 파일만 업로드할 수 있습니다.'},400);
+    if(Number(file.size||0)>52428800)return jsonResponse({message:'파일 크기는 50MB 이하여야 합니다.'},400);
+    await ensureProductMediaBucket(env);
+    const folder=String(form.get('folder')||'products').replace(/[^a-z0-9/_-]/gi,'').replace(/^\/+|\/+$/g,'')||'products';
+    const original=String(file.name||'product-image').replace(/[^\p{L}\p{N}._-]+/gu,'-').replace(/^-+|-+$/g,'')||'product-image';
+    const path=folder+'/'+Date.now()+'-'+crypto.randomUUID()+'-'+original;
+    const key=String(env.SUPABASE_SERVICE_ROLE_KEY||'').replace(/\s/g,'');
+    const response=await fetch(supabaseUrl(env)+'/storage/v1/object/product-images/'+path.split('/').map(encodeURIComponent).join('/'),{
+      method:'POST',
+      headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':type,'x-upsert':'false'},
+      body:await file.arrayBuffer()
+    });
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(data.message||data.error||'파일 업로드에 실패했습니다.');
+    return jsonResponse({
+      ok:true,
+      path,
+      name:file.name,
+      contentType:type,
+      url:supabaseUrl(env)+'/storage/v1/object/public/product-images/'+path.split('/').map(encodeURIComponent).join('/')
+    });
+  }catch(error){
+    return jsonResponse({message:error.message||'파일 업로드를 처리하지 못했습니다.'},403);
+  }
+}
+
+const bareAdminMediaApiBase=adminApi;
+adminApi=async function(request,env,url){
+  if(url.pathname==='/api/admin/media-upload')return adminMediaUpload(request,env);
+  return bareAdminMediaApiBase(request,env,url);
+};
+
+const bareProductMediaUploadPageBase=adminProductsPage;
+adminProductsPage=function(env={}){
+  return bareProductMediaUploadPageBase(env)
+    .replace(
+      /async function uploadFiles\(files\)\{[\s\S]*?\}(?=\s*async function uploadGalleryFiles)/,
+      `async function uploadAdminMedia(file,folder){const body=new FormData();body.append('file',file);body.append('folder',folder);const response=await fetch('/api/admin/media-upload',{method:'POST',headers:{Authorization:'Bearer '+token()},body});const data=await response.json().catch(()=>({}));if(!response.ok)throw new Error(data.message||'파일 업로드 실패');return data}async function uploadFiles(files){for(const file of files){status(file.name+' 업로드 중입니다.');const data=await uploadAdminMedia(file,'products');images.push({url:data.url,path:data.path,name:data.name,contentType:data.contentType,gap:Number($('#image-gap')?.value||24)||0})}renderPreview();status('이미지·GIF를 추가했습니다. 상품 저장을 눌러 반영해주세요.')}`
+    )
+    .replace(
+      /async function uploadGalleryFiles\(files\)\{[\s\S]*?\}(?=\s*function moveImage)/,
+      `async function uploadGalleryFiles(files){readGalleryFromDom();for(const file of files){status(file.name+' 썸네일 업로드 중입니다.');const data=await uploadAdminMedia(file,'products/how-bared');galleryItems.push({url:data.url,path:data.path,name:data.name,contentType:data.contentType,link:'',placement:'how-bared'})}renderGallery();status('하단 갤러리 썸네일을 추가했습니다. 이동 링크를 입력해주세요.')}`
+    );
+};
