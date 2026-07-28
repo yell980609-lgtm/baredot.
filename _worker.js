@@ -1150,3 +1150,12 @@ adminProductsPage=function(env={}){
       `async function uploadGalleryFiles(files){readGalleryFromDom();for(const file of files){status(file.name+' 썸네일 업로드 중입니다.');const data=await uploadAdminMedia(file,'products/how-bared');galleryItems.push({url:data.url,path:data.path,name:data.name,contentType:data.contentType,link:'',placement:'how-bared'})}renderGallery();status('하단 갤러리 썸네일을 추가했습니다. 이동 링크를 입력해주세요.')}`
     );
 };
+
+
+// bare-home-hero-comp-1-21-v2
+const bareComp121HeroVideoBase=patchHtml;
+patchHtml=function(html){
+  return bareComp121HeroVideoBase(html)
+    .replace(/assets\/KakaoTalk_20260525_182952322\.mp4/g,'assets/hero-comp-1-21.mp4')
+    .replace(/assets\/hero-original-web\.mp4/g,'assets/hero-comp-1-21.mp4');
+};
