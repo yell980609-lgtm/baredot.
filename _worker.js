@@ -1307,3 +1307,11 @@ adminProductsPage=function(env={}){
       `const product=products.find(item=>String(item.id)===row.dataset.smartId);if(!product)return;if(e.target.closest('[data-clone-product]'))cloneProduct(product);else openProductEditor(product)`
     );
 };
+
+// bare-set-2-size-label-v1
+const bareSet2SizeLabelScript='<script id="bare-set-2-size-label-script">(()=>{const route="#product-db-set-2";let timer=0;function sync(){if(location.hash!==route)return;const block=document.querySelector(\'.product-options [data-option-group="back"]\');if(!block)return;const label=block.querySelector("label"),buttons=block.querySelector(".size-buttons"),help=block.querySelector(".option-help");if(label)label.textContent="SIZE";if(buttons)buttons.setAttribute("aria-label","SIZE 선택");if(help)help.textContent="[필수] SIZE 선택"}function queue(){clearTimeout(timer);timer=setTimeout(sync,40)}new MutationObserver(queue).observe(document.querySelector(".product-options")||document.body,{childList:true,subtree:true});addEventListener("hashchange",queue);[100,400,1000].forEach(delay=>setTimeout(sync,delay))})();</script>';
+const bareSet2SizeLabelBase=patchHtml;
+patchHtml=function(html){
+  return bareSet2SizeLabelBase(html)
+    .replace('</body>',bareSet2SizeLabelScript+'</body>');
+};
