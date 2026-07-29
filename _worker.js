@@ -1269,3 +1269,11 @@ patchHtml=function(html){
       `function renderPrice(data){const list=Number(data.price||0),sale=Number(data.salePrice||0);return '<span class="detail-price-row">'+(sale&&sale<list?'<s class="detail-list-price">'+formatWon(list)+'</s>':'')+'<strong class="detail-sale-price">'+formatWon(sale||list)+'</strong></span>'}`
     );
 };
+
+// bare-how-bared-equal-thumbnails-v1
+const bareHowBaredEqualThumbnailsStyle='<style id="bare-how-bared-equal-thumbnails-style">.product-detail .how-bared-grid{align-items:stretch!important}.product-detail .how-bared .how-bared-card{position:relative!important;display:block!important;width:100%!important;height:auto!important;aspect-ratio:1/1!important;overflow:hidden!important}.product-detail .how-bared .how-bared-card img{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:cover!important;object-position:center!important}</style>';
+const bareHowBaredEqualThumbnailsBase=patchHtml;
+patchHtml=function(html){
+  return bareHowBaredEqualThumbnailsBase(html)
+    .replace('</head>',bareHowBaredEqualThumbnailsStyle+'</head>');
+};
