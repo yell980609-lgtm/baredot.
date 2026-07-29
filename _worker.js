@@ -1168,3 +1168,11 @@ patchHtml=function(html){
     .replace('</head>',bareHomeIntroThenWelcomeStyle+'</head>')
     .replace('</body>',bareHomeIntroThenWelcomeScript+'</body>');
 };
+
+// bare-home-product-row-spacing-v1
+const bareHomeProductRowSpacingStyle='<style id="bare-home-product-row-spacing-style">.shop-section .product-row{column-gap:6px!important;row-gap:36px!important}@media(max-width:860px){.shop-section .product-row{gap:6px!important}}</style>';
+const bareHomeProductRowSpacingBase=patchHtml;
+patchHtml=function(html){
+  return bareHomeProductRowSpacingBase(html)
+    .replace('</head>',bareHomeProductRowSpacingStyle+'</head>');
+};
