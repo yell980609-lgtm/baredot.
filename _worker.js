@@ -1287,3 +1287,23 @@ patchHtml=function(html){
     .replace('</head>',bareSpinWelcomeCouponNoteStyle+'</head>')
     .replace('</body>',bareSpinWelcomeCouponNoteScript+'</body>');
 };
+
+// bare-admin-product-clone-v1
+const bareAdminProductCloneStyle='<style id="bare-admin-product-clone-style">.row-actions{display:flex;align-items:center;justify-content:center;gap:5px}.row-clone{height:29px;border:1px solid #111;background:#fff;color:#111;padding:0 9px;font-weight:900;cursor:pointer;white-space:nowrap}</style>';
+const bareAdminProductCloneBase=adminProductsPage;
+adminProductsPage=function(env={}){
+  return bareAdminProductCloneBase(env)
+    .replace('</head>',bareAdminProductCloneStyle+'</head>')
+    .replace(
+      `'<tr data-smart-id="'+esc(p.id)+'"><td><button class="row-edit" type="button">수정</button></td>`,
+      `'<tr data-smart-id="'+esc(p.id)+'"><td><div class="row-actions"><button class="row-edit" type="button">수정</button><button class="row-clone" data-clone-product type="button">복제</button></div></td>`
+    )
+    .replace(
+      `function openProductEditor(product){`,
+      `function cloneProduct(product){openProductEditor(product);editing=null;const suffix=Date.now().toString().slice(-6);$('#name').value=(product.name||'상품')+' (복제본)';$('#slug').value=(product.slug||slug(product.name)||'product')+'-copy-'+suffix;$('#sku').value='';$('#state').value='draft';variants=variants.map((item,index)=>({...item,id:'clone-'+Date.now()+'-'+index,sku:''}));renderVariants();renderGallery();renderReviewEditor();renderPreview();$('#editor-title').textContent='상품복제';status('상세 이미지와 옵션을 복제했습니다. 상품명과 슬러그를 확인한 뒤 상품 저장을 눌러주세요.')}function openProductEditor(product){`
+    )
+    .replace(
+      `const product=products.find(item=>String(item.id)===row.dataset.smartId);if(product)openProductEditor(product)`,
+      `const product=products.find(item=>String(item.id)===row.dataset.smartId);if(!product)return;if(e.target.closest('[data-clone-product]'))cloneProduct(product);else openProductEditor(product)`
+    );
+};
