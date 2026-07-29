@@ -1161,7 +1161,17 @@ adminProductsPage=function(env={}){
     )
     .replace(
       /async function uploadGalleryFiles\(files\)\{[\s\S]*?\}(?=\s*function moveImage)/,
-      `async function uploadGalleryFiles(files){readGalleryFromDom();for(const file of files){status(file.name+' 썸네일 업로드 중입니다.');const data=await uploadAdminMedia(file,'products/how-bared');galleryItems.push({url:data.url,path:data.path,name:data.name,contentType:data.contentType,link:'',placement:'how-bared'})}renderGallery();status('하단 갤러리 썸네일을 추가했습니다. 이동 링크를 입력해주세요.')}`
+      `async function uploadGalleryFiles(files){readGalleryFromDom();const failed=[];let uploaded=0;for(const file of files){try{status(file.name+' 썸네일 업로드 중입니다.');const data=await uploadAdminMedia(file,'products/how-bared');galleryItems.push({url:data.url,path:data.path,name:data.name,contentType:data.contentType,link:'',placement:'how-bared'});uploaded++}catch(error){failed.push(file.name+': '+error.message)}}renderGallery();if(failed.length)throw new Error((uploaded?uploaded+'장 업로드 완료, ':'')+failed.join(' / '));status(uploaded+'장 썸네일을 추가했습니다. 이동 링크를 입력하고 상품 저장을 눌러주세요.')}`
+    );
+};
+
+// bare-how-bared-upload-retry-v1
+const bareHowBaredUploadRetryBase=adminProductsPage;
+adminProductsPage=function(env={}){
+  return bareHowBaredUploadRetryBase(env)
+    .replace(
+      `$('#how-bared-file')?.addEventListener('change',e=>uploadGalleryFiles([...e.target.files]).catch(err=>status('썸네일 업로드 실패: '+err.message)));`,
+      `$('#how-bared-file')?.addEventListener('change',async e=>{const input=e.currentTarget,files=[...input.files];input.value='';if(!files.length)return;try{await uploadGalleryFiles(files)}catch(err){status('썸네일 업로드 결과: '+err.message)}});`
     );
 };
 
