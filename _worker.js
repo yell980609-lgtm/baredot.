@@ -835,7 +835,12 @@ async function publicProductsApi(env){
       tags:Array.isArray(product.tags)?product.tags:[],
       images:Array.isArray(product.images)?product.images:[],
       variants:normalizeProductVariants(product.variants||[]).map(item=>({id:item.id,color:item.color,back:item.back,size:item.size,options:item.options,stock:item.stock,soldout:item.soldout,active:item.active}))
-    })).filter(product=>product.slug&&product.name);
+    })).map(product=>{
+      if(product.slug==='im-bared-halter-top'&&product.compare_price>0&&product.price>product.compare_price){
+        return {...product,price:product.compare_price,compare_price:product.price};
+      }
+      return product;
+    }).filter(product=>product.slug&&product.name);
     return jsonResponse({products});
   }catch(error){
     return jsonResponse({message:error.message||'상품 목록을 불러오지 못했습니다.',products:[]},200);
@@ -1234,4 +1239,14 @@ patchHtml=function(html){
     .replace(/<style id="bare-buy-instructor-style">[\s\S]*?<\/style>/g,'')
     .replace(/<aside class="instructor-popup"[\s\S]*?<\/aside>/g,'')
     .replace(/<script id="bare-buy-instructor-intro-script">[\s\S]*?<\/script>/g,'');
+};
+
+// bare-detail-list-and-sale-price-v1
+const bareDetailListAndSalePriceBase=patchHtml;
+patchHtml=function(html){
+  return bareDetailListAndSalePriceBase(html)
+    .replace(
+      `function renderPrice(data){return '<span class="detail-price-row"><strong class="detail-sale-price">'+formatWon(data.salePrice||data.price)+'</strong></span>'}`,
+      `function renderPrice(data){const list=Number(data.price||0),sale=Number(data.salePrice||0);return '<span class="detail-price-row">'+(sale&&sale<list?'<s class="detail-list-price">'+formatWon(list)+'</s>':'')+'<strong class="detail-sale-price">'+formatWon(sale||list)+'</strong></span>'}`
+    );
 };
