@@ -1277,3 +1277,13 @@ patchHtml=function(html){
   return bareHowBaredEqualThumbnailsBase(html)
     .replace('</head>',bareHowBaredEqualThumbnailsStyle+'</head>');
 };
+
+// bare-spin-welcome-coupon-note-v1
+const bareSpinWelcomeCouponNoteStyle='<style id="bare-spin-welcome-coupon-note-style">.product-summary>.bare-spin-coupon-note{display:block;grid-column:2;width:132px;margin:-10px 0 0;color:#050505;text-align:center;font:900 clamp(10px,1vw,13px)/1.45 Pretendard,sans-serif;letter-spacing:-.02em;animation:bare-spin-coupon-blink 1.25s ease-in-out infinite}@keyframes bare-spin-coupon-blink{0%,100%{opacity:1}50%{opacity:.22}}@media(prefers-reduced-motion:reduce){.product-summary>.bare-spin-coupon-note{animation:none}}@media(max-width:860px){.product-summary>.bare-spin-coupon-note{display:none}}</style>';
+const bareSpinWelcomeCouponNoteScript='<script id="bare-spin-welcome-coupon-note-script">(()=>{const text="웰컴팩 10% 쿠폰 적용 가능한 제품입니다";let timer=0;function sync(){const summary=document.querySelector(".product-detail .product-summary"),media=summary?.querySelector(".spin-media");if(!summary||!media)return;let note=summary.querySelector(":scope>.bare-spin-coupon-note");if(!note){note=document.createElement("p");note.className="bare-spin-coupon-note";media.after(note)}note.textContent=text;note.hidden=media.classList.contains("is-hidden")}function queue(){clearTimeout(timer);timer=setTimeout(sync,60)}new MutationObserver(queue).observe(document.querySelector(".product-detail")||document.body,{childList:true,subtree:true,attributes:true,attributeFilter:["class"]});addEventListener("hashchange",queue);[100,400,1000].forEach(delay=>setTimeout(sync,delay))})();</script>';
+const bareSpinWelcomeCouponNoteBase=patchHtml;
+patchHtml=function(html){
+  return bareSpinWelcomeCouponNoteBase(html)
+    .replace('</head>',bareSpinWelcomeCouponNoteStyle+'</head>')
+    .replace('</body>',bareSpinWelcomeCouponNoteScript+'</body>');
+};
