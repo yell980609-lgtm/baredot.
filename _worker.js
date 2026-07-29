@@ -1184,3 +1184,11 @@ patchHtml=function(html){
   return bareHomeFeaturedProductCardsBase(html)
     .replace('</head>',bareHomeFeaturedProductCardsStyle+'</head>');
 };
+
+// bare-product-copy-horizontal-padding-v1
+const bareProductCopyHorizontalPaddingStyle='<style id="bare-product-copy-horizontal-padding-style">.product-detail .purchase-panel{padding-left:clamp(20px,2.2vw,32px)!important;padding-right:clamp(20px,2.2vw,32px)!important}.product-detail .how-bared-head{padding-left:clamp(20px,2.2vw,32px)!important;padding-right:clamp(20px,2.2vw,32px)!important}@media(max-width:860px){.product-detail .purchase-panel{padding-left:20px!important;padding-right:20px!important}.product-detail .how-bared-head{padding-left:20px!important;padding-right:20px!important}}</style>';
+const bareProductCopyHorizontalPaddingBase=patchHtml;
+patchHtml=function(html){
+  return bareProductCopyHorizontalPaddingBase(html)
+    .replace('</head>',bareProductCopyHorizontalPaddingStyle+'</head>');
+};
