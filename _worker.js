@@ -1226,3 +1226,12 @@ patchHtml=function(html){
   return bareSelectedOptionContrastBase(html)
     .replace('</head>',bareSelectedOptionContrastStyle+'</head>');
 };
+
+// bare-remove-instructor-discount-popup-v1
+const bareRemoveInstructorDiscountPopupBase=patchHtml;
+patchHtml=function(html){
+  return bareRemoveInstructorDiscountPopupBase(html)
+    .replace(/<style id="bare-buy-instructor-style">[\s\S]*?<\/style>/g,'')
+    .replace(/<aside class="instructor-popup"[\s\S]*?<\/aside>/g,'')
+    .replace(/<script id="bare-buy-instructor-intro-script">[\s\S]*?<\/script>/g,'');
+};
