@@ -1176,3 +1176,11 @@ patchHtml=function(html){
   return bareHomeProductRowSpacingBase(html)
     .replace('</head>',bareHomeProductRowSpacingStyle+'</head>');
 };
+
+// bare-home-featured-product-cards-v1
+const bareHomeFeaturedProductCardsStyle='<style id="bare-home-featured-product-cards-style">.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-info{min-height:106px;padding:14px 12px 16px!important;background:#050505;color:#fff!important}.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-name,.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-price,.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-sale-price{color:#fff!important}.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-list-price{color:rgba(255,255,255,.58)!important;text-decoration-color:rgba(255,255,255,.58)!important}@media(max-width:860px){.shop-section .product-card:is([href="#product-db-set-2"],[href="#product-db-im-bared-set-up"]) .product-info{min-height:100px;padding:13px 10px 15px!important}}</style>';
+const bareHomeFeaturedProductCardsBase=patchHtml;
+patchHtml=function(html){
+  return bareHomeFeaturedProductCardsBase(html)
+    .replace('</head>',bareHomeFeaturedProductCardsStyle+'</head>');
+};
