@@ -1200,3 +1200,11 @@ patchHtml=function(html){
   return bareSetOptionFixBase(html)
     .replace('</body>',bareSetOptionFixScript+'</body>');
 };
+
+// bare-product-spin-videos-v1
+const bareProductSpinVideosScript='<script id="bare-product-spin-videos-script">(()=>{const videos={"#product-db-im-bared-high-up-leggings":"assets/spin-leggings.mp4","#product-db-im-bared-halter-top":"assets/spin-halter-top.mp4","#product-db-c":"assets/spin-cover-up.mp4"};let timer=0;function sync(){Object.entries(videos).forEach(([hash,src])=>{try{if(productData[hash])productData[hash].spin=src}catch{}});const src=videos[location.hash];if(!src)return;try{const data=productData[location.hash];if(data&&typeof renderSpin==="function")renderSpin(data)}catch{}}function queue(){clearTimeout(timer);timer=setTimeout(sync,60)}new MutationObserver(queue).observe(document.querySelector(".product-options")||document.body,{childList:true,subtree:true});addEventListener("hashchange",queue);[120,500,1200,2200].forEach(delay=>setTimeout(sync,delay))})();</script>';
+const bareProductSpinVideosBase=patchHtml;
+patchHtml=function(html){
+  return bareProductSpinVideosBase(html)
+    .replace('</body>',bareProductSpinVideosScript+'</body>');
+};
