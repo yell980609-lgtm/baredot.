@@ -1151,11 +1151,20 @@ adminProductsPage=function(env={}){
     );
 };
 
-
 // bare-home-hero-comp-1-21-v2
 const bareComp121HeroVideoBase=patchHtml;
 patchHtml=function(html){
   return bareComp121HeroVideoBase(html)
     .replace(/assets\/KakaoTalk_20260525_182952322\.mp4/g,'assets/hero-comp-1-21.mp4')
     .replace(/assets\/hero-original-web\.mp4/g,'assets/hero-comp-1-21.mp4');
+};
+
+// bare-home-intro-then-welcome-v3
+const bareHomeIntroThenWelcomeStyle='<style id="bare-home-intro-then-welcome-style">.intro-overlay{display:none!important}.home-view .hero{min-height:calc(100svh - var(--promo-height))!important}.home-view .hero-video{opacity:1!important;visibility:visible!important}.home-view .bare-welcome-hero{z-index:6!important}</style>';
+const bareHomeIntroThenWelcomeScript='<script id="bare-home-intro-then-welcome-script">(()=>{if(location.hash.startsWith("#men-")){history.replaceState(null,"",location.pathname+location.search);if(typeof syncRoute==="function")syncRoute();if(typeof syncTopbar==="function")syncTopbar()}document.querySelector(".intro-overlay")?.remove();const hero=document.querySelector(".home-view .hero"),video=hero?.querySelector(".hero-video,video"),welcome=hero?.querySelector(".bare-welcome-hero");if(!hero||!video||!welcome)return;welcome.classList.remove("is-visible");video.loop=false;video.removeAttribute("loop");video.muted=true;video.defaultMuted=true;video.setAttribute("muted","");video.setAttribute("autoplay","");video.setAttribute("playsinline","");video.setAttribute("webkit-playsinline","");const showWelcome=()=>welcome.classList.add("is-visible");const finish=()=>{if(video.duration&&video.currentTime<video.duration-.12)return;showWelcome()};video.addEventListener("ended",showWelcome,{once:true});video.addEventListener("timeupdate",finish);video.addEventListener("error",showWelcome,{once:true});function playFromStart(){welcome.classList.remove("is-visible");try{video.currentTime=0}catch(e){}const attempt=video.play();if(attempt?.catch)attempt.catch(()=>{const retry=()=>{video.play().catch(()=>{});removeEventListener("pointerdown",retry);removeEventListener("touchstart",retry)};addEventListener("pointerdown",retry,{once:true});addEventListener("touchstart",retry,{once:true,passive:true})})}if(video.readyState>=1)playFromStart();else video.addEventListener("loadedmetadata",playFromStart,{once:true});addEventListener("pageshow",event=>{if(event.persisted)playFromStart()});})();</script>';
+const bareHomeIntroThenWelcomeBase=patchHtml;
+patchHtml=function(html){
+  return bareHomeIntroThenWelcomeBase(html)
+    .replace('</head>',bareHomeIntroThenWelcomeStyle+'</head>')
+    .replace('</body>',bareHomeIntroThenWelcomeScript+'</body>');
 };
