@@ -1208,3 +1208,13 @@ patchHtml=function(html){
   return bareProductSpinVideosBase(html)
     .replace('</body>',bareProductSpinVideosScript+'</body>');
 };
+
+// bare-cover-up-spin-white-background-v1
+const bareCoverUpSpinWhiteStyle='<style id="bare-cover-up-spin-white-style">body.cover-up-spin-route .spin-media,body.cover-up-spin-route .spin-video{background:#fff!important}</style>';
+const bareCoverUpSpinWhiteScript='<script id="bare-cover-up-spin-white-script">(()=>{const sync=()=>document.body.classList.toggle("cover-up-spin-route",location.hash==="#product-db-c");addEventListener("hashchange",sync);sync()})();</script>';
+const bareCoverUpSpinWhiteBase=patchHtml;
+patchHtml=function(html){
+  return bareCoverUpSpinWhiteBase(html)
+    .replace('</head>',bareCoverUpSpinWhiteStyle+'</head>')
+    .replace('</body>',bareCoverUpSpinWhiteScript+'</body>');
+};
