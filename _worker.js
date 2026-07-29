@@ -1115,8 +1115,17 @@ async function adminMediaUpload(request,env){
     if(Number(file.size||0)>52428800)return jsonResponse({message:'파일 크기는 50MB 이하여야 합니다.'},400);
     await ensureProductMediaBucket(env);
     const folder=String(form.get('folder')||'products').replace(/[^a-z0-9/_-]/gi,'').replace(/^\/+|\/+$/g,'')||'products';
-    const original=String(file.name||'product-image').replace(/[^\p{L}\p{N}._-]+/gu,'-').replace(/^-+|-+$/g,'')||'product-image';
-    const path=folder+'/'+Date.now()+'-'+crypto.randomUUID()+'-'+original;
+    const extensionByType={
+      'image/jpeg':'jpg',
+      'image/png':'png',
+      'image/webp':'webp',
+      'image/gif':'gif'
+    };
+    const originalExtension=String(file.name||'').match(/\.([a-z0-9]{1,8})$/i)?.[1]?.toLowerCase();
+    const extension=/^(?:jpe?g|png|webp|gif)$/.test(originalExtension||'')
+      ?(originalExtension==='jpeg'?'jpg':originalExtension)
+      :extensionByType[type];
+    const path=folder+'/'+Date.now()+'-'+crypto.randomUUID()+'.'+extension;
     const key=String(env.SUPABASE_SERVICE_ROLE_KEY||'').replace(/\s/g,'');
     const response=await fetch(supabaseUrl(env)+'/storage/v1/object/product-images/'+path.split('/').map(encodeURIComponent).join('/'),{
       method:'POST',
