@@ -1218,3 +1218,11 @@ patchHtml=function(html){
     .replace('</head>',bareCoverUpSpinWhiteStyle+'</head>')
     .replace('</body>',bareCoverUpSpinWhiteScript+'</body>');
 };
+
+// bare-selected-option-contrast-v1
+const bareSelectedOptionContrastStyle='<style id="bare-selected-option-contrast-style">.product-options .size-button.is-selected:not(:disabled){background:#050505!important;border:1px solid #050505!important;color:#fff!important;opacity:1!important;text-decoration:none!important;box-shadow:none!important}</style>';
+const bareSelectedOptionContrastBase=patchHtml;
+patchHtml=function(html){
+  return bareSelectedOptionContrastBase(html)
+    .replace('</head>',bareSelectedOptionContrastStyle+'</head>');
+};
