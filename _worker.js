@@ -1315,3 +1315,8 @@ patchHtml=function(html){
   return bareSet2SizeLabelBase(html)
     .replace('</body>',bareSet2SizeLabelScript+'</body>');
 };
+
+
+// bare-fix-men-custom-option-click-v1
+const bareMenCustomOptionBase=patchHtml;
+patchHtml=function(html){return bareMenCustomOptionBase(html).replace("matchesSelection=(item,selection)=>groups.every(group=>!selection[group.key]||String((item.options&&item.options[group.key])||item[group.key]||'')===selection[group.key])","matchesSelection=(item,selection)=>groups.every(group=>!selection[group.key]||(group.key.startsWith('custom-')&&!((item.options&&item.options[group.key])||item[group.key]))||String((item.options&&item.options[group.key])||item[group.key]||'')===selection[group.key])")};
