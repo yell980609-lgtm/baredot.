@@ -1,6 +1,6 @@
 const logoUrl='https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080';
 const blogLeggingsThumb='https://mblogthumb-phinf.pstatic.net/MjAyNjA1MjVfMTE3/MDAxNzc5Njk2NzcxOTAz.Ccq205yMCyK3xT1QB8s8oZbjIu4YPVq0wCKXLINCIb8g.xu-VwvIF3CnG2rJ7qnW_Y0A-yk6Is96TaLKhkqtMW6kg.JPEG/IMG_7169.jpg?type=w800';
-const blogBrandThumb='https://mblogthumb-phinf.pstatic.net/MjAyNjA1MjVfMTQ0/MDAxNzc5Njk5ODEyMzcx.EctgqINqqhtQvgPKkIkvGXyhdh9yavvRkqICqhD1u4Ug.dLACvmkaNY0ewDP783kwoP-WZxzChNkN_L8XNb_8OG0g.JPEG/5bb1d897-f392-4705-8423-cae33a4d2c36_2.JPEG?type=w800';
+const blogBrandThumb='https://mblogthumb-phinf.pstatic.net/MjAyNjA3MjlfMjA4/MDAxNzg1Mjc1ODE2ODIy.0v2j_lKvsMYHeGoPEFwQ54Zu0ZhNiFT6nyIftldzsk0g.1_HbCjk9mm2w11E0OIgjRE2diymLPsQrpOlcsCBRAzUg.JPEG/KakaoTalk_20260729_065642950.jpg?type=w800';
 const blogEp2Thumb='https://mblogthumb-phinf.pstatic.net/MjAyNjA1MzFfMTc1/MDAxNzgwMjEwODkyODE5.Rj8IduWkwHXgCFglOoN9dsF8_znyr0qre2ELw5dbG3Mg.8HnySF8PpzIbEphbwdDXJgXeQ27-ncyE_ftlOG-YEAog.JPEG/99250F0A%EF%BC%8D657E%EF%BC%8D4BF3%EF%BC%8DB7D4%EF%BC%8D2B59A32A2006.jpg?type=w800';
 const blogPopupThumb='https://mblogthumb-phinf.pstatic.net/MjAyNjA2MDJfNiAg/MDAxNzgwMzUyNDYwODk5.50Zl8hOTtBuRAv2C4tN0deFNV1o_zt0irwFjnLYB0LUg.ymKxfcch1w3K6wZtRmmeSLkE-Zxa7DPwlbaGTBN1EF0g.JPEG/IMG%EF%BC%BF7356.jpg?type=w800';
 const smartStoreUrl='https://smartstore.naver.com/baredot/products/13512900046';
