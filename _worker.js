@@ -1308,6 +1308,57 @@ adminProductsPage=function(env={}){
     );
 };
 
+// bare-product-specific-discount-code-v1
+const bareProductCouponAdminStyle='<style id="bare-product-coupon-admin-style">.coupon-admin-box{grid-column:1/-1;padding:16px;border:1px solid #cfd6df;background:#f8fafc}.coupon-admin-box h3{margin:0 0 8px;font-size:15px}.coupon-admin-help{margin:0 0 14px;color:#667085;font:800 11px/1.5 Pretendard,sans-serif}.coupon-admin-grid{display:grid;grid-template-columns:1.2fr .8fr 1fr;gap:10px}.coupon-admin-grid .field{margin:0}@media(max-width:700px){.coupon-admin-grid{grid-template-columns:1fr}}</style>';
+const bareProductCouponAdminBase=adminProductsPage;
+adminProductsPage=function(env={}){
+  return bareProductCouponAdminBase(env)
+    .replace('</head>',bareProductCouponAdminStyle+'</head>')
+    .replace('<label class="field full"><span>상품 설명</span>','<section class="coupon-admin-box"><h3>이 상품 전용 할인코드</h3><p class="coupon-admin-help">코드가 비어 있으면 사용하지 않습니다. 정액 할인 또는 퍼센트 할인을 선택할 수 있어요.</p><div class="coupon-admin-grid"><label class="field"><span>할인코드</span><input id="coupon-code-admin" placeholder="예: BARE5000"></label><label class="field"><span>할인 방식</span><select id="coupon-type-admin"><option value="fixed">정액 할인</option><option value="percent">퍼센트 할인</option></select></label><label class="field"><span>할인값</span><input id="coupon-value-admin" inputmode="numeric" placeholder="예: 5000 또는 10"></label></div></section><label class="field full"><span>상품 설명</span>')
+    .replace("const tags=$('#tags').value.split(',').map(v=>v.trim()).filter(Boolean).filter(tag=>!tag.startsWith('option-label:')&&!tag.startsWith('custom-option:'));","const tags=$('#tags').value.split(',').map(v=>v.trim()).filter(Boolean).filter(tag=>!tag.startsWith('option-label:')&&!tag.startsWith('custom-option:')&&!tag.startsWith('coupon-code:')&&!tag.startsWith('coupon-type:')&&!tag.startsWith('coupon-value:')),couponCode=$('#coupon-code-admin')?.value.trim().toUpperCase()||'',couponType=$('#coupon-type-admin')?.value||'fixed',couponValue=Math.max(0,Number($('#coupon-value-admin')?.value||0)||0);")
+    .replace("tags:[...tags,...backs.map(v=>'back:'+v),...optionLabelTags(),...customOptionTags()]","tags:[...tags,...backs.map(v=>'back:'+v),...optionLabelTags(),...customOptionTags(),...(couponCode&&couponValue?['coupon-code:'+couponCode,'coupon-type:'+couponType,'coupon-value:'+couponValue]:[])]")
+    .replace("const normalTags=(p.tags||[]).filter(t=>!String(t).startsWith('back:')&&!String(t).startsWith('option-label:')&&!String(t).startsWith('custom-option:'));","const couponTag=name=>(p.tags||[]).find(t=>String(t).startsWith(name+':'))?.slice(name.length+1)||'',normalTags=(p.tags||[]).filter(t=>!String(t).startsWith('back:')&&!String(t).startsWith('option-label:')&&!String(t).startsWith('custom-option:')&&!String(t).startsWith('coupon-code:')&&!String(t).startsWith('coupon-type:')&&!String(t).startsWith('coupon-value:'));$('#coupon-code-admin').value=couponTag('coupon-code');$('#coupon-type-admin').value=couponTag('coupon-type')||'fixed';$('#coupon-value-admin').value=couponTag('coupon-value');");
+};
+
+const bareProductCouponPublicProductApi=publicProductApi;
+publicProductApi=async function(env,url){
+  const slug=decodeURIComponent(url.pathname.replace('/api/products/slug/','')).trim();
+  if(!slug.startsWith('__coupon__-'))return bareProductCouponPublicProductApi(env,url);
+  const code=slug.slice('__coupon__-'.length).trim().toUpperCase();
+  if(!code)return jsonResponse({message:'할인코드를 입력해주세요.'},400);
+  try{
+    const rows=await supabaseRest(env,'products?select=name,tags&status=in.(published,soldout)&limit=300');
+    const matches=(Array.isArray(rows)?rows:[]).map(product=>{
+      const tags=Array.isArray(product.tags)?product.tags:[],get=name=>String(tags.find(tag=>String(tag).startsWith(name+':'))||'').slice(name.length+1);
+      if(get('coupon-code').toUpperCase()!==code)return null;
+      return {name:String(product.name||''),type:get('coupon-type')==='percent'?'percent':'fixed',value:Math.max(0,Number(get('coupon-value'))||0)};
+    }).filter(item=>item&&item.name&&item.value);
+    return matches.length?jsonResponse({ok:true,matches}):jsonResponse({message:'사용할 수 없는 할인코드입니다.'},404);
+  }catch(error){return jsonResponse({message:error.message||'할인코드를 확인하지 못했습니다.'},500)}
+};
+
+const bareProductCouponPublicProductsApi=publicProductsApi;
+publicProductsApi=async function(env){
+  const response=await bareProductCouponPublicProductsApi(env),data=await response.clone().json().catch(()=>null);
+  if(!data?.products)return response;
+  data.products=data.products.map(product=>({...product,tags:(product.tags||[]).filter(tag=>!String(tag).startsWith('coupon-code:')&&!String(tag).startsWith('coupon-type:')&&!String(tag).startsWith('coupon-value:'))}));
+  return jsonResponse(data,response.status);
+};
+
+const bareProductCouponCheckoutStyle='<style id="bare-product-coupon-checkout-style">.product-code-box{display:grid;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid #ddd}.product-code-row{display:grid;grid-template-columns:minmax(0,1fr) 92px;gap:8px}.product-code-row input{height:40px;border:1px solid #aaa;padding:0 12px;text-transform:uppercase}.product-code-row button{border:0;background:#111;color:#fff;font:900 12px/1 Pretendard,sans-serif;cursor:pointer}.product-code-message{margin:0;color:#666;font:800 11px/1.5 Pretendard,sans-serif}.product-code-message.is-success{color:#087a36}</style>';
+const bareProductCouponCheckoutScript='<script id="bare-product-coupon-checkout-script">(()=>{const read=k=>{try{return JSON.parse(localStorage.getItem(k)||"[]")}catch{return[]}},money=v=>"₩"+Number(v||0).toLocaleString("ko-KR"),items=read("bare_checkout_items").length?read("bare_checkout_items"):read("bare_cart_items"),section=document.querySelector("#discount-line")?.closest(".section-body");if(!section||!items.length)return;section.insertAdjacentHTML("beforeend","<div class=\"product-code-box\"><strong>상품 할인코드</strong><div class=\"product-code-row\"><input id=\"product-coupon-code\" placeholder=\"할인코드 입력\"><button id=\"product-coupon-apply\" type=\"button\">적용</button></div><p class=\"product-code-message\" id=\"product-coupon-message\">관리자가 상품에 등록한 전용 코드를 입력해주세요.</p></div>");const input=document.getElementById("product-coupon-code"),message=document.getElementById("product-coupon-message");localStorage.removeItem("bare_product_coupon");async function apply(){const code=input.value.trim().toUpperCase();if(!code){message.textContent="할인코드를 입력해주세요.";return}const products=await Promise.all(items.map(async item=>{const all=await fetch("/api/products?coupon="+Date.now(),{cache:"no-store"}).then(r=>r.json());return(all.products||[]).find(p=>String(p.name||"")===String(item.title||""))||null}));let discount=0,matched=[];products.forEach((product,index)=>{if(!product)return;const tags=Array.isArray(product.tags)?product.tags:[],get=name=>String(tags.find(t=>String(t).startsWith(name+":"))||"").slice(name.length+1),saved=get("coupon-code").toUpperCase();if(saved!==code)return;const type=get("coupon-type")||"fixed",value=Math.max(0,Number(get("coupon-value"))||0),price=Number(items[index].price||0)*Number(items[index].quantity||1),cut=type==="percent"?Math.round(price*Math.min(value,100)/100):Math.min(value,price);discount+=cut;matched.push(product.name)});if(!discount){localStorage.removeItem("bare_product_coupon");message.classList.remove("is-success");message.textContent="사용할 수 없는 코드이거나 주문 상품에 적용되지 않습니다.";return}const data={code,discount,products:matched};localStorage.setItem("bare_product_coupon",JSON.stringify(data));message.classList.add("is-success");message.textContent=matched.join(", ")+"에 "+money(discount)+" 할인이 적용되었습니다.";const current=Number((document.getElementById("grand-total")?.textContent||"").replace(/[^0-9]/g,""))||0,total=Math.max(0,current-discount);document.getElementById("grand-total").textContent=money(total);document.getElementById("pay-button").textContent=money(total)+" 결제하기";const existing=Number((document.getElementById("summary-discount")?.textContent||"").replace(/[^0-9]/g,""))||0;["discount-total","summary-discount"].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent="-"+money(existing+discount)})}document.getElementById("product-coupon-apply").addEventListener("click",()=>apply().catch(()=>{message.textContent="할인코드를 확인하지 못했습니다. 잠시 후 다시 시도해주세요."}));input.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();document.getElementById("product-coupon-apply").click()}})})();</script>';
+const bareProductCouponCheckoutBase=modernCheckoutPage;
+modernCheckoutPage=function(){
+  let page=bareProductCouponCheckoutBase();
+  page=page.replace(/,amount=Math\.max\(0,subtotal\+shipping-discount\),buyer=/g,",productCoupon=read('bare_product_coupon')||{},couponDiscount=Math.max(0,Number(productCoupon.discount||0)||0),amount=Math.max(0,subtotal+shipping-discount-couponDiscount),buyer=");
+  page=page.replace("write('bare_pending_order',{orderId,items,amount,buyer","write('bare_pending_order',{orderId,items,amount,coupon:productCoupon,buyer");
+  let couponScript=bareProductCouponCheckoutScript;
+  couponScript=couponScript.replace(/const products=await Promise\.all\([\s\S]*?matched\.push\(product\.name\)\}\)/,"const result=await fetch('/api/products/slug/__coupon__-'+encodeURIComponent(code),{cache:'no-store'}).then(async r=>{const data=await r.json();if(!r.ok)throw new Error(data.message||'사용할 수 없는 할인코드입니다.');return data});let discount=0,matched=[];(result.matches||[]).forEach(rule=>{items.forEach(item=>{if(String(item.title||'')!==String(rule.name||''))return;const price=Number(item.price||0)*Number(item.quantity||1),cut=rule.type==='percent'?Math.round(price*Math.min(Number(rule.value||0),100)/100):Math.min(Number(rule.value||0),price);discount+=cut;matched.push(rule.name)})})");
+  couponScript=couponScript.replace('const data={code,discount,products:matched};','const previous=read("bare_product_coupon")||{},data={code,discount,products:matched};').replace('total=Math.max(0,current-discount)','total=Math.max(0,current+Number(previous.discount||0)-discount)');
+  for(const [attr,value] of [['class','product-code-box'],['class','product-code-row'],['class','product-code-message'],['id','product-coupon-code'],['id','product-coupon-apply'],['id','product-coupon-message'],['placeholder','할인코드 입력'],['type','button']])couponScript=couponScript.replaceAll(attr+'="'+value+'"',attr+"='"+value+"'");
+  return page.replace('</head>',bareProductCouponCheckoutStyle+'</head>').replace('</body>',couponScript+'</body>');
+};
+
 // bare-set-2-size-label-v1
 const bareSet2SizeLabelScript='<script id="bare-set-2-size-label-script">(()=>{const route="#product-db-set-2";let timer=0;function sync(){if(location.hash!==route)return;const block=document.querySelector(\'.product-options [data-option-group="back"]\');if(!block)return;const label=block.querySelector("label"),buttons=block.querySelector(".size-buttons"),help=block.querySelector(".option-help");if(label)label.textContent="SIZE";if(buttons)buttons.setAttribute("aria-label","SIZE 선택");if(help)help.textContent="[필수] SIZE 선택"}function queue(){clearTimeout(timer);timer=setTimeout(sync,40)}new MutationObserver(queue).observe(document.querySelector(".product-options")||document.body,{childList:true,subtree:true});addEventListener("hashchange",queue);[100,400,1000].forEach(delay=>setTimeout(sync,delay))})();</script>';
 const bareSet2SizeLabelBase=patchHtml;
