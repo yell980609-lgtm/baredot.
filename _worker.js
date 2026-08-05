@@ -1367,6 +1367,17 @@ patchHtml=function(html){
     .replace('</body>',bareSet2SizeLabelScript+'</body>');
 };
 
+// bare-home-priority-black-cards-v2
+const bareHomePriorityBlackCardsStyle='<style id="bare-home-priority-black-cards-style">.shop-section .product-card:is([href="#product-db-libbed-cover-up-sleeveless-copy-364550"],[href="#product-db-libbed-cover-up-sleeveless-copy-354305"],[href="#product-db-set-2"],[href="#product-db-t-libbed-sleeveless"]) .product-info{min-height:106px;padding:14px 12px 16px!important;background:#050505;color:#fff!important}.shop-section .product-card:is([href="#product-db-libbed-cover-up-sleeveless-copy-364550"],[href="#product-db-libbed-cover-up-sleeveless-copy-354305"],[href="#product-db-set-2"],[href="#product-db-t-libbed-sleeveless"]) :is(.product-name,.product-price,.product-sale-price,.product-discount-link){color:#fff!important}.shop-section .product-card:is([href="#product-db-libbed-cover-up-sleeveless-copy-364550"],[href="#product-db-libbed-cover-up-sleeveless-copy-354305"],[href="#product-db-set-2"],[href="#product-db-t-libbed-sleeveless"]) .product-list-price{color:rgba(255,255,255,.58)!important;text-decoration-color:rgba(255,255,255,.58)!important}@media(max-width:860px){.shop-section .product-card:is([href="#product-db-libbed-cover-up-sleeveless-copy-364550"],[href="#product-db-libbed-cover-up-sleeveless-copy-354305"],[href="#product-db-set-2"],[href="#product-db-t-libbed-sleeveless"]) .product-info{min-height:100px;padding:13px 10px 15px!important}}</style>';
+const bareHomePriorityBlackCardsScript='<script id="bare-home-priority-black-cards-script">(()=>{const priority=["#product-db-libbed-cover-up-sleeveless-copy-364550","#product-db-libbed-cover-up-sleeveless-copy-354305","#product-db-set-2","#product-db-t-libbed-sleeveless"];let syncing=false,timer=0;function sync(){if(syncing)return;const row=document.querySelector(".shop-section .product-row");if(!row)return;const cards=[...row.querySelectorAll(":scope>.product-card")],byHref=new Map(cards.map(card=>[card.getAttribute("href"),card])),ordered=priority.map(href=>byHref.get(href)).filter(Boolean),rest=cards.filter(card=>!priority.includes(card.getAttribute("href")));if(!ordered.length)return;const next=[...ordered,...rest];if(next.every((card,index)=>card===cards[index]))return;syncing=true;next.forEach(card=>row.appendChild(card));syncing=false}function queue(){clearTimeout(timer);timer=setTimeout(sync,30)}new MutationObserver(queue).observe(document.querySelector(".shop-section .product-row")||document.body,{childList:true,subtree:false});document.addEventListener("DOMContentLoaded",queue);[100,400,1000,1800].forEach(delay=>setTimeout(sync,delay))})();</script>';
+const bareHomePriorityBlackCardsBase=patchHtml;
+patchHtml=function(html){
+  return bareHomePriorityBlackCardsBase(html)
+    .replace(/<style id="bare-home-featured-product-cards-style">[\s\S]*?<\/style>/g,'')
+    .replace('</head>',bareHomePriorityBlackCardsStyle+'</head>')
+    .replace('</body>',bareHomePriorityBlackCardsScript+'</body>');
+};
+
 
 // bare-fix-men-custom-option-click-v1
 const bareMenCustomOptionBase=patchHtml;
