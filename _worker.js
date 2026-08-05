@@ -1382,3 +1382,21 @@ patchHtml=function(html){
 // bare-fix-men-custom-option-click-v1
 const bareMenCustomOptionBase=patchHtml;
 patchHtml=function(html){return bareMenCustomOptionBase(html).replace("matchesSelection=(item,selection)=>groups.every(group=>!selection[group.key]||String((item.options&&item.options[group.key])||item[group.key]||'')===selection[group.key])","matchesSelection=(item,selection)=>groups.every(group=>!selection[group.key]||(group.key.startsWith('custom-')&&!((item.options&&item.options[group.key])||item[group.key]))||String((item.options&&item.options[group.key])||item[group.key]||'')===selection[group.key])")};
+
+// bare-admin-option-labels-on-storefront-v2
+const bareAdminOptionLabelsBase=patchHtml;
+patchHtml=function(html){
+  return bareAdminOptionLabelsBase(html)
+    .replace(
+      "const variants=data.variants||[],groups=[['color','COLOR'],['back','BACK'],['size','SIZE']].map(([key,label])=>",
+      "const variants=data.variants||[],labels={color:'COLOR',back:'BACK',size:'SIZE'};(data.tags||[]).forEach(tag=>{const match=String(tag).match(/^option-label:(color|back|size):(.+)$/);if(match)labels[match[1]]=match[2]});const groups=[['color',labels.color],['back',labels.back],['size',labels.size]].map(([key,label])=>"
+    );
+};
+
+const bareAdminOptionGuideBase=adminProductsPage;
+adminProductsPage=function(env={}){
+  return bareAdminOptionGuideBase(env).replace(
+    '옵션명과 옵션값을 쉼표로 구분해 입력하세요. 예: 사이즈 / S-M, M-L',
+    '옵션명은 상품페이지에 그대로 표시됩니다. 옵션값은 쉼표로 구분하세요. 예: 남자사이즈 / L, XL, 2XL'
+  );
+};
