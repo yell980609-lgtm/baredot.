@@ -1389,7 +1389,7 @@ patchHtml=function(html){
   return bareAdminOptionLabelsBase(html)
     .replace(
       "const variants=data.variants||[],groups=[['color','COLOR'],['back','BACK'],['size','SIZE']].map(([key,label])=>",
-      "const variants=data.variants||[],labels={color:'COLOR',back:'BACK',size:'SIZE'};(data.tags||[]).forEach(tag=>{const match=String(tag).match(/^option-label:(color|back|size):(.+)$/);if(match)labels[match[1]]=match[2]});const groups=[['color',labels.color],['back',labels.back],['size',labels.size]].map(([key,label])=>"
+      "const variants=data.variants||[],labels={color:'COLOR',back:'BACK',size:'SIZE'};(data.tags||[]).forEach(tag=>{const match=String(tag).match(/^option-label:(color|back|size):(.+)$/);if(match)labels[match[1]]=match[2]});if(data.slug==='libbed-cover-up-sleeveless-copy-364550'&&labels.back==='여성사이즈')labels.back='여자사이즈';const groups=[['color',labels.color],['back',labels.back],['size',labels.size]].map(([key,label])=>"
     );
 };
 
