@@ -1488,4 +1488,8 @@ simpleLoginPage=function(){return bareKoreanMemberLabelsBaseLoginPage().replace(
 const bareKoreanMemberLabelsBaseSignupPage=signupPage;
 signupPage=function(){return bareKoreanMemberLabelsBaseSignupPage().replace('>LOGIN</a></header>','>LOGIN · 로그인</a></header>')};
 const bareKoreanMemberLabelsBasePatchHtml=patchHtml;
-patchHtml=function(html){return bareKoreanMemberLabelsBasePatchHtml(html).replace('</head>',bareKoreanMemberLabelsStyle+'</head>').replace('</body>',bareKoreanMemberLabelsScript+'</body>')};
+const barePopupRecoveryLinksStyle='<style id="bare-popup-recovery-links-style">.popup-recovery-links{display:flex;align-items:center;justify-content:center;gap:12px;margin:2px 0 4px}.popup-recovery-links button{border:0;border-bottom:1px solid #777;background:transparent;color:#555;padding:3px 0;font:800 11px/1.2 Pretendard,"Noto Sans KR",sans-serif;cursor:pointer}</style>';
+patchHtml=function(html){return bareKoreanMemberLabelsBasePatchHtml(html)
+  .replace('</head>',bareKoreanMemberLabelsStyle+bareMemberRecoveryStyle+barePopupRecoveryLinksStyle+'</head>')
+  .replace('<p class="member-note">아이디와 비밀번호로 로그인해주세요.</p>','<div class="popup-recovery-links"><button class="soft-action" type="button">아이디 찾기</button><button class="soft-action" type="button">비밀번호 찾기</button></div><p class="member-note">아이디와 비밀번호로 로그인해주세요.</p>')
+  .replace('</body>',bareMemberRecoveryMarkup+bareMemberRecoveryScript+bareKoreanMemberLabelsScript+'</body>')};
