@@ -214,14 +214,15 @@ async function memberRecoveryApi(request,env){
   if(verifiedPhone!==phone)return otpResponse({message:'본인인증이 만료됐습니다. 인증번호를 다시 받아주세요.'},401);
   const key=String(env.SUPABASE_SERVICE_ROLE_KEY).replace(/\s/g,''),usersResponse=await fetch(supabaseUrl(env)+'/auth/v1/admin/users?page=1&per_page=1000',{headers:{apikey:key,Authorization:'Bearer '+key}}),usersData=await usersResponse.json().catch(()=>({}));
   if(!usersResponse.ok)return otpResponse({message:usersData.message||'회원 정보를 확인하지 못했습니다.'},502);
-  const users=(usersData.users||[]).filter(user=>normalizePhone(user.user_metadata?.phone)===phone&&String(user.user_metadata?.login_id||'').trim());
+  const recoveryLoginId=user=>{const metadata=user.user_metadata||{},provider=String(metadata.provider||'').toLowerCase(),authEmail=String(user.email||'').trim();if(provider==='kakao'||provider==='naver'||/@social\.baredot\.kr$/i.test(authEmail))return'';return String(metadata.login_id||metadata.email||metadata.contact_email||(!/@login\.baredot\.kr$/i.test(authEmail)?authEmail:'')).trim()};
+  const users=(usersData.users||[]).filter(user=>normalizePhone(user.user_metadata?.phone)===phone&&recoveryLoginId(user));
   if(!users.length)return otpResponse({message:'해당 휴대전화번호로 가입한 일반 회원을 찾지 못했습니다.'},404);
-  const loginIds=users.map(user=>String(user.user_metadata.login_id));
+  const loginIds=[...new Set(users.map(recoveryLoginId))];
   if(action==='find')return otpResponse({ok:true,loginIds});
   if(action!=='reset')return otpResponse({message:'요청 내용을 확인해주세요.'},400);
   const loginId=String(body?.loginId||'').trim(),password=String(body?.password||'');
   if(password.length<6)return otpResponse({message:'새 비밀번호는 6자 이상 입력해주세요.'},400);
-  const user=users.find(item=>String(item.user_metadata?.login_id||'')===loginId);
+  const user=users.find(item=>recoveryLoginId(item)===loginId);
   if(!user)return otpResponse({message:'인증한 휴대전화번호와 아이디가 일치하지 않습니다.'},404);
   const updateResponse=await fetch(supabaseUrl(env)+'/auth/v1/admin/users/'+encodeURIComponent(user.id),{method:'PUT',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({password})}),updated=await updateResponse.json().catch(()=>({}));
   if(!updateResponse.ok)return otpResponse({message:updated.message||'비밀번호를 변경하지 못했습니다.'},502);
