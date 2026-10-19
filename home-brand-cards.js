@@ -10,7 +10,8 @@ export const homeBrandCardsStyle=`<style id="bare-home-brand-cards-style">
 export function renderHomeBrandCards(signature,cards){
  if(!signature||!Array.isArray(cards)||cards.length!==2||cards.some(card=>!card.src))return;
  let section=document.getElementById('home-brand-cards');
- if(!section){section=document.createElement('section');section.id='home-brand-cards';section.className='home-brand-cards';section.setAttribute('aria-label','BARE. 브랜드 카드');section.innerHTML='<div class="wrap"><div class="home-brand-cards-grid"></div></div>';signature.after(section)}
+ if(!section){section=document.createElement('section');section.id='home-brand-cards';section.className='home-brand-cards';section.setAttribute('aria-label','BARE. 브랜드 카드');section.innerHTML='<div class="wrap"><div class="home-brand-cards-grid"></div></div>';}
+ signature.closest('.home-view').appendChild(section);
  const fragment=document.createDocumentFragment();
  for(const card of cards){const figure=document.createElement('figure');figure.className='home-brand-card';const image=document.createElement('img');image.src=card.src;image.alt=card.alt;image.width=card.width||1241;image.height=card.height||1748;image.loading='lazy';image.decoding='async';figure.appendChild(image);fragment.appendChild(figure)}
  section.querySelector('.home-brand-cards-grid').replaceChildren(fragment);
