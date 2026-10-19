@@ -1,11 +1,16 @@
 export const homeSignatureStyle=`<style id="bare-home-signature-style">
-.home-signature{padding:0 0 64px;background:#fff;color:#050505}
+.home-signature{padding:36px 0 44px;margin-bottom:64px;background:#050505;color:#fff}
 .home-view .home-signature>.wrap{width:min(1120px,calc(100% - 36px))!important;margin-inline:auto}
 .home-signature-head{margin-bottom:24px}
-.home-signature h2{display:inline-block;margin:0;padding:12px 20px;background:#050505;color:#fff;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em}
-.home-signature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.home-signature-grid .product-card{min-width:0;width:100%}
-@media(max-width:860px){.home-signature{padding-bottom:44px}.home-view .home-signature>.wrap{width:calc(100% - 32px)!important}.home-signature-head{margin-bottom:18px}.home-signature h2{padding:10px 14px;font-size:26px}.home-signature-grid{gap:6px}}
+.home-signature h2{margin:0;padding:0;color:#fff;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em}
+.home-signature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.home-signature-grid .product-card{min-width:0;width:100%;color:#fff}
+.home-signature-grid .product-card:first-child{grid-column:2}
+.home-signature .product-name,.home-signature .product-price,.home-signature .product-sale-price{color:#fff!important}
+.home-signature .product-list-price{color:#aaa!important}
+.home-signature .product-discount-badge{background:#fff!important;color:#050505!important}
+.home-signature .product-card:focus-visible{outline:2px solid #fff;outline-offset:4px}
+@media(max-width:860px){.home-signature{padding:26px 0 32px;margin-bottom:44px}.home-view .home-signature>.wrap{width:calc(100% - 32px)!important}.home-signature-head{margin-bottom:18px}.home-signature h2{font-size:26px}.home-signature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-signature-grid .product-card:first-child{grid-column:auto}}
 </style>`;
 // Reuse storefront cards so price, sale rate, stock state and product links stay consistent.
 export function renderHomeSignature(products,card){
