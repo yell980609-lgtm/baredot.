@@ -1,3 +1,4 @@
+import {cancelAdminOrder,cancellationAdminScript} from './order-cancellation.js';
 import {withChannelTalk} from './channel-talk.js';
 import {analyticsApi,analyticsPage,trackingScript} from './analytics.js';
 const logoUrl='https://framerusercontent.com/images/a3Pvzk5vHkS6uAT6JGV5VgPpTZk.png?width=1080&height=1080';
@@ -1585,3 +1586,23 @@ const shopFirstPaintBase=patchHtml;
 patchHtml=function(html){return shopFirstPaintBase(html).replace('</head>',shopFirstPaintStyle+'</head>').replace(/(<section class="shop-section"[\s\S]*?<div class="product-row")[^>]*>[\s\S]*?(<\/div><\/div><\/section>)/,(_,start,end)=>start+' aria-busy="true" aria-label="상품 목록">'+Array.from({length:4},()=>'<div class="shop-loading-tile" aria-hidden="true"></div>').join('')+'<span class="shop-loading-label" role="status">상품을 불러오는 중입니다.</span>'+end)};
 
 export default {async fetch(request,env,ctx){return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}};
+
+// Only the dedicated endpoint can mark an order canceled; it verifies the payment first.
+const adminApiBeforeCancellation=adminApi;
+adminApi=async function(request,env,url){
+ const cancel=url.pathname.match(/^\/api\/admin\/orders\/([^/]+)\/cancel$/);
+ if(cancel)return cancelAdminOrder(request,env,decodeURIComponent(cancel[1]),{requireAdmin,rest:supabaseRest});
+ if(request.method==='PATCH'&&/^\/api\/admin\/orders\/[^/]+$/.test(url.pathname)){
+  try{
+   await requireAdmin(request,env);
+   const body=await request.clone().json();
+   if(body.fulfillment_status==='cancelled')return jsonResponse({message:'주문 취소·환불 버튼을 이용해주세요.'},409);
+   const id=decodeURIComponent(url.pathname.split('/').pop());
+   const rows=await supabaseRest(env,'orders?order_id=eq.'+encodeURIComponent(id)+'&select=fulfillment_status,payment_status&limit=1');
+   if(rows?.[0]?.fulfillment_status==='cancelled'||rows?.[0]?.payment_status==='cancelled')return jsonResponse({message:'취소된 주문의 상태는 변경할 수 없습니다.'},409);
+  }catch{return jsonResponse({message:'주문 상태와 관리자 권한을 확인하지 못했습니다.'},403)}
+ }
+ return adminApiBeforeCancellation(request,env,url);
+};
+const adminOrdersBeforeCancellation=adminOrdersPage;
+adminOrdersPage=function(env={}){return adminOrdersBeforeCancellation(env).replace('supabase.auth.getSession().then',cancellationAdminScript+'supabase.auth.getSession().then')};
