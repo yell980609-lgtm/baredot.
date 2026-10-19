@@ -1,3 +1,4 @@
+import {homeGalleryApi,homeGalleryAdminPage} from './home-gallery-settings.js';
 import {homeHowBaredStyle,homeHowBaredScript} from './home-how-bared.js';
 import {cancelAdminOrder,cancellationAdminScript} from './order-cancellation.js';
 import {withChannelTalk} from './channel-talk.js';
@@ -1586,7 +1587,7 @@ const shopFirstPaintStyle='<style id="bare-shop-first-paint">.shop-section .prod
 const shopFirstPaintBase=patchHtml;
 patchHtml=function(html){return shopFirstPaintBase(html).replace('</head>',shopFirstPaintStyle+'</head>').replace(/(<section class="shop-section"[\s\S]*?<div class="product-row")[^>]*>[\s\S]*?(<\/div><\/div><\/section>)/,(_,start,end)=>start+' aria-busy="true" aria-label="상품 목록">'+Array.from({length:4},()=>'<div class="shop-loading-tile" aria-hidden="true"></div>').join('')+'<span class="shop-loading-label" role="status">상품을 불러오는 중입니다.</span>'+end)};
 
-export default {async fetch(request,env,ctx){return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}};
+export default {async fetch(request,env,ctx){const path=new URL(request.url).pathname;if(path==='/admin/home-gallery')return new Response(homeGalleryAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});if(path==='/api/site/home-gallery')return homeGalleryApi(request,env,{base:supabaseUrl,fetch,requireAdmin,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket});return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}};
 
 // Only the dedicated endpoint can mark an order canceled; it verifies the payment first.
 const adminApiBeforeCancellation=adminApi;
@@ -1613,3 +1614,8 @@ patchHtml=function(html){return patchHtmlBeforeCompactTopbar(html).replace('</he
 
 const patchHtmlBeforeHomeHowBared=patchHtml;
 patchHtml=function(html){return patchHtmlBeforeHomeHowBared(html).replace('</head>',homeHowBaredStyle+'</head>').replace('</body>',homeHowBaredScript+'</body>')};
+
+const adminApiBeforeHomeGallery=adminApi;
+adminApi=async function(request,env,url){if(url.pathname==='/api/admin/site/home-gallery')return homeGalleryApi(request,env,{base:supabaseUrl,fetch,requireAdmin,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket},true);return adminApiBeforeHomeGallery(request,env,url)};
+const adminProductsBeforeHomeGallery=adminProductsPage;
+adminProductsPage=function(env={}){return adminProductsBeforeHomeGallery(env).replace('<a href="#hero-editor" id="hero-editor-nav">','<a href="/admin/home-gallery">홈 착용 사진</a><a href="#hero-editor" id="hero-editor-nav">')};
