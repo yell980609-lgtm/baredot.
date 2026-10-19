@@ -1,3 +1,4 @@
+import {slimHeaderStyle} from './header-style.js';
 import {cancelAdminOrder,cancellationAdminScript} from './order-cancellation.js';
 import {withChannelTalk} from './channel-talk.js';
 import {analyticsApi,analyticsPage,trackingScript} from './analytics.js';
@@ -1606,3 +1607,6 @@ adminApi=async function(request,env,url){
 };
 const adminOrdersBeforeCancellation=adminOrdersPage;
 adminOrdersPage=function(env={}){return adminOrdersBeforeCancellation(env).replace('supabase.auth.getSession().then',cancellationAdminScript+'supabase.auth.getSession().then')};
+
+const patchHtmlBeforeSlimHeader=patchHtml;
+patchHtml=function(html){return patchHtmlBeforeSlimHeader(html).replace('</head>',slimHeaderStyle+'</head>')};
