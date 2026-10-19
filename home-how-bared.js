@@ -4,7 +4,7 @@ export const homeHowBaredStyle=`<style id="bare-home-how-bared-style">
 .home-how-bared-head{margin-bottom:24px}
 .home-view .shop-head h2,.home-how-bared h2{margin:0;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em;transform:none!important;text-align:left}
 .home-how-bared-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.home-how-bared-card{display:block;aspect-ratio:1;overflow:hidden;background:#f5f5f5}
+.home-how-bared-card{display:block;aspect-ratio:4/5;overflow:hidden;background:#f5f5f5}
 .home-how-bared-card img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .2s}
 .home-how-bared-card:focus-visible{outline:3px solid #111;outline-offset:3px}
 .home-how-bared-empty{margin:0;color:#777;font:14px/1.6 system-ui}
@@ -31,7 +31,7 @@ export const homeHowBaredScript=`<script id="bare-home-how-bared-script">(()=>{
     const href=link||(product.slug?'#product-db-'+encodeURIComponent(product.slug):'https://www.instagram.com/iambared_official/'),key=image+'|'+href;if(seen.has(key))continue;seen.add(key);
     const card=document.createElement('a');card.className='home-how-bared-card';card.href=href;card.setAttribute('aria-label',product.name+' 착용 사진 '+(link?'보기 (새 창)':'및 상품 보기'));
     if(link&&!internal){card.target='_blank';card.rel='noopener noreferrer'}
-    const img=document.createElement('img');img.src=image;img.alt=product.name+' 착용 사진';img.loading='lazy';img.decoding='async';img.width=600;img.height=600;card.appendChild(img);fragment.appendChild(card);count++;
+    const img=document.createElement('img');img.src=image;img.alt=product.name+' 착용 사진';img.loading='lazy';img.decoding='async';img.width=1080;img.height=1350;card.appendChild(img);fragment.appendChild(card);count++;
    }
   }
   grid.replaceChildren(fragment);grid.removeAttribute('aria-busy');
