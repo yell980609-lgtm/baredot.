@@ -1606,3 +1606,6 @@ adminApi=async function(request,env,url){
 };
 const adminOrdersBeforeCancellation=adminOrdersPage;
 adminOrdersPage=function(env={}){return adminOrdersBeforeCancellation(env).replace('supabase.auth.getSession().then',cancellationAdminScript+'supabase.auth.getSession().then')};
+
+const patchHtmlBeforeCompactTopbar=patchHtml;
+patchHtml=function(html){return patchHtmlBeforeCompactTopbar(html).replace('</head>','<style id="bare-compact-topbar">:root{--topbar-height:38px!important}@media(max-width:860px){:root{--topbar-height:31px!important}.mobile-menu-toggle{top:calc(var(--promo-height) + .5px)!important;height:30px!important}}</style></head>')};
