@@ -2,10 +2,10 @@
 export const homeBrandCardsStyle=`<style id="bare-home-brand-cards-style">
 .home-brand-cards{padding:0 0 64px;background:#fff}
 .home-view .home-brand-cards>.wrap{width:min(1120px,calc(100% - 36px))!important;margin-inline:auto}
-.home-brand-cards-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:start}
+.home-brand-cards-grid{display:grid;width:70%;margin-inline:auto;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;align-items:start}
 .home-brand-card{margin:0;min-width:0}
 .home-brand-card img{display:block;width:100%;height:auto}
-@media(max-width:860px){.home-brand-cards{padding-bottom:44px}.home-view .home-brand-cards>.wrap{width:calc(100% - 32px)!important}.home-brand-cards-grid{gap:6px}}
+@media(max-width:860px){.home-brand-cards{padding-bottom:44px}.home-view .home-brand-cards>.wrap{width:calc(100% - 32px)!important}.home-brand-cards-grid{gap:4.2px}}
 </style>`;
 export function renderHomeBrandCards(signature,cards){
  if(!signature||!Array.isArray(cards)||cards.length!==2||cards.some(card=>!card.src))return;
