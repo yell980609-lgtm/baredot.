@@ -1,5 +1,5 @@
 export const homeShopCarouselStyle=`<style id="bare-home-shop-carousel-style">
-.home-view .shop-section .shop-head{flex-direction:row;align-items:center;gap:12px!important;flex-wrap:wrap}
+.home-view .shop-section .shop-head{flex-direction:row;align-items:center;justify-content:center;gap:12px!important;flex-wrap:wrap}
 .home-view .shop-section .shop-tabs{width:auto;margin:0}
 .home-shop-carousel{position:relative}
 .home-view .shop-section .home-shop-carousel .product-row{display:flex!important;flex-wrap:nowrap!important;gap:6px!important;margin:0!important;padding:0 0 6px!important;width:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}

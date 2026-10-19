@@ -4,7 +4,7 @@ export const homeHowBaredStyle=`<style id="bare-home-how-bared-style">
 .home-how-bared-head{margin-bottom:24px}
 .home-view .shop-head h2,.home-how-bared h2{margin:0;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em;transform:none!important;text-align:left}
 .home-how-bared h2{font-size:clamp(14px,1.7vw,24px);text-transform:none}
-.home-view h2.home-box-heading{display:inline-block;width:fit-content;max-width:100%;margin:0;padding:10px 16px;background:#050505;color:#fff;font:900 clamp(14px,1.7vw,24px)/1 InterDisplay,Pretendard,sans-serif!important;letter-spacing:-.035em;text-align:left;transform:none!important;text-transform:none}
+.home-view h2.home-box-heading{display:block;width:fit-content;max-width:100%;margin:0 auto;padding:10px 16px;background:#050505;color:#fff;font:900 clamp(14px,1.7vw,24px)/1 InterDisplay,Pretendard,sans-serif!important;letter-spacing:-.035em;text-align:center;transform:none!important;text-transform:none}
 .home-how-bared-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .home-how-bared-card{display:block;aspect-ratio:4/5;overflow:hidden;background:#f5f5f5}
 .home-how-bared-card img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .2s}
