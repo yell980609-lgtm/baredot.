@@ -1631,3 +1631,6 @@ patchHtml=function(html){return patchHtmlBeforeHomeSignature(html).replace('</he
 
 const patchHtmlBeforeHomeBrandCards=patchHtml;
 patchHtml=function(html){return patchHtmlBeforeHomeBrandCards(html).replace('</head>',homeBrandCardsStyle+'</head>')};
+
+const patchHtmlBeforeBoxedHomeTitles=patchHtml;
+patchHtml=function(html){return patchHtmlBeforeBoxedHomeTitles(html).replace('<h2>SHOP IN</h2><nav class="shop-tabs"><a href="#shop">New Arrivals</a></nav>','<h2 class="home-box-heading">NEW ARRIVALS</h2>')};

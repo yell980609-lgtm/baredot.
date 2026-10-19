@@ -12,7 +12,7 @@ export const homeShopCarouselStyle=`<style id="bare-home-shop-carousel-style">
 </style>`;
 export const homeShopCarouselScript=`<script id="bare-home-shop-carousel-script">(()=>{
  const row=document.querySelector('.home-view .shop-section .product-row');if(!row||row.closest('.home-shop-carousel'))return;
- const wrapper=document.createElement('div');wrapper.className='home-shop-carousel';wrapper.setAttribute('role','region');wrapper.setAttribute('aria-label','SHOP IN 신상품');row.before(wrapper);wrapper.appendChild(row);row.id='home-shop-carousel-list';row.tabIndex=0;
+ const wrapper=document.createElement('div');wrapper.className='home-shop-carousel';wrapper.setAttribute('role','region');wrapper.setAttribute('aria-label','NEW ARRIVALS 신상품');row.before(wrapper);wrapper.appendChild(row);row.id='home-shop-carousel-list';row.tabIndex=0;
  const buttons={};
  function move(direction){const card=row.querySelector('.product-card');if(!card)return;const gap=parseFloat(getComputedStyle(row).columnGap)||6;row.scrollBy({left:direction*(card.getBoundingClientRect().width+gap),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'})}
  for(const [name,direction,label]of[['previous',-1,'이전 상품 보기'],['next',1,'다음 상품 보기']]){const button=document.createElement('button');button.type='button';button.className='home-shop-arrow '+name;button.setAttribute('aria-label',label);button.setAttribute('aria-controls',row.id);button.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="'+(direction<0?'M15 5l-7 7 7 7':'M9 5l7 7-7 7')+'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';button.addEventListener('click',()=>move(direction));buttons[name]=button;wrapper.appendChild(button)}
