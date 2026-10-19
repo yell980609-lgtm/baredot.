@@ -2,7 +2,7 @@ export const homeHowBaredStyle=`<style id="bare-home-how-bared-style">
 .home-how-bared{padding:0 0 72px;background:#fff;color:#050505}
 .home-how-bared .wrap{width:min(1120px,calc(100% - 36px));margin-inline:auto}
 .home-how-bared-head{margin-bottom:24px}
-.home-how-bared h2{margin:0;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em}
+.home-view .shop-head h2,.home-how-bared h2{margin:0;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em;transform:none!important;text-align:left}
 .home-how-bared-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
 .home-how-bared-card{display:block;aspect-ratio:1;overflow:hidden;background:#f5f5f5}
 .home-how-bared-card img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .2s}
