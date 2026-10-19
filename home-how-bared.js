@@ -10,7 +10,7 @@ export const homeHowBaredStyle=`<style id="bare-home-how-bared-style">
 .home-how-bared-empty{margin:0;color:#777;font:14px/1.6 system-ui}
 @media(hover:hover){.home-how-bared-card:hover img{transform:scale(1.025)}}
 @media(prefers-reduced-motion:reduce){.home-how-bared-card img{transition:none}}
-@media(max-width:860px){.home-how-bared{padding-bottom:44px}.home-how-bared .wrap{width:calc(100% - 32px)}.home-how-bared-head{margin-bottom:18px}.home-how-bared-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}}
+@media(max-width:860px){.home-view .shop-section>.wrap{width:calc(100% - 32px)!important}.home-view .shop-section .product-row{margin-inline:0!important;padding-inline:0!important}.home-how-bared{padding-bottom:44px}.home-how-bared .wrap{width:calc(100% - 32px)}.home-how-bared-head{margin-bottom:18px}.home-how-bared-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}}
 </style>`;
 export const homeHowBaredScript=`<script id="bare-home-how-bared-script">(()=>{
  const shop=document.querySelector('.home-view .shop-section');if(!shop)return;
