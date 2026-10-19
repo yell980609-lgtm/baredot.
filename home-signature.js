@@ -1,7 +1,7 @@
 export const homeSignatureStyle=`<style id="bare-home-signature-style">
 .home-signature{padding:36px 0 44px;margin-bottom:64px;background:#050505;color:#fff}
 .home-view .home-signature>.wrap{width:min(1120px,calc(100% - 36px))!important;margin-inline:auto}
-.home-signature-head{margin-bottom:24px}
+.home-signature-head{margin-bottom:24px;text-align:center}
 .home-signature h2{margin:0;padding:0;color:#fff;font:900 clamp(28px,3.4vw,48px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em}
 .home-signature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .home-signature-grid .product-card{min-width:0;width:100%;color:#fff}
