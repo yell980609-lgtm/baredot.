@@ -30,5 +30,27 @@ export async function purchaseReviewApi(request,env,{rest}){
 export async function withPurchaseReviewCounts(response,env,{rest}){if(!response.ok)return response;let data;try{data=await response.clone().json();if(!Array.isArray(data.products))return response;const counts=await rest(env,'rpc/bare_public_review_counts',{method:'POST',body:'{}'});const bySlug=new Map(counts.map(r=>[r.product_slug,Number(r.review_count||0)]));return json({...data,products:data.products.map(p=>({...p,purchase_review_count:bySlug.get(p.slug)||0}))})}catch{return response}}
 export const purchaseReviewAdminScript=String.raw`
 const openOrderBeforePurchaseReview=openOrder;
-openOrder=function(order){openOrderBeforePurchaseReview(order);const row=document.querySelector('#drawer-body .save-row');if(!row)return;const button=document.createElement('button');button.type='button';button.className='btn secondary';button.textContent='리뷰 작성 링크 복사';button.disabled=order.fulfillment_status!=='done'||order.payment_status!=='paid';row.prepend(button);button.addEventListener('click',async()=>{button.disabled=true;try{const data=await api('/api/admin/orders/'+encodeURIComponent(order.order_id)+'/review-link',{method:'POST'});try{await navigator.clipboard.writeText(data.url);status('리뷰 링크를 복사했습니다. 링크는 30일간 유효하며 해당 구매자에게만 전달해주세요.')}catch{window.prompt('해당 구매자 전용 리뷰 링크입니다. 복사해서 전달해주세요. (30일 유효)',data.url)}}catch(e){alert(e.message)}finally{button.disabled=false}})};
+openOrder=function(order){
+ openOrderBeforePurchaseReview(order);const row=document.querySelector('#drawer-body .save-row');if(!row)return;
+ const eligible=order.fulfillment_status==='done'&&order.payment_status==='paid';
+ const button=document.createElement('button');button.type='button';button.className='btn secondary';button.textContent='리뷰 작성 링크 복사';button.disabled=!eligible;row.prepend(button);
+ const panel=document.createElement('section');panel.id='review-link-panel';panel.style.cssText='margin:16px 0;padding:16px;border:1px solid #ddd;background:#fafafa;overflow-wrap:anywhere';
+ const message=document.createElement('p');message.id='review-link-status';message.setAttribute('role','status');message.setAttribute('aria-live','polite');message.style.margin='0';message.textContent=eligible?'버튼을 누르면 구매자 전용 리뷰 링크가 여기에 표시됩니다.':'결제완료·배송완료 상태의 주문에서만 리뷰 링크를 만들 수 있습니다.';panel.appendChild(message);row.before(panel);
+ button.addEventListener('click',async()=>{
+  button.disabled=true;button.textContent='리뷰 링크 생성 중…';message.style.color='';message.textContent='구매자 전용 링크를 생성하고 있습니다.';
+  panel.querySelector('.review-link-result')?.remove();const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+  try{
+   const data=await api('/api/admin/orders/'+encodeURIComponent(order.order_id)+'/review-link',{method:'POST',signal:controller.signal});clearTimeout(timer);
+   const url=new URL(data.url);if(url.origin!==location.origin||url.pathname!=='/review'||!url.hash.startsWith('#token='))throw Error('리뷰 링크를 확인하지 못했습니다. 다시 시도해주세요.');
+   const result=document.createElement('div');result.className='review-link-result';const label=document.createElement('label');label.textContent='구매자 전용 리뷰 링크';label.style.cssText='display:block;margin-top:12px;font-size:12px';
+   const input=document.createElement('input');input.id='review-link-value';input.readOnly=true;input.value=url.href;input.style.cssText='display:block;width:100%;min-width:0;margin:6px 0 12px;padding:10px;border:1px solid #bbb;background:white;font:12px/1.5 system-ui';label.appendChild(input);result.appendChild(label);
+   const actions=document.createElement('div');actions.style.cssText='display:flex;gap:8px;flex-wrap:wrap';const copy=document.createElement('button');copy.type='button';copy.className='btn secondary';copy.textContent='링크 복사';const open=document.createElement('a');open.className='btn';open.textContent='리뷰 작성 화면 열기';open.href=url.href;open.target='_blank';open.rel='noopener noreferrer';actions.append(copy,open);result.appendChild(actions);
+   const note=document.createElement('p');note.style.cssText='margin:12px 0 0;font-size:12px;color:#666';note.textContent='링크는 30일간 유효합니다. 해당 구매자에게만 전달해주세요. 실제 리뷰를 등록하면 상품에 공개됩니다.';result.appendChild(note);panel.appendChild(result);
+   message.textContent='리뷰 링크를 생성했습니다. 아래에서 복사하거나 작성 화면을 열 수 있습니다.';
+   async function copyLink(){try{if(!navigator.clipboard?.writeText)throw Error();await Promise.race([navigator.clipboard.writeText(input.value),new Promise((_,reject)=>setTimeout(()=>reject(Error('Clipboard timeout')),1500))]);if(!panel.isConnected)return;message.style.color='';message.textContent='리뷰 링크를 복사했습니다. 구매자에게 전달해주세요.';status('리뷰 링크를 복사했습니다.')}catch{if(!panel.isConnected)return;message.textContent='자동 복사가 제한되어 있습니다. 아래 링크를 선택한 뒤 Ctrl+C로 복사하거나 작성 화면을 열어주세요.';input.focus();input.select()}}
+   copy.addEventListener('click',copyLink);void copyLink();
+  }catch(e){message.style.color='#b42318';message.textContent=e.name==='AbortError'?'링크 생성 응답이 지연되고 있습니다. 잠시 후 다시 눌러주세요.':'리뷰 링크 생성 실패: '+e.message}
+  finally{clearTimeout(timer);button.disabled=false;button.textContent='리뷰 작성 링크 복사'}
+ });
+};
 `;
