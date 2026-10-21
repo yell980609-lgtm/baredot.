@@ -1,3 +1,4 @@
+import {signupKakaoMarketingConsent,signupAgreementControlsScript,kakaoMarketingConsentMarkup,kakaoMarketingConsentStyle} from './signup-marketing-consent.js';
 import {homeSignatureStyle,renderHomeSignature} from './home-signature.js';
 import {homeShopCarouselStyle,homeShopCarouselScript} from './home-shop-carousel.js';
 import {homeGalleryApi,homeGalleryAdminPage} from './home-gallery-settings.js';
@@ -49,8 +50,9 @@ async function createConfirmedMember(request,env){
   const body=await request.json().catch(()=>({})),loginId=String(body.loginId||'').trim(),password=String(body.password||''),metadata=body.metadata&&typeof body.metadata==='object'?body.metadata:{};
   if(loginId.length<3||password.length<6)return jsonResponse({message:'아이디는 3자 이상, 비밀번호는 6자 이상 입력해주세요.'},400);
   if(!body.terms||!body.privacy||!String(metadata.name||'').trim()||!String(metadata.phone||'').trim()||!String(metadata.address||'').trim()||!String(metadata.contact_email||'').trim())return jsonResponse({message:'필수정보와 필수 동의를 모두 확인해주세요.'},400);
+  const kakaoConsent=signupKakaoMarketingConsent(metadata);
   const authEmail=loginId.includes('@')?loginId:[...new TextEncoder().encode(loginId.toLowerCase())].map(value=>value.toString(16).padStart(2,'0')).join('')+'@login.baredot.kr';
-  const response=await fetch(supabaseUrl(env)+'/auth/v1/admin/users',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({email:authEmail,password,email_confirm:true,user_metadata:{...metadata,login_id:loginId}})}),data=await response.json().catch(()=>({}));
+  const response=await fetch(supabaseUrl(env)+'/auth/v1/admin/users',{method:'POST',headers:{apikey:key,Authorization:'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({email:authEmail,password,email_confirm:true,user_metadata:{...metadata,login_id:loginId,marketing_kakao:kakaoConsent.granted,marketing_kakao_consent_at:kakaoConsent.consented_at,marketing_kakao_consent_version:kakaoConsent.version,marketing_kakao_consent_text:kakaoConsent.text},app_metadata:{marketing_consent:{kakao:kakaoConsent}}})}),data=await response.json().catch(()=>({}));
   if(!response.ok){const duplicate=response.status===422||/already|registered|exists/i.test(String(data.message||''));return jsonResponse({message:duplicate?'이미 사용 중인 아이디입니다.':data.message||'회원가입을 완료하지 못했습니다.'},duplicate?409:response.status)}
   return jsonResponse({ok:true,email:authEmail});
 }
@@ -1631,3 +1633,11 @@ patchHtml=function(html){return patchHtmlBeforeHomeSignature(html).replace('</he
 
 const patchHtmlBeforeBoxedHomeTitles=patchHtml;
 patchHtml=function(html){return patchHtmlBeforeBoxedHomeTitles(html).replace('<h2>SHOP IN</h2><nav class="shop-tabs"><a href="#shop">New Arrivals</a></nav>','<h2 class="home-section-heading">NEW ARRIVALS</h2>')};
+
+const signupBeforeKakaoMarketing=signupPage;
+signupPage=function(){return signupBeforeKakaoMarketing()
+ .replace('</head>',kakaoMarketingConsentStyle+'</head>')
+ .replace('<div class="submit-wrap">',kakaoMarketingConsentMarkup+'<div class="submit-wrap">')
+ .replace('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.','필수 약관과 SMS·이메일·카카오톡 광고성 정보 수신(선택)에 모두 동의합니다.')
+ .replace("document.getElementById('agreeAll').addEventListener('change',event=>{form.querySelectorAll('input[type=\"checkbox\"]').forEach(input=>{input.checked=event.target.checked})});",signupAgreementControlsScript)
+ .replace("marketing_email:fd.has('emailMarketing')","marketing_email:fd.has('emailMarketing'),marketing_kakao:fd.has('kakaoMarketing')")};
