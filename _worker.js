@@ -1,3 +1,4 @@
+import {withProductReviewCounts} from './product-review-counts.js';
 import {startKakaoConsent,finishKakaoConsent,socialIdentity} from './kakao-signup-consent.js';
 import {withSignupDisclosures} from './signup-disclosures.js';
 import {signupKakaoMarketingConsent,signupAgreementControlsScript,kakaoMarketingConsentMarkup,kakaoMarketingConsentStyle} from './signup-marketing-consent.js';
@@ -1642,3 +1643,6 @@ signupPage=function(){return signupBeforeKakaoMarketing()
  .replace('이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.','필수 약관과 SMS·이메일·카카오톡 광고성 정보 수신(선택)에 모두 동의합니다.')
  .replace("document.getElementById('agreeAll').addEventListener('change',event=>{form.querySelectorAll('input[type=\"checkbox\"]').forEach(input=>{input.checked=event.target.checked})});",signupAgreementControlsScript)
  .replace("marketing_email:fd.has('emailMarketing')","marketing_email:fd.has('emailMarketing'),marketing_kakao:fd.has('kakaoMarketing')")};
+
+const patchHtmlBeforeProductReviewCounts=patchHtml;
+patchHtml=function(html){return withProductReviewCounts(patchHtmlBeforeProductReviewCounts(html))};

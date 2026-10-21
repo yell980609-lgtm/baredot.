@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import worker from '../_worker.js';import {productReviews} from '../product-review-counts.js';
+const legacy=[{text:'기존 후기'},{text:'기존 후기 2'}],managed={placement:'product-review',text:'등록 후기'};
+assert.equal(productReviews({slug:'new-top',images:[managed,{placement:'how-bared'}]},legacy).length,1);
+assert.equal(productReviews({slug:'new-top',images:[]},legacy).length,0);
+assert.equal(productReviews({slug:'im-bared-halter-top',images:[]},legacy).length,2);
+assert.equal(productReviews({slug:'im-bared-high-up-leggings',images:[managed]},legacy).length,1);
+assert.equal(productReviews({slug:'im-bared-halter-top',dynamic:true,reviews:[managed]},legacy).length,1);
+assert.equal(productReviews({slug:'unrelated',dynamic:true,reviews:[]},legacy).length,0);
+assert.equal(productReviews({},legacy,'#product-halter-70000').length,2);
+assert.equal(productReviews({},legacy,'#product-t-libbed-sleeveless').length,0);
+const response=await worker.fetch(new Request('https://bare.test/'),{ASSETS:{fetch:async()=>new Response(await readFile(new URL('../index.html',import.meta.url),'utf8'),{headers:{'content-type':'text/html'}})}},{});assert.equal(response.status,200);const html=await response.text();assert.equal((html.match(/id="bare-product-review-count-helpers"/g)||[]).length,1);assert.equal((html.match(/\+window.bareProductReviewCountMarkup\(/g)||[]).length,2);assert(html.includes('const reviews=window.bareProductReviewList(data,location.hash),list='));
+console.log('PASS managed/legacy/zero reviews, managed replacement, static men exclusion and both card render paths sharing detail counts');
