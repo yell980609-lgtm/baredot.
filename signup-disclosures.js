@@ -1,0 +1,28 @@
+const fullTermsLink='<a href="/terms-of-use.html" target="_blank" rel="noopener noreferrer">이용약관 전문 보기 (새 창)</a>';
+const privacyLink='<a href="/privacy-policy.html" target="_blank" rel="noopener noreferrer">개인정보처리방침 전문 보기 (새 창)</a>';
+const privacySummary=`<div class="signup-disclosure-summary"><p><strong>수집·이용 목적:</strong> 회원 식별·관리, 본인 확인, 주문·배송 및 고객 문의 처리</p><p><strong>필수 항목:</strong> 회원구분, 아이디, 비밀번호, 이름, 휴대전화번호, 이메일, 기본주소</p><p><strong>보유기간:</strong> 회원 탈퇴 또는 이용 목적 달성 시까지. 법령에 따라 보관해야 하는 거래·분쟁 기록은 해당 법정기간 동안 별도 보관합니다.</p><p><strong>동의 거부:</strong> 동의를 거부할 수 있으나 필수 정보 수집·이용에 동의하지 않으면 회원가입이 어렵습니다.</p></div>`;
+const privacyDetails=`<p>회원가입 양식에 입력한 정보는 회원 계정 운영, 연락처 확인, 배송지 입력 지원, 주문·배송 안내 및 고객 문의 대응에 이용됩니다.</p><p><strong>선택 입력 항목:</strong> 우편번호, 상세주소, 일반전화번호, 성별, 생년월일, 양·음력 구분, 지역. 해당 항목은 입력하지 않아도 가입할 수 있으며, 입력한 경우 회원정보 관리 및 서비스 이용 편의 제공에 이용됩니다.</p><p>거래가 발생한 경우 계약·청약철회 및 결제·재화 공급 기록은 5년, 소비자 불만·분쟁처리 기록은 3년 동안 관련 법령에 따라 보관합니다. 해당 보존 기록은 보존 목적에 한해 이용합니다.</p><p>SMS·이메일·카카오톡 광고 수신 여부는 아래 선택 동의 항목에서 각각 결정할 수 있습니다. 필수 개인정보 동의만으로 광고 수신에 동의한 것으로 처리하지 않습니다.</p><p>${privacyLink}</p>`;
+const marketingDetails=`<p><strong>목적:</strong> 베어닷의 신상품, 할인·프로모션, 이벤트 등 광고성 정보 안내</p><p><strong>이용 항목과 발송 채널:</strong> SMS 수신에 동의한 경우 휴대전화번호로 문자메시지를, 이메일 수신에 동의한 경우 이메일 주소로 이메일을 보냅니다. 각 채널의 수신 동의 여부도 함께 관리합니다.</p><p><strong>이용기간:</strong> 수신 동의 철회 또는 회원 탈퇴 시까지</p><p><strong>선택 동의:</strong> 각 항목은 선택사항이며 동의하지 않아도 회원가입·상품 구매가 가능합니다.</p><p><strong>철회 방법:</strong> 수신한 광고에 안내된 수신거부 방법 또는 <a href="mailto:contact@baredot.kr">contact@baredot.kr</a>·홈페이지 고객센터를 통해 철회를 요청할 수 있습니다.</p><p>주문·결제·배송 등 서비스 제공에 필요한 안내는 광고 수신 동의와 별도로 발송될 수 있습니다.</p>`;
+const kakaoDetails=`<p><strong>목적:</strong> 카카오톡을 통한 베어닷 신상품·할인·이벤트 등 광고성 정보 안내</p><p><strong>이용 항목:</strong> 휴대전화번호, 카카오톡 광고 수신 동의 여부·일시·문구 버전</p><p><strong>이용기간:</strong> 수신 동의 철회 또는 회원 탈퇴 시까지</p><p><strong>선택 동의:</strong> 동의하지 않아도 회원가입·상품 구매가 가능합니다. SMS·이메일 광고 동의와는 별도로 선택할 수 있습니다.</p><p><strong>철회 방법:</strong> 수신한 메시지의 수신거부 안내 또는 <a href="mailto:contact@baredot.kr">contact@baredot.kr</a>·홈페이지 고객센터를 통해 철회를 요청할 수 있습니다.</p><p>이 동의는 카카오톡 채널 친구 추가를 자동으로 처리하는 동의가 아니며, 주문·배송 알림 수신 동의와도 구분됩니다.</p>`;
+const fallbackTerms=`<p>베어닷 온라인 스토어 이용약관은 회원가입·탈퇴, 상품 구매계약, 결제·배송, 교환·반품·환불, 개인정보 보호 및 분쟁해결에 관한 회사와 이용자의 권리·의무를 정합니다.</p><p>${fullTermsLink}</p>`;
+export const signupDisclosureStyle=`<style id="bare-signup-disclosure-style">.signup-disclosure-summary,.signup-disclosure-panel{margin:12px 0;padding:14px;background:#f7f7f7;color:#333;font:12px/1.8 system-ui,sans-serif;overflow-wrap:anywhere}.signup-disclosure-summary p,.signup-disclosure-panel p{margin:0 0 8px}.signup-disclosure-summary p:last-child,.signup-disclosure-panel p:last-child{margin-bottom:0}.signup-disclosure-panel[hidden]{display:none}.signup-disclosure-panel{max-height:360px;overflow:auto;border:1px solid #ddd}.signup-disclosure-panel h2{font-size:14px;line-height:1.6;margin:18px 0 8px}.signup-disclosure-panel li{margin-bottom:5px}.signup-disclosure-panel a{color:inherit;text-decoration:underline}.signup-disclosure-panel:focus-visible{outline:2px solid #111;outline-offset:2px}.agreement-title .expand-btn{flex:0 0 auto;margin-left:10px}</style>`;
+export const signupDisclosureScript=`<script id="bare-signup-disclosure-script">(()=>{const form=document.getElementById('signup-form');if(!form)return;form.addEventListener('click',event=>{const button=event.target.closest('[data-signup-disclosure]');if(!button||!form.contains(button))return;const panel=document.getElementById(button.getAttribute('aria-controls'));if(!panel)return;const expanded=button.getAttribute('aria-expanded')!=='true';panel.hidden=!expanded;button.setAttribute('aria-expanded',String(expanded));button.textContent=expanded?'접기':'펼침';button.setAttribute('aria-label',button.dataset.signupDisclosure+' 내용 '+(expanded?'접기':'펼침'))})})();</script>`;
+
+export async function withSignupDisclosures(html,request,env){
+ let terms=fallbackTerms;
+ try{const response=await env.ASSETS.fetch(new Request(new URL('/terms-of-use.html',request.url)));if(response.ok){const content=(await response.text()).match(/<main\b[^>]*class="policy"[^>]*>([\s\S]*?)<\/main>/i)?.[1];if(content)terms=content.replace(/<h1\b[^>]*>[\s\S]*?<\/h1>/i,'')+'<p>'+fullTermsLink+'</p>'}}catch{/* Keep a useful summary and direct link when the static asset is temporarily unavailable. */}
+ const entries=[
+  {heading:'[필수] 이용약관 동의',name:'이용약관',id:'signup-terms-content',content:terms},
+  {heading:'[필수] 개인정보 수집 및 이용 동의',name:'개인정보 수집 및 이용',id:'signup-privacy-content',summary:privacySummary,content:privacyDetails},
+  {heading:'[선택] 쇼핑정보 수신 동의',name:'SMS·이메일 광고 수신',id:'signup-marketing-content',content:marketingDetails},
+  {heading:'카카오톡 소식 받기',name:'카카오톡 광고 수신',id:'signup-kakao-content',content:kakaoDetails}
+ ];
+ for(const entry of entries){
+  const title='<div class="agreement-title"><span>'+entry.heading+'</span>';
+  const old=title+(entry.id==='signup-kakao-content'?'':'<button class="expand-btn" type="button">펼침</button>')+'</div>';
+  const button='<button class="expand-btn" type="button" data-signup-disclosure="'+entry.name+'" aria-label="'+entry.name+' 내용 펼침" aria-controls="'+entry.id+'" aria-expanded="false">펼침</button>';
+  html=html.replace(old,title+button+'</div>'+(entry.summary||'')+'<div class="signup-disclosure-panel" id="'+entry.id+'" role="region" aria-label="'+entry.name+' 안내" tabindex="0" hidden>'+entry.content+'</div>');
+ }
+ html=html.replace("form.querySelectorAll('.expand-btn').forEach(btn=>btn.addEventListener('click',()=>alert('약관 상세 내용은 약관 페이지에서 확인할 수 있도록 연결 예정입니다.')));",'');
+ return html.replace('</head>',signupDisclosureStyle+'</head>').replace('</body>',signupDisclosureScript+'</body>');
+}
