@@ -9,9 +9,10 @@ async function start(){const r=await startKakaoConsent(request,env,user,'/#women
 function post(pending,fields={},headers={}){return new Request('https://bare.test/api/auth/kakao/consent',{method:'POST',headers:{origin:'https://bare.test',cookie:pending.cookie,...headers},body:new URLSearchParams({csrf:pending.csrf,terms:'on',privacy:'on',...fields})})}
 try{
  const identity=await socialIdentity(env,'kakao',user);assert.equal(identity.email,'kakao-1234@social.baredot.kr');
- let pending=await start();assert.equal(completed.length,0);assert.equal((pending.html.match(/type="checkbox"/g)||[]).length,4);assert(pending.html.includes('[선택]'));assert(!pending.html.includes('type="checkbox" name="kakaoMarketing" checked'));assert(pending.r.headers.get('set-cookie').includes('HttpOnly'));assert(!pending.cookie.includes('test@example.com'));
+ let pending=await start();assert.equal(pending.r.headers.get('referrer-policy'),'strict-origin');assert.equal(completed.length,0);assert.equal((pending.html.match(/type="checkbox"/g)||[]).length,4);assert(pending.html.includes('[선택]'));assert(!pending.html.includes('type="checkbox" name="kakaoMarketing" checked'));assert(pending.r.headers.get('set-cookie').includes('HttpOnly'));assert(!pending.cookie.includes('test@example.com'));
  let r=await finishKakaoConsent(post(pending,{terms:''}),env,config,complete);assert.equal(r.status,400);assert.equal(completed.length,0);
  r=await finishKakaoConsent(post(pending,{}, {origin:'https://evil.test'}),env,config,complete);assert.equal(r.status,403);
+ r=await finishKakaoConsent(post(pending,{}, {origin:'null'}),env,config,complete);assert.equal(r.status,403);
  r=await finishKakaoConsent(post(pending,{csrf:'tampered'}),env,config,complete);assert.equal(r.status,403);
  r=await finishKakaoConsent(post({...pending,cookie:pending.cookie+'tampered'}),env,config,complete);assert.equal(r.status,400);assert.equal(completed.length,0);
  r=await finishKakaoConsent(post(pending),env,config,complete);assert.equal(r.status,200);assert(r.headers.get('set-cookie').includes('Max-Age=0'));assert.equal(completed[0][3],'/#women-all');const evidence=completed[0][4];assert.equal(evidence.signup_consent.version,SOCIAL_TERMS_VERSION);assert.equal(evidence.marketing_consent.kakao.granted,false);assert(Date.now()-Date.parse(evidence.signup_consent.consented_at)<5000);
