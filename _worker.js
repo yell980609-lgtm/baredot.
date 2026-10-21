@@ -1,3 +1,4 @@
+import {purchaseReviewPage,purchaseReviewApi,adminReviewLink,withPurchaseReviewCounts,purchaseReviewAdminScript} from './purchase-reviews.js';
 import {withProductReviewCounts} from './product-review-counts.js';
 import {startKakaoConsent,finishKakaoConsent,socialIdentity} from './kakao-signup-consent.js';
 import {withSignupDisclosures} from './signup-disclosures.js';
@@ -1593,7 +1594,7 @@ const shopFirstPaintStyle='<style id="bare-shop-first-paint">.shop-section .prod
 const shopFirstPaintBase=patchHtml;
 patchHtml=function(html){return shopFirstPaintBase(html).replace('</head>',shopFirstPaintStyle+'</head>').replace(/(<section class="shop-section"[\s\S]*?<div class="product-row")[^>]*>[\s\S]*?(<\/div><\/div><\/section>)/,(_,start,end)=>start+' aria-busy="true" aria-label="상품 목록">'+Array.from({length:4},()=>'<div class="shop-loading-tile" aria-hidden="true"></div>').join('')+'<span class="shop-loading-label" role="status">상품을 불러오는 중입니다.</span>'+end)};
 
-export default {async fetch(request,env,ctx){const path=new URL(request.url).pathname;if(path==='/admin/home-gallery')return new Response(homeGalleryAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});if(path==='/api/site/home-gallery')return homeGalleryApi(request,env,{base:supabaseUrl,fetch,requireAdmin,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket});return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}};
+export default {async fetch(request,env,ctx){const path=new URL(request.url).pathname;if(path==='/review')return new Response(purchaseReviewPage(),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store','Referrer-Policy':'no-referrer','X-Robots-Tag':'noindex, nofollow','X-Frame-Options':'DENY'}});if(path==='/api/reviews/order'||path.startsWith('/api/reviews/product/'))return purchaseReviewApi(request,env,{rest:supabaseRest});if(path==='/api/products')return withPurchaseReviewCounts(await bareAnalyticsWorker.fetch(request,env,ctx),env,{rest:supabaseRest});if(path==='/admin/home-gallery')return new Response(homeGalleryAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});if(path==='/api/site/home-gallery')return homeGalleryApi(request,env,{base:supabaseUrl,fetch,requireAdmin,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket});return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}};
 
 // Only the dedicated endpoint can mark an order canceled; it verifies the payment first.
 const adminApiBeforeCancellation=adminApi;
@@ -1646,3 +1647,8 @@ signupPage=function(){return signupBeforeKakaoMarketing()
 
 const patchHtmlBeforeProductReviewCounts=patchHtml;
 patchHtml=function(html){return withProductReviewCounts(patchHtmlBeforeProductReviewCounts(html))};
+
+const adminApiBeforePurchaseReviews=adminApi;
+adminApi=async function(request,env,url){const match=url.pathname.match(/^\/api\/admin\/orders\/([^/]+)\/review-link$/);if(match)return adminReviewLink(request,env,decodeURIComponent(match[1]),{rest:supabaseRest,requireAdmin});return adminApiBeforePurchaseReviews(request,env,url)};
+const adminOrdersBeforePurchaseReviews=adminOrdersPage;
+adminOrdersPage=function(env={}){return adminOrdersBeforePurchaseReviews(env).replace('supabase.auth.getSession().then',purchaseReviewAdminScript+'supabase.auth.getSession().then')};
