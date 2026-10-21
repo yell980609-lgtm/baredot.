@@ -2,6 +2,21 @@
 
 The administrator dashboard is `/admin/analytics`. This is first-party analytics backed by the existing Supabase project, not a Google Analytics integration.
 
+## Detailed dashboard update (report version 2)
+
+Run the updated `analytics-schema.sql` once in Supabase SQL Editor, including when the original analytics table already exists. It retains current records, adds two indexes and replaces the report function; product and order tables are untouched. The administrator dashboard detects an old report response and shows an update notice rather than displaying invented detailed counts. Existing page collection continues during the upgrade. This repository change alone does not apply SQL to the production database.
+
+The detailed dashboard adds:
+
+- Visitors, sessions, views and views per session with previous-period comparisons. For 7 days including today, comparison shifts both endpoints back 7 days; the previous interval ends at the same time of day. No percentage is fabricated when the previous count is zero.
+- Daily metric switching, a zero-filled date series, hourly view totals in Seoul time, and accessible numeric tables.
+- First-session source share, distinct source visitors, campaign visitor/session counts and first-entry pages. A session active within the selected interval keeps its earliest retained source, even if it started before the interval.
+- Product TOP 20 grouped by product route, independent of the page TOP 50. Repeated views count as views while visitors/sessions are deduplicated per product. `/` and `/index.html` product hashes group together. Product names and default thumbnails come from the existing product catalog; catalog failures do not prevent viewing counts. Product ranking search searches only the displayed TOP 20.
+- First-time versus returning browsers based on first appearance in the retained 90-day history, not lifetime customers. First appearance inside the selected interval remains first-time even after repeated visits during that interval.
+- CSV export of the loaded interval, with spreadsheet-formula escaping, and Instagram profile/story/advertisement UTM links. Use these links before running a campaign; historic unattributed visits cannot be reassigned.
+
+All detailed aggregations run inside PostgreSQL, without row-limit sampling or exporting visitor/session identifiers to the administrator browser. Sources and device categories can each contain the same visitor; their visitor counts should not be summed into site visitors. Sessions remain tab-specific.
+
 ## Activate once
 
 1. Open the existing Supabase project's **SQL Editor**.
@@ -14,9 +29,9 @@ The deployed Worker already uses `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY`.
 ## Interpretation
 
 - **Visitors:** distinct random browser identifiers, hashed server-side. Not a count of identified people.
-- **Sessions:** random tab/session identifiers renewed after 30 minutes without a tracked action. First source in a session is retained.
+- **Sessions:** random tab/session identifiers renewed after 30 minutes without a tracked action. First source in a session is retained. Reports use the earliest retained event for sessions active in the selected interval.
 - **Views:** initial page loads and supported product/collection hash navigation, deduplicated for consecutive identical routes in the same session.
-- **Dates:** Asia/Seoul; today, 7 days, or 30 days.
+- **Dates:** Asia/Seoul; today, 7 days, or 30 days, including the current incomplete day.
 - **Sources:** UTM source first, then external referrer hostname, otherwise `direct / unknown`. Query strings are not stored. App browsers may hide referrers.
 - **Campaigns:** `utm_source`, `utm_medium`, `utm_campaign`, with restricted length/characters.
 - **Retention:** records older than 90 days are removed on collection or administrator report access. An entirely inactive site needs a scheduled cleanup if deletion must occur on a fixed calendar deadline. Browser IDs expire after 90 days.
