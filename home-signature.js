@@ -3,6 +3,9 @@ export const homeSignatureStyle=`<style id="bare-home-signature-style">
 .home-view .home-signature>.wrap{width:min(1120px,calc(100% - 36px))!important;margin-inline:auto}
 .home-signature-head{margin-bottom:24px;margin-left:0;text-align:center}
 .home-signature h2{margin:0;padding:0;color:#fff;font:900 clamp(14px,1.7vw,24px)/1 InterDisplay,Pretendard,sans-serif;letter-spacing:-.035em;text-transform:none}
+@keyframes bare-signature-fade{0%,100%{opacity:.5}50%{opacity:1}}
+.home-signature h2{animation:bare-signature-fade 8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.home-signature h2{animation:none;opacity:1}}
 .home-signature-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .home-signature-grid .product-card{min-width:0;width:100%;color:#fff}
 .home-signature-grid .product-card:first-child{grid-column:2}
