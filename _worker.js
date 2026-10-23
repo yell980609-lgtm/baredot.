@@ -1,3 +1,4 @@
+import {withReviewMediaSources} from './review-media-sources.js';
 import {withAdminReviewImages} from './admin-review-images.js';
 import {CATEGORY_PAGES,categoryPageResponse,searchDiscoveryResponse,withSearchSeo} from './search-seo.js';
 import {purchaseReviewPage,purchaseReviewApi,adminReviewLink,withPurchaseReviewCounts,purchaseReviewAdminScript} from './purchase-reviews.js';
@@ -1659,3 +1660,6 @@ async function withChannelTalkResponseForSeo(request,env,ctx){return withChannel
 
 const adminProductsBeforeReviewImages=adminProductsPage;
 adminProductsPage=function(env={}){return withAdminReviewImages(adminProductsBeforeReviewImages(env))};
+
+const bareReviewMediaSourcesBase=patchHtml;
+patchHtml=function(html){return withReviewMediaSources(bareReviewMediaSourcesBase(html))};
