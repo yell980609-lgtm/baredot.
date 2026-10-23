@@ -1,3 +1,4 @@
+import {withAdminReviewImages} from './admin-review-images.js';
 import {CATEGORY_PAGES,categoryPageResponse,searchDiscoveryResponse,withSearchSeo} from './search-seo.js';
 import {purchaseReviewPage,purchaseReviewApi,adminReviewLink,withPurchaseReviewCounts,purchaseReviewAdminScript} from './purchase-reviews.js';
 import {withProductReviewCounts} from './product-review-counts.js';
@@ -1655,3 +1656,6 @@ const adminOrdersBeforePurchaseReviews=adminOrdersPage;
 adminOrdersPage=function(env={}){return adminOrdersBeforePurchaseReviews(env).replace('supabase.auth.getSession().then',purchaseReviewAdminScript+'supabase.auth.getSession().then')};
 
 async function withChannelTalkResponseForSeo(request,env,ctx){return withChannelTalk(await bareAnalyticsWorker.fetch(request,env,ctx),request)}
+
+const adminProductsBeforeReviewImages=adminProductsPage;
+adminProductsPage=function(env={}){return withAdminReviewImages(adminProductsBeforeReviewImages(env))};
