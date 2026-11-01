@@ -1,3 +1,4 @@
+import {withProductRecommendations} from './product-recommendations.js';
 import {HOME_HERO_ENABLED,withoutHomeHero} from './home-hero-visibility.js';
 import {withHeroDemandLoading,withAdminQuotaMessage} from './hero-demand-loading.js';
 import {withReviewMediaSources} from './review-media-sources.js';
@@ -1670,3 +1671,9 @@ const bareQuotaProductsBase=adminProductsPage;
 adminProductsPage=function(env){return withAdminQuotaMessage(bareQuotaProductsBase(env))};
 const bareQuotaOrdersBase=adminOrdersPage;
 adminOrdersPage=function(env){return withAdminQuotaMessage(bareQuotaOrdersBase(env))};
+
+const bareRelatedBase=patchHtml;
+patchHtml=function(html){return withProductRecommendations(bareRelatedBase(html))};
+
+const bareCompactMyPageBase=myPage;
+myPage=function(){return bareCompactMyPageBase().replace(/<section class="bare-my-hero"[\s\S]*?<\/section>/,'')};
