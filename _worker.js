@@ -1,3 +1,5 @@
+import {withFreeShippingThreshold} from './free-shipping-threshold.js';
+import {withAdminProductRecommendations} from './admin-product-recommendations.js';
 import {withProductRecommendations} from './product-recommendations.js';
 import {HOME_HERO_ENABLED,withoutHomeHero} from './home-hero-visibility.js';
 import {withHeroDemandLoading,withAdminQuotaMessage} from './hero-demand-loading.js';
@@ -1674,3 +1676,9 @@ adminOrdersPage=function(env){return withAdminQuotaMessage(bareQuotaOrdersBase(e
 
 const bareRelatedBase=patchHtml;
 patchHtml=function(html){return withProductRecommendations(bareRelatedBase(html))};
+
+const bareRelatedAdminBase=adminProductsPage;
+adminProductsPage=function(env){return withAdminProductRecommendations(bareRelatedAdminBase(env))};
+
+const bareShippingThresholdBase=modernCheckoutPage;
+modernCheckoutPage=function(){return withFreeShippingThreshold(bareShippingThresholdBase())};
