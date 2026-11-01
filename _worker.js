@@ -1,3 +1,4 @@
+import {withProductIndependentScroll} from './product-independent-scroll.js';
 import {withFreeShippingThreshold} from './free-shipping-threshold.js';
 import {withAdminProductRecommendations} from './admin-product-recommendations.js';
 import {withProductRecommendations} from './product-recommendations.js';
@@ -1682,3 +1683,6 @@ adminProductsPage=function(env){return withAdminProductRecommendations(bareRelat
 
 const bareShippingThresholdBase=modernCheckoutPage;
 modernCheckoutPage=function(){return withFreeShippingThreshold(bareShippingThresholdBase())};
+
+const bareIndependentScrollBase=patchHtml;
+patchHtml=function(html){return withProductIndependentScroll(bareIndependentScrollBase(html))};
