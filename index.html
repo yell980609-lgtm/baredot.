@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script>document.documentElement.classList.remove("no-intro");try{localStorage.removeItem("bareIntroSeenHeroVideo3")}catch(e){}addEventListener("DOMContentLoaded",()=>setTimeout(()=>document.querySelector(".intro-overlay")?.remove(),5800));</script>
+<script>(()=>{if(window.bareIntroInitialized)return;window.bareIntroInitialized=true;let seen=false;const home=(location.pathname==="/"||location.pathname==="/index.html")&&!location.hash;try{seen=sessionStorage.getItem("bareIntroPlayed")==="1";if(home&&!seen)sessionStorage.setItem("bareIntroPlayed","1")}catch(e){}const skip=seen||!home;document.documentElement.classList.toggle("no-intro",skip);addEventListener("DOMContentLoaded",()=>{const intro=document.querySelector(".intro-overlay");if(skip)intro?.remove();else setTimeout(()=>intro?.remove(),5800)},{once:true})})();</script>
 <title>BARE. 베어닷 | 퍼포먼스 액티브웨어 브랜드</title>
 <meta name="description" content="Quiet design, Loud performance. 베어닷은 미니멀한 무드에 본질을 패션적 디테일로 표현한 액티브웨어 브랜드입니다.">
 <meta name="keywords" content="BARE., 베어닷, baredot, 짐웨어, 필라테스복, 운동복, 여자운동복, 퍼포먼스웨어, 홀터탑, 하이웨스트 레깅스, 남성 나시">
