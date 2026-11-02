@@ -1,3 +1,4 @@
+import {preserveOrderOwner} from './order-member-identity.js';
 // Cancellation never trusts a browser-supplied payment key or refund amount.
 export async function cancelAdminOrder(request,env,orderId,{requireAdmin,rest,fetchPayment=fetch}){
  const reply=(body,status=200)=>Response.json(body,{status,headers:{'cache-control':'no-store'}});
@@ -33,7 +34,7 @@ export async function cancelAdminOrder(request,env,orderId,{requireAdmin,rest,fe
  }catch(error){return reply({message:error.message||'결제사 연결에 실패했습니다. 잠시 후 다시 시도해주세요.'},502)}
  if(preview)return reply({ok:true,alreadyCancelled:true,paidAmount:Number(payment.totalAmount),refundAmount:0,status:payment.status});
  try{
-  const rows=await rest(env,'orders?order_id=eq.'+encodeURIComponent(order.order_id),{method:'PATCH',body:JSON.stringify({payment_status:'cancelled',fulfillment_status:'cancelled',cancel_reason:reason,raw_payment:payment,updated_at:new Date().toISOString()})});
+  const rows=await rest(env,'orders?order_id=eq.'+encodeURIComponent(order.order_id),{method:'PATCH',body:JSON.stringify({payment_status:'cancelled',fulfillment_status:'cancelled',cancel_reason:reason,raw_payment:preserveOrderOwner(order.raw_payment,payment),updated_at:new Date().toISOString()})});
   if(!rows?.length)throw Error('Missing order');
  }catch{return reply({message:'결제는 취소됐지만 주문 상태 저장에 실패했습니다. 같은 버튼을 다시 눌러 상태를 동기화해주세요. 중복 환불은 진행하지 않습니다.'},503)}
  return reply({ok:true,message:'결제 전액 취소 및 주문 취소가 완료되었습니다.'});
