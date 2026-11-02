@@ -32,8 +32,6 @@ export function withSearchSeo(html,path='/'){
  metadata+='<script type="application/ld+json" id="bare-search-identity">'+json({'@context':'https://schema.org','@graph':graph})+'</script>';
  html=html.replace('</head>',metadata+'</head>');
  for(const [p,c] of Object.entries(CATEGORY_PAGES))html=html.replaceAll('href="'+c.hash+'"','href="'+p+'"');
- const nav='<nav class="bare-category-links" aria-label="상품 카테고리">'+Object.entries(CATEGORY_PAGES).map(([p,c])=>'<a href="'+p+'">'+esc(c.name)+'</a>').join('')+'</nav>';
- html=html.replace('</head>','<style>.bare-category-links{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:20px 18px;font:700 12px/1.5 InterDisplay,system-ui,sans-serif}.bare-category-links a{color:inherit;text-decoration:none}</style></head>').replace('<nav class="footer-links"',nav+'<nav class="footer-links"');
  return html;
 }
 export async function categoryPageResponse(request,category,path,{renderHome,loadProducts}){
