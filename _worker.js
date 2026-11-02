@@ -1,3 +1,4 @@
+import {shippingNotificationApi,withShippingNotificationAdmin} from './shipping-notifications.js';
 import {VERIFIED_ORDER_OWNER,createOrderContext,verifyOrderContext,paymentWithOrderOwner,customerOrdersByMember,orderMemberAdminApi} from './order-member-identity.js';
 import {withOrderMemberCheckout,withOrderMemberSuccess,withOrderMemberAdmin} from './order-member-storefront.js';
 import {memberRewardsApi,withRewardBenefit,withAccountRewards} from './member-rewards.js';
@@ -1728,3 +1729,8 @@ const bareMemberOrderCheckoutBase=modernCheckoutPage;
 modernCheckoutPage=function(){return withOrderMemberCheckout(bareMemberOrderCheckoutBase(),supabaseUrl({}),supabasePublicKey({}))};
 const bareMemberOrderAdminBase=adminOrdersPage;
 adminOrdersPage=function(env={}){return withOrderMemberAdmin(bareMemberOrderAdminBase(env))};
+
+const bareShippingNotificationAdminBase=adminApi;
+adminApi=async function(request,env,url){const match=url.pathname.match(/^\/api\/admin\/orders\/([^/]+)\/shipping-notification$/);if(match)return shippingNotificationApi(request,env,decodeURIComponent(match[1]),{requireAdmin,rest:supabaseRest});return bareShippingNotificationAdminBase(request,env,url)};
+const bareShippingNotificationPageBase=adminOrdersPage;
+adminOrdersPage=function(env={}){return withShippingNotificationAdmin(bareShippingNotificationPageBase(env))};
