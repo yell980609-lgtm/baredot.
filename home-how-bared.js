@@ -17,7 +17,7 @@ export const homeHowBaredStyle=`<style id="bare-home-how-bared-style">
 export const homeHowBaredScript=`<script id="bare-home-how-bared-script">(()=>{
  const shop=document.querySelector('.home-view .shop-section');if(!shop)return;
  let section=document.getElementById('home-how-bared');
- if(!section){section=document.createElement('section');section.className='home-how-bared';section.id='home-how-bared';section.setAttribute('aria-labelledby','home-how-bared-title');section.innerHTML='<div class="wrap"><div class="home-how-bared-head"><h2 class="home-section-heading" id="home-how-bared-title">How to be Bared</h2></div><div class="home-how-bared-grid" aria-busy="true"></div></div>';(document.getElementById('home-signature')||shop).after(section)}
+ if(!section){section=document.createElement('section');section.className='home-how-bared';section.id='home-how-bared';section.setAttribute('aria-labelledby','home-how-bared-title');section.innerHTML='<div class="wrap"><div class="home-how-bared-head"><h2 class="home-section-heading" id="home-how-bared-title">How to be Bared</h2></div><div class="home-how-bared-grid" aria-busy="true"></div></div>';(document.getElementById('home-category-shortcuts')||document.getElementById('home-signature')||shop).after(section)}
  const grid=section.querySelector('.home-how-bared-grid');let products=null,gallery=null,settingsReady=false;
  const validUrl=value=>{try{const url=new URL(value,location.origin);return /^https?:$/.test(url.protocol)?url.href:''}catch{return''}};
  function render(sourceProducts){

@@ -1,3 +1,4 @@
+import {withHomeCategoryShortcuts} from './home-category-shortcuts.js';
 import {signaturePanelsApi,signaturePanelsAdminPage,applySignaturePanels,signaturePanelsStyle} from './home-signature-settings.js';
 import {homeBannerApi,homeBannerAdminPage,applyHomeBanner} from './home-banner.js';
 import {withStorefrontRedesign,withBannerAdminLink} from './storefront-redesign.js';
@@ -1763,3 +1764,6 @@ export default {async fetch(request,env,ctx){
  const [bannerHtml,signatureHtml]=await Promise.all([applyHomeBanner(html,env,deps),applySignaturePanels('<!--BARE-SIGNATURE-PANELS-->',env,deps)]);
  return new Response(bannerHtml.replace('<!--BARE-SIGNATURE-PANELS-->',()=>signatureHtml),{status:response.status,headers});
 }};
+
+const bareCategoryShortcutsBase=patchHtml;
+patchHtml=function(html){return withHomeCategoryShortcuts(bareCategoryShortcutsBase(html))};
