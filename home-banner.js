@@ -1,0 +1,61 @@
+const SETTING='settings/home-banner.json';
+const TYPES={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'};
+const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
+function storageFetch(deps,...args){const fetcher=deps.fetch;return fetcher(...args)}
+function mediaBase(env,deps){return deps.base(env)+'/storage/v1/object/public/site-media/'}
+export function validateHomeBanner(value,env,deps){
+ const image=(v,required)=>{if(!v&&!required)return'';const prefix=mediaBase(env,deps)+'banners/';if(typeof v!=='string'||!v.startsWith(prefix)||!/^\d+-[a-f0-9-]+\.(jpg|png|webp|gif)$/.test(v.slice(prefix.length)))throw Error('업로드한 배너 사진을 선택해주세요.');return v};
+ const link=String(value?.link||'').trim();if(link&&(!link.startsWith('/')||link.startsWith('//')||/[\\\x00-\x20<>"']/.test(link)))throw Error('이동 링크는 /women/all처럼 사이트 내부 주소를 입력해주세요.');
+ return {desktopUrl:image(value?.desktopUrl,true),mobileUrl:image(value?.mobileUrl,false),alt:String(value?.alt||'BARE.').trim().slice(0,160),link};
+}
+export async function readHomeBanner(env,deps){
+ const response=await storageFetch(deps,mediaBase(env,deps)+SETTING+'?v='+Date.now()+'-'+crypto.randomUUID(),{cache:'no-store',headers:{'Cache-Control':'no-cache'},signal:AbortSignal.timeout(5000)});
+ if(response.status===404)return null;
+ const body=await response.json();if(!response.ok){if(response.status===400&&/not found/i.test(body.message||body.error||''))return null;throw Error('홈 배너 설정을 불러오지 못했습니다.')}
+ if(body.desktopUrl===null)return null;
+ return {...validateHomeBanner(body,env,deps),updatedAt:body.updatedAt||null};
+}
+async function bucket(env,deps){
+ await deps.ensureBucket(env);const headers=deps.headers(env),url=deps.base(env)+'/storage/v1/bucket/site-media',r=await storageFetch(deps,url,{headers});if(!r.ok)throw Error('배너 저장소를 확인하지 못했습니다.');const b=await r.json(),required=[...Object.keys(TYPES),'application/json'];
+ if(Array.isArray(b.allowed_mime_types)&&required.some(t=>!b.allowed_mime_types.includes(t))){const saved=await storageFetch(deps,url,{method:'PUT',headers:{...headers,'Content-Type':'application/json'},body:JSON.stringify({public:b.public,file_size_limit:b.file_size_limit,allowed_mime_types:[...new Set([...b.allowed_mime_types,...required])]})});if(!saved.ok)throw Error('사진 업로드를 위한 저장소 설정에 실패했습니다.')}
+}
+export async function homeBannerApi(request,env,deps,admin=false){
+ if(admin){try{await deps.requireAdmin(request,env)}catch{return reply({message:'관리자 로그인이 필요합니다.'},403)}}
+ if(!admin&&request.method!=='GET')return reply({message:'Method not allowed'},405);
+ try{
+  if(request.method==='GET')return reply({banner:await readHomeBanner(env,deps)});
+  if(request.method==='POST'){
+   const form=await request.formData(),file=form.get('file');if(!file||typeof file.arrayBuffer!=='function'||!TYPES[file.type]||!file.size||file.size>10485760)return reply({message:'JPG·PNG·WebP·GIF 사진을 10MB 이하로 올려주세요.'},400);
+   const bytes=new Uint8Array(await file.slice(0,12).arrayBuffer()),text=String.fromCharCode(...bytes),valid=file.type==='image/jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:file.type==='image/png'?[137,80,78,71,13,10,26,10].every((v,i)=>bytes[i]===v):file.type==='image/webp'?text.startsWith('RIFF')&&text.slice(8,12)==='WEBP':text.startsWith('GIF87a')||text.startsWith('GIF89a');if(!valid)return reply({message:'파일 내용과 사진 형식이 맞지 않습니다.'},400);
+   await bucket(env,deps);const path='banners/'+Date.now()+'-'+crypto.randomUUID()+'.'+TYPES[file.type],r=await storageFetch(deps,deps.base(env)+'/storage/v1/object/site-media/'+path,{method:'POST',headers:{...deps.headers(env),'Content-Type':file.type,'x-upsert':'false'},body:file.stream()});if(!r.ok)throw Error('사진 업로드에 실패했습니다.');return reply({image:{url:mediaBase(env,deps)+path,name:String(file.name).slice(0,160)}});
+  }
+  if(request.method!=='PUT')return reply({message:'Method not allowed'},405);
+  const body=await request.json().catch(()=>null);let banner;
+  try{banner=body?.reset===true?null:validateHomeBanner(body,env,deps)}catch(error){return reply({message:error.message},400)}
+  if(banner){for(const url of [banner.desktopUrl,banner.mobileUrl].filter(Boolean)){const exists=await storageFetch(deps,url,{method:'HEAD',signal:AbortSignal.timeout(5000)});if(!exists.ok||!TYPES[String(exists.headers.get('Content-Type')||'').split(';')[0].toLowerCase()])return reply({message:'업로드한 사진을 확인하지 못했습니다. 다시 업로드해주세요.'},400)}}
+  await bucket(env,deps);const r=await storageFetch(deps,deps.base(env)+'/storage/v1/object/site-media/'+SETTING,{method:'POST',headers:{...deps.headers(env),'Content-Type':'application/json','x-upsert':'true','Cache-Control':'0'},body:JSON.stringify({...banner,desktopUrl:banner?.desktopUrl||null,updatedAt:new Date().toISOString()})});if(!r.ok)throw Error('홈 배너 저장에 실패했습니다.');return reply({ok:true,banner});
+ }catch(error){return reply({message:error.message||'홈 배너를 처리하지 못했습니다.'},503)}
+}
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export async function applyHomeBanner(html,env,deps){
+ if(!html.includes('<!--BARE-HOME-BANNER-->'))return html;
+ let banner=null;try{banner=await readHomeBanner(env,deps)}catch{}
+ const fallback='<div class="campaign-placeholder"><small>BARE.</small><p>Quiet design.<br>Loud performance.</p><a href="/#shop">EXPLORE BARE. <span>↗</span></a></div>';
+ const media=banner?'<picture'+(banner.mobileUrl?' class="has-mobile-banner"':'')+'>'+(banner.mobileUrl?'<source media="(max-width:860px)" data-srcset="'+esc(banner.mobileUrl)+'">':'')+'<img data-src="'+esc(banner.desktopUrl)+'" alt="'+esc(banner.alt)+'" fetchpriority="high" decoding="async" width="1920" height="1020"></picture>':fallback;
+ const content=banner?.link?'<a class="campaign-link" href="'+esc(banner.link)+'">'+media+'</a>':media;
+ return html.replace('<!--BARE-HOME-BANNER-->',()=>content);
+}
+export function homeBannerAdminPage(base,key){return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>홈 메인 배너 | BARE.</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f4f1;color:#111;font:14px/1.6 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:30px 22px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:26px}a{color:inherit}section{background:white;border:1px solid #ddd;padding:24px;margin:20px 0}button,input{font:inherit}button{padding:11px 18px;border:1px solid #111;background:white;cursor:pointer}button.primary{background:#111;color:white}button:disabled{opacity:.4;cursor:wait}label{display:grid;gap:8px;margin:18px 0}input{padding:11px;border:1px solid #bbb;width:100%}.previews{display:grid;grid-template-columns:2fr 1fr;gap:24px}.preview{width:100%;aspect-ratio:1920/1020;object-fit:cover;background:#eee}.mobile{aspect-ratio:4/5}.note{color:#777;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:10px}[hidden]{display:none!important}#status{white-space:pre-line;overflow-wrap:anywhere}@media(max-width:650px){.previews{grid-template-columns:1fr}main{padding:18px}section{padding:18px}}</style></head><body><main><header><h1>홈 메인 배너</h1><a href="/admin/products">상품관리</a></header><p id="status" role="status">관리자 로그인을 확인하고 있습니다.</p><section id="login" hidden><label>이메일<input id="email" type="email" autocomplete="username"></label><label>비밀번호<input id="password" type="password" autocomplete="current-password"></label><button id="sign-in">로그인</button></section><section id="editor" hidden><h2>사진 업로드</h2><p class="note">PC 권장 1920×1020px · 모바일 권장 900×1125px · JPG/PNG/WebP/GIF, 각 10MB 이하.<br>모바일 사진을 올리지 않으면 PC 사진을 여백 없이 같은 비율로 표시합니다. 업로드 후 ‘홈 배너 저장’을 눌러야 홈페이지에 적용됩니다.</p><div class="previews"><div><label>PC·기본 사진<input id="desktop-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="desktop-preview" class="preview" alt="PC 배너 미리보기" hidden></div><div><label>모바일 사진 (선택)<input id="mobile-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="mobile-preview" class="preview mobile" alt="모바일 배너 미리보기" hidden><button id="clear-mobile">모바일 사진 제거</button></div></div><label>사진 설명<input id="alt" maxlength="160" placeholder="베어닷 메인 컬렉션"></label><label>사진 클릭 시 이동 주소 (선택)<input id="link" placeholder="/women/all"></label><div class="actions"><button id="save" class="primary">홈 배너 저장</button><button id="reset">기본 배너로 되돌리기</button><a href="/" target="_blank" rel="noopener">홈페이지 확인 ↗</a></div></section></main><script type="module">
+import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const sb=createClient(${JSON.stringify(base)},${JSON.stringify(key)}),$=s=>document.querySelector(s);let session,banner={desktopUrl:'',mobileUrl:'',alt:'BARE.',link:''},busy=false,dirty=false;const status=text=>$('#status').textContent=text;
+function lock(value){busy=value;document.querySelectorAll('#editor button,#editor input').forEach(el=>el.disabled=value)}
+async function api(options={}){const r=await fetch('/api/admin/site/home-banner',{...options,headers:{Authorization:'Bearer '+session.access_token,...(options.body instanceof FormData?{}:{'Content-Type':'application/json'})}}),data=await r.json();if(!r.ok)throw Error(data.message||'요청을 처리하지 못했습니다.');return data}
+function draw(){for(const type of['desktop','mobile']){const image=$('#'+type+'-preview');image.hidden=!banner[type+'Url'];if(banner[type+'Url'])image.src=banner[type+'Url'];else image.removeAttribute('src')}$('#alt').value=banner.alt||'';$('#link').value=banner.link||''}
+async function start(){const{data}=await sb.auth.getSession();session=data?.session;if(!session){$('#login').hidden=false;status('관리자 계정으로 로그인해주세요.');return}try{const data=await api();if(data.banner)banner=data.banner;draw();$('#login').hidden=true;$('#editor').hidden=false;status('사진을 올리고 저장하면 홈페이지에 적용됩니다.')}catch(error){status(error.message)}}
+$('#sign-in').onclick=async()=>{const{error}=await sb.auth.signInWithPassword({email:$('#email').value.trim(),password:$('#password').value});if(error)status('로그인 정보를 확인해주세요.');else start()};
+for(const type of['desktop','mobile'])$('#'+type+'-file').onchange=async event=>{const file=event.target.files[0];if(!file||busy)return;if(file.size>10485760){status('10MB 이하 사진을 선택해주세요.');return}lock(true);status('사진을 업로드하고 있습니다…');try{const form=new FormData();form.append('file',file);const data=await api({method:'POST',body:form});banner[type+'Url']=data.image.url;dirty=true;draw();status('업로드 완료 · 홈 배너 저장을 눌러 적용해주세요.')}catch(error){status(error.message)}finally{lock(false);event.target.value=''}};
+$('#alt').oninput=()=>{banner.alt=$('#alt').value;dirty=true};$('#link').oninput=()=>{banner.link=$('#link').value;dirty=true};$('#clear-mobile').onclick=()=>{banner.mobileUrl='';dirty=true;draw()};
+$('#save').onclick=async()=>{if(busy)return;if(!banner.desktopUrl){status('PC·기본 사진을 먼저 올려주세요.');return}lock(true);try{const data=await api({method:'PUT',body:JSON.stringify(banner)});banner=data.banner;dirty=false;status('저장 완료! 홈페이지를 새로고침하면 적용됩니다.')}catch(error){status(error.message)}finally{lock(false)}};
+$('#reset').onclick=async()=>{if(busy||!confirm('홈 사진을 기본 배너로 되돌릴까요?'))return;lock(true);try{await api({method:'PUT',body:JSON.stringify({reset:true})});banner={desktopUrl:'',mobileUrl:'',alt:'BARE.',link:''};dirty=false;draw();status('기본 배너로 변경했습니다.')}catch(error){status(error.message)}finally{lock(false)}};
+addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue=''}});start();
+</script></body></html>`}
