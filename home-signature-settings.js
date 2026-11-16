@@ -1,5 +1,5 @@
 import {homeBannerApi,validateHomeBanner,validateHomeBannerLink} from './home-banner.js';
-const DEFAULTS=[{url:'',title:'TOPS',link:'/women/top',alt:'베어닷 상의 컬렉션'},{url:'',title:'BOTTOMS',link:'/women/bottom',alt:'베어닷 하의 컬렉션'}];
+const DEFAULTS=[{url:'',title:'MEET OUR SIGNATURE',link:'/women/top',alt:'베어닷 시그니처 컬렉션'},{url:'',title:'WINE PAIRING EDITION',link:'/women/bottom',alt:'베어닷 와인 페어링 에디션'}];
 const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
 function storageFetch(deps,...args){const fetcher=deps.fetch;return fetcher(...args)}
 function settingUrl(env,deps,publicRead=false){return deps.base(env)+'/storage/v1/object/'+(publicRead?'public/':'')+'site-media/settings/home-signature.json'}
@@ -9,7 +9,7 @@ export function validateSignaturePanels(value,env,deps){
 }
 export async function readSignaturePanels(env,deps){
  const r=await storageFetch(deps,settingUrl(env,deps,true)+'?v='+Date.now()+'-'+crypto.randomUUID(),{cache:'no-store',headers:{'Cache-Control':'no-cache'},signal:AbortSignal.timeout(5000)});
- if(r.status===404)return{items:DEFAULTS};const data=await r.json();if(!r.ok){if(r.status===400&&/not found/i.test(data.message||data.error||''))return{items:DEFAULTS};throw Error('컬렉션 사진을 불러오지 못했습니다.')}return validateSignaturePanels(data,env,deps);
+ if(r.status===404)return{items:DEFAULTS};const data=await r.json();if(!r.ok){if(r.status===400&&/not found/i.test(data.message||data.error||''))return{items:DEFAULTS};throw Error('컬렉션 사진을 불러오지 못했습니다.')}const panels=validateSignaturePanels(data,env,deps);if(data.copyVersion!==2)panels.items.forEach((item,i)=>{if(item.title.trim().toUpperCase()===['TOPS','BOTTOMS'][i])item.title=DEFAULTS[i].title});return panels;
 }
 export async function signaturePanelsApi(request,env,deps,admin=false){
  if(admin&&request.method==='POST')return homeBannerApi(request,env,deps,true);
@@ -20,7 +20,7 @@ export async function signaturePanelsApi(request,env,deps,admin=false){
   if(request.method!=='PUT'||!admin)return reply({message:'Method not allowed'},405);
   let panels;try{panels=validateSignaturePanels(await request.json(),env,deps)}catch(error){return reply({message:error.message},400)}
   for(const item of panels.items.filter(i=>i.url)){const r=await storageFetch(deps,item.url,{method:'HEAD',signal:AbortSignal.timeout(5000)});if(!r.ok||!['image/jpeg','image/png','image/webp','image/gif'].includes(String(r.headers.get('Content-Type')||'').split(';')[0].toLowerCase()))return reply({message:'업로드한 사진을 확인하지 못했습니다.'},400)}
-  await deps.ensureBucket(env);const saved=await storageFetch(deps,settingUrl(env,deps),{method:'POST',headers:{...deps.headers(env),'Content-Type':'application/json','x-upsert':'true','Cache-Control':'0'},body:JSON.stringify({...panels,updatedAt:new Date().toISOString()})});if(!saved.ok)throw Error('컬렉션 사진 저장에 실패했습니다.');return reply({ok:true,panels});
+  await deps.ensureBucket(env);const saved=await storageFetch(deps,settingUrl(env,deps),{method:'POST',headers:{...deps.headers(env),'Content-Type':'application/json','x-upsert':'true','Cache-Control':'0'},body:JSON.stringify({...panels,copyVersion:2,updatedAt:new Date().toISOString()})});if(!saved.ok)throw Error('컬렉션 사진 저장에 실패했습니다.');return reply({ok:true,panels});
  }catch(error){return reply({message:error.message||'컬렉션 사진을 처리하지 못했습니다.'},503)}
 }
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
