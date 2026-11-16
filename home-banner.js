@@ -3,9 +3,10 @@ const TYPES={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif
 const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
 function storageFetch(deps,...args){const fetcher=deps.fetch;return fetcher(...args)}
 function mediaBase(env,deps){return deps.base(env)+'/storage/v1/object/public/site-media/'}
+export function validateHomeBannerLink(value){const link=String(value||'').trim();if(link&&(!link.startsWith('/')||link.startsWith('//')||/[\\\x00-\x20<>"']/.test(link)))throw Error('이동 링크는 /women/all처럼 사이트 내부 주소를 입력해주세요.');return link}
 export function validateHomeBanner(value,env,deps){
  const image=(v,required)=>{if(!v&&!required)return'';const prefix=mediaBase(env,deps)+'banners/';if(typeof v!=='string'||!v.startsWith(prefix)||!/^\d+-[a-f0-9-]+\.(jpg|png|webp|gif)$/.test(v.slice(prefix.length)))throw Error('업로드한 배너 사진을 선택해주세요.');return v};
- const link=String(value?.link||'').trim();if(link&&(!link.startsWith('/')||link.startsWith('//')||/[\\\x00-\x20<>"']/.test(link)))throw Error('이동 링크는 /women/all처럼 사이트 내부 주소를 입력해주세요.');
+ const link=validateHomeBannerLink(value?.link);
  return {desktopUrl:image(value?.desktopUrl,true),mobileUrl:image(value?.mobileUrl,false),alt:String(value?.alt||'BARE.').trim().slice(0,160),link};
 }
 export async function readHomeBanner(env,deps){

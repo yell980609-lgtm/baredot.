@@ -1,3 +1,4 @@
+import {signaturePanelsApi,signaturePanelsAdminPage,applySignaturePanels,signaturePanelsStyle} from './home-signature-settings.js';
 import {homeBannerApi,homeBannerAdminPage,applyHomeBanner} from './home-banner.js';
 import {withStorefrontRedesign,withBannerAdminLink} from './storefront-redesign.js';
 import {withMobileHeroLayout} from './home-hero-visibility.js';
@@ -1742,7 +1743,7 @@ const bareMobileHeroLayoutBase=patchHtml;
 patchHtml=function(html){return withMobileHeroLayout(bareMobileHeroLayoutBase(html))};
 
 const bareStorefrontRedesignBase=patchHtml;
-patchHtml=function(html){return withStorefrontRedesign(bareStorefrontRedesignBase(html))};
+patchHtml=function(html){return withStorefrontRedesign(bareStorefrontRedesignBase(html)).replace('</head>',signaturePanelsStyle+'</head>')};
 const bareBannerAdminProductsBase=adminProductsPage;
 adminProductsPage=function(env={}){return withBannerAdminLink(bareBannerAdminProductsBase(env))};
 const bareBannerAdminOrdersBase=adminOrdersPage;
@@ -1750,6 +1751,8 @@ adminOrdersPage=function(env={}){return withBannerAdminLink(bareBannerAdminOrder
 export default {async fetch(request,env,ctx){
  const path=new URL(request.url).pathname;
  const deps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,fetch};
+ if(path==='/admin/signature-panels')return new Response(signaturePanelsAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ if(path==='/api/admin/site/signature-panels'||path==='/api/site/signature-panels')return signaturePanelsApi(request,env,deps,path.startsWith('/api/admin/'));
  if(path==='/admin/home-banner')return new Response(homeBannerAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  if(path==='/api/admin/site/home-banner'||path==='/api/site/home-banner')return homeBannerApi(request,env,deps,path.startsWith('/api/admin/'));
  const response=await bareStorefrontWorker.fetch(request,env,ctx);
@@ -1757,5 +1760,6 @@ export default {async fetch(request,env,ctx){
  const html=await response.text();
  if(!html.includes('<!--BARE-HOME-BANNER-->'))return new Response(html,response);
  const headers=new Headers(response.headers);headers.delete('Content-Length');headers.delete('ETag');headers.delete('Last-Modified');headers.set('Cache-Control','no-store');
- return new Response(await applyHomeBanner(html,env,deps),{status:response.status,headers});
+ const [bannerHtml,signatureHtml]=await Promise.all([applyHomeBanner(html,env,deps),applySignaturePanels('<!--BARE-SIGNATURE-PANELS-->',env,deps)]);
+ return new Response(bannerHtml.replace('<!--BARE-SIGNATURE-PANELS-->',()=>signatureHtml),{status:response.status,headers});
 }};

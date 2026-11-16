@@ -17,6 +17,7 @@ export const homeSignatureStyle=`<style id="bare-home-signature-style">
 </style>`;
 // Reuse storefront cards so price, sale rate, stock state and product links stay consistent.
 export function renderHomeSignature(products,card){
+ if(document.querySelector('#home-signature[data-custom-signature]'))return;
  const shop=document.querySelector('.home-view .shop-section');if(!shop)return;
  let section=document.getElementById('home-signature');
  if(!section){section=document.createElement('section');section.id='home-signature';section.className='home-signature';section.setAttribute('aria-labelledby','home-signature-title');section.innerHTML='<div class="wrap"><div class="home-signature-head"><h2 id="home-signature-title">Meet our Signature</h2></div><div class="home-signature-grid"></div></div>';shop.after(section)}
