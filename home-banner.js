@@ -1,4 +1,4 @@
-import {renderHeroTransition} from './home-hero-transition.js';
+import {renderHeroTransition,heroTransitionRuntime,heroRecoveryScript} from './home-hero-transition.js';
 const SETTING='settings/home-banner.json';
 const TYPES={'image/jpeg':'jpg','image/png':'png','image/webp':'webp','image/gif':'gif'};
 const reply=(data,status=200)=>Response.json(data,{status,headers:{'Cache-Control':'no-store'}});
@@ -27,7 +27,7 @@ export async function homeBannerApi(request,env,deps,admin=false){
  if(admin){try{await deps.requireAdmin(request,env)}catch{return reply({message:'관리자 로그인이 필요합니다.'},403)}}
  if(!admin&&request.method!=='GET')return reply({message:'Method not allowed'},405);
  try{
-  if(request.method==='GET')return reply({banner:await readHomeBanner(env,deps)});
+  if(request.method==='GET'){const banner=await readHomeBanner(env,deps);return reply({banner,...(!admin?{heroHtml:banner?.teaserUrl?renderHeroTransition(renderHomeIntro(banner),banner):null}:{})})}
   if(request.method==='POST'){
    const form=await request.formData(),file=form.get('file');if(!file||typeof file.arrayBuffer!=='function'||!TYPES[file.type]||!file.size||file.size>10485760)return reply({message:'JPG·PNG·WebP·GIF 사진을 10MB 이하로 올려주세요.'},400);
    const bytes=new Uint8Array(await file.slice(0,12).arrayBuffer()),text=String.fromCharCode(...bytes),valid=file.type==='image/jpeg'?bytes[0]===255&&bytes[1]===216&&bytes[2]===255:file.type==='image/png'?[137,80,78,71,13,10,26,10].every((v,i)=>bytes[i]===v):file.type==='image/webp'?text.startsWith('RIFF')&&text.slice(8,12)==='WEBP':text.startsWith('GIF87a')||text.startsWith('GIF89a');if(!valid)return reply({message:'파일 내용과 사진 형식이 맞지 않습니다.'},400);
@@ -41,13 +41,16 @@ export async function homeBannerApi(request,env,deps,admin=false){
  }catch(error){return reply({message:error.message||'홈 배너를 처리하지 못했습니다.'},503)}
 }
 const esc=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-export async function applyHomeBanner(html,env,deps){
- if(!html.includes('<!--BARE-HOME-BANNER-->'))return html;
- let banner=null;try{banner=await readHomeBanner(env,deps)}catch{}
+function renderHomeIntro(banner){
  const fallback='<div class="campaign-placeholder"><small>BARE.</small><p>Quiet design.<br>Loud performance.</p><a href="/#shop">EXPLORE BARE. <span>↗</span></a></div>';
  const media=banner?.desktopUrl?'<picture'+(banner.mobileUrl?' class="has-mobile-banner"':'')+'>'+(banner.mobileUrl?'<source media="(max-width:860px)" data-srcset="'+esc(banner.mobileUrl)+'">':'')+'<img data-src="'+esc(banner.desktopUrl)+'" alt="'+esc(banner.alt)+'" fetchpriority="high" decoding="async" width="1920" height="1020"></picture>':fallback;
  const content=banner?.link?'<a class="campaign-link" href="'+esc(banner.link)+'">'+media+'</a>':media;
- return html.replace('<!--BARE-HOME-BANNER-->',()=>banner?.teaserUrl?renderHeroTransition(content,banner):content);
+ return content;
+}
+export async function applyHomeBanner(html,env,deps){
+ if(!html.includes('<!--BARE-HOME-BANNER-->'))return html;
+ let banner=null;try{banner=await readHomeBanner(env,deps)}catch{}
+ return html.replace('<!--BARE-HOME-BANNER-->',()=>banner?.teaserUrl?renderHeroTransition(renderHomeIntro(banner),banner):renderHomeIntro(banner)).replace('</body>',()=>heroTransitionRuntime+heroRecoveryScript+'</body>');
 }
 export function homeBannerAdminPage(base,key){return `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>홈 메인 배너 | BARE.</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f4f1;color:#111;font:14px/1.6 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:30px 22px}header{display:flex;justify-content:space-between;align-items:center;gap:20px}h1{font-size:26px}a{color:inherit}section{background:white;border:1px solid #ddd;padding:24px;margin:20px 0}button,input{font:inherit}button{padding:11px 18px;border:1px solid #111;background:white;cursor:pointer}button.primary{background:#111;color:white}button:disabled{opacity:.4;cursor:wait}label{display:grid;gap:8px;margin:18px 0}input{padding:11px;border:1px solid #bbb;width:100%}.previews{display:grid;grid-template-columns:2fr 1fr;gap:24px}.preview{width:100%;aspect-ratio:1920/1020;object-fit:cover;background:#eee}.mobile{aspect-ratio:4/5}.note{color:#777;font-size:13px}.actions{display:flex;flex-wrap:wrap;gap:10px}[hidden]{display:none!important}#status{white-space:pre-line;overflow-wrap:anywhere}@media(max-width:650px){.previews{grid-template-columns:1fr}main{padding:18px}section{padding:18px}}</style></head><body><main><header><h1>홈 메인 배너</h1><a href="/admin/products">상품관리</a></header><p id="status" role="status">관리자 로그인을 확인하고 있습니다.</p><section id="login" hidden><label>이메일<input id="email" type="email" autocomplete="username"></label><label>비밀번호<input id="password" type="password" autocomplete="current-password"></label><button id="sign-in">로그인</button></section><section id="editor" hidden><h2>첫 화면 사진 (Quiet design)</h2><p class="note">PC 권장 1920×1020px · 모바일 권장 900×1125px · JPG/PNG/WebP/GIF, 각 10MB 이하.<br>모바일 사진을 올리지 않으면 PC 사진을 여백 없이 같은 비율로 표시합니다. 업로드 후 ‘홈 배너 저장’을 눌러야 홈페이지에 적용됩니다.</p><div class="previews"><div><label>PC·기본 사진<input id="desktop-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="desktop-preview" class="preview" alt="PC 배너 미리보기" hidden></div><div><label>모바일 사진 (선택)<input id="mobile-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="mobile-preview" class="preview mobile" alt="모바일 배너 미리보기" hidden><button id="clear-mobile">모바일 사진 제거</button></div></div><h2>2초 뒤 표시할 Coming Soon 화면</h2><p class="note">배경 사진을 올리면 첫 화면을 2초 보여준 뒤 이 화면으로 한 번 전환되어 유지됩니다. 글자가 없는 배경 사진을 권장합니다. 첫 화면 사진 없이도 기본 Quiet design 화면을 사용할 수 있습니다.</p><div class="previews"><div><label>Coming Soon PC 배경<input id="teaser-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="teaser-preview" class="preview" alt="Coming Soon 미리보기" hidden></div><div><label>Coming Soon 모바일 배경 (선택)<input id="teaserMobile-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif"></label><img id="teaserMobile-preview" class="preview mobile" alt="모바일 Coming Soon 미리보기" hidden></div></div><label>오픈알림받기 버튼 · 카카오 채널 주소<input id="teaser-link" placeholder="https://pf.kakao.com/채널ID/friend"></label><button id="clear-teaser">Coming Soon 화면 제거</button><label>사진 설명<input id="alt" maxlength="160" placeholder="베어닷 메인 컬렉션"></label><label>사진 클릭 시 이동 주소 (선택)<input id="link" placeholder="/women/all"></label><div class="actions"><button id="save" class="primary">홈 배너 저장</button><button id="reset">기본 배너로 되돌리기</button><a href="/" target="_blank" rel="noopener">홈페이지 확인 ↗</a></div></section></main><script type="module">
 import{createClient}from'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
