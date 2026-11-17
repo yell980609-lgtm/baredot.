@@ -9,4 +9,4 @@
 
 ## 홈 카테고리 분리
 
-Bras & Tanks는 `/women/bras-tanks`, Activewear는 `/women/activewear`로 연결합니다. 여성 상의 중 커버업 슬리브리스(카모 포함)와 래글런 오프숄더 제품군은 Bras & Tanks에서 제외하고 Activewear로 표시합니다. Activewear에는 기존 레깅스·세트 등 브라/탱크 이외 여성 상품도 표시합니다. 전체 WOMEN/TOPS 목록과 상품 원본 데이터는 유지합니다. 홈 Bras & Tanks 자동 썸네일에서도 커버업·래글런을 제외합니다.
+Bras & Tanks는 `/women/bras-tanks`, Activewear는 `/women/activewear`로 연결합니다. 여성 상의 중 커버업 슬리브리스(카모 포함)와 래글런 오프숄더 제품군은 Bras & Tanks에서 제외하고 Activewear로 표시합니다. Activewear에서는 #I'M BARED 세트, 폴딩 레깅스, 하이업 레깅스를 제외합니다. 하단 MEN 메뉴는 SET ~18% OFF로 교체하고 `/collections/sets`에서 #I'M BARED set up 1종만 표시합니다. 레깅스는 기존 Bottoms에 유지합니다. 전체 WOMEN/TOPS 목록과 상품 원본 데이터는 유지합니다. 홈 Bras & Tanks 자동 썸네일에서도 커버업·래글런을 제외합니다.
