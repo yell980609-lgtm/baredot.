@@ -1,3 +1,4 @@
+import {collectionThumbnailsApi,collectionThumbnailsAdminPage,readCollectionThumbnails} from './collection-thumbnails.js';
 import {collectionBannerApi,collectionBannersAdminPage,readCollectionBanner} from './collection-banners.js';
 import {FEATURED_COLLECTIONS,featuredCollectionPage} from './featured-collections.js';
 import {withHomeCategoryShortcuts} from './home-category-shortcuts.js';
@@ -1754,10 +1755,13 @@ adminOrdersPage=function(env={}){return withBannerAdminLink(bareBannerAdminOrder
 const barePublishedWorker={async fetch(request,env,ctx){
  const path=new URL(request.url).pathname;
  const deps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,fetch};
+ if(path==='/admin/collection-thumbnails')return new Response(collectionThumbnailsAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ const thumbnailMatch=path.match(/^\/api\/admin\/site\/collection-thumbnails\/(signature|wine)$/);
+ if(thumbnailMatch)return collectionThumbnailsApi(request,env,thumbnailMatch[1],{...deps,loadProducts:async()=>{const r=await publicProductsApi(env);return r.json()}});
  if(path==='/admin/collection-banners')return new Response(collectionBannersAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  const collectionBannerMatch=path.match(/^\/api\/admin\/site\/collection-banner\/(signature|wine)$/);
  if(collectionBannerMatch)return collectionBannerApi(request,env,collectionBannerMatch[1],deps);
- if(FEATURED_COLLECTIONS[path])return featuredCollectionPage(request,FEATURED_COLLECTIONS[path],{renderHome:r=>barePublishedWorker.fetch(r,env,ctx),loadBanner:key=>readCollectionBanner(env,key,deps),loadProducts:async()=>{const r=await publicProductsApi(env);if(!r.ok)throw Error('Product API unavailable');return r.json()}});
+ if(FEATURED_COLLECTIONS[path])return featuredCollectionPage(request,FEATURED_COLLECTIONS[path],{renderHome:r=>barePublishedWorker.fetch(r,env,ctx),loadBanner:key=>readCollectionBanner(env,key,deps),loadThumbnails:key=>readCollectionThumbnails(env,key,deps),loadProducts:async()=>{const r=await publicProductsApi(env);if(!r.ok)throw Error('Product API unavailable');return r.json()}});
  if(path==='/admin/signature-panels')return new Response(signaturePanelsAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  if(path==='/api/admin/site/signature-panels'||path==='/api/site/signature-panels')return signaturePanelsApi(request,env,deps,path.startsWith('/api/admin/'));
  if(path==='/admin/home-banner')return new Response(homeBannerAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
