@@ -1,3 +1,4 @@
+import {FEATURED_COLLECTIONS,featuredCollectionPage} from './featured-collections.js';
 import {withHomeCategoryShortcuts} from './home-category-shortcuts.js';
 import {signaturePanelsApi,signaturePanelsAdminPage,applySignaturePanels,signaturePanelsStyle} from './home-signature-settings.js';
 import {homeBannerApi,homeBannerAdminPage,applyHomeBanner} from './home-banner.js';
@@ -1749,9 +1750,10 @@ const bareBannerAdminProductsBase=adminProductsPage;
 adminProductsPage=function(env={}){return withBannerAdminLink(bareBannerAdminProductsBase(env))};
 const bareBannerAdminOrdersBase=adminOrdersPage;
 adminOrdersPage=function(env={}){return withBannerAdminLink(bareBannerAdminOrdersBase(env))};
-export default {async fetch(request,env,ctx){
+const barePublishedWorker={async fetch(request,env,ctx){
  const path=new URL(request.url).pathname;
  const deps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,fetch};
+ if(FEATURED_COLLECTIONS[path])return featuredCollectionPage(request,FEATURED_COLLECTIONS[path],{renderHome:r=>barePublishedWorker.fetch(r,env,ctx),loadProducts:async()=>{const r=await publicProductsApi(env);if(!r.ok)throw Error('Product API unavailable');return r.json()}});
  if(path==='/admin/signature-panels')return new Response(signaturePanelsAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  if(path==='/api/admin/site/signature-panels'||path==='/api/site/signature-panels')return signaturePanelsApi(request,env,deps,path.startsWith('/api/admin/'));
  if(path==='/admin/home-banner')return new Response(homeBannerAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
@@ -1767,3 +1769,5 @@ export default {async fetch(request,env,ctx){
 
 const bareCategoryShortcutsBase=patchHtml;
 patchHtml=function(html){return withHomeCategoryShortcuts(bareCategoryShortcutsBase(html))};
+
+export default barePublishedWorker;
