@@ -1,9 +1,19 @@
+import {categoryProducts} from './search-seo.js';
 export const FEATURED_COLLECTIONS={
+ '/women/bras-tanks':{key:'bras-tanks',title:'BRAS & TANKS',description:'베어닷 브라탑과 홀터탑 컬렉션'},
+ '/women/activewear':{key:'activewear',title:'ACTIVEWEAR',description:'베어닷 커버업·래글런 탑과 액티브웨어 컬렉션'},
  '/collections/signature':{key:'signature',title:'MEET OUR SIGNATURE',description:'베어닷 시그니처 초콜릿·네이비 할터탑 컬렉션'},
  '/collections/wine-pairing':{key:'wine',title:'WINE PAIRING EDITION',description:'래글런 탑, 폴딩 레깅스와 와인·블랙 라벨 할터탑 컬렉션'}
 };
 const normal=value=>String(value||'').toLowerCase().replace(/[^a-z0-9가-힣]/g,'');
 export function featuredCollectionProducts(products,key){
+ if(key==='bras-tanks'||key==='activewear'){
+  const women=categoryProducts(products,{gender:'women'}),tops=categoryProducts(products,{gender:'women',kind:'top'});
+  const activewearTop=p=>/coverupsleeveless|raglanoffshoulder/.test(normal(p.name)+' '+normal(p.slug));
+  const bras=new Set(tops.filter(p=>!activewearTop(p)).map(p=>p.slug));
+  return women.filter(p=>key==='bras-tanks'?bras.has(p.slug):!bras.has(p.slug));
+ }
+
  const rules=key==='signature'?[
   p=>p.slug==='signature-cut-out-halter-top-chocolate'||normal(p.name).includes('signaturecutouthaltertopchocolate'),
   p=>p.slug==='im-bared-halter-top'||normal(p.name)==='imbaredhaltertop'
