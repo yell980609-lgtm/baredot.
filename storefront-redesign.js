@@ -32,4 +32,4 @@ export function withStorefrontRedesign(html){
  .replace('</body>',()=>'<dialog class="bare-search-dialog" id="bare-search-dialog"><header><h2>SEARCH</h2><button type="button" aria-label="검색 닫기">×</button></header><input type="search" placeholder="상품명을 입력하세요" aria-label="상품 검색어"><p class="bare-search-status" role="status"></p><div class="bare-search-results"></div></dialog>'+runtime+'</body>');
  return html;
 }
-export function withBannerAdminLink(html){return html.replace('</head>','<style>#hero-editor-nav,#hero-editor-open{display:none!important}</style></head>').replace('</nav>','<a href="/admin/home-banner">홈 메인 배너</a><a href="/admin/signature-panels">홈 컬렉션 사진</a></nav>')}
+export function withBannerAdminLink(html){return html.replace('</head>','<style>#hero-editor-nav,#hero-editor-open{display:none!important}</style></head>').replace('</nav>','<a href="/admin/home-banner">홈 메인 배너</a><a href="/admin/signature-panels">홈 컬렉션 사진</a><a href="/admin/collection-banners">컬렉션 상단 배너</a></nav>')}
