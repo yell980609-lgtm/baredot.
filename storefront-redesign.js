@@ -1,3 +1,4 @@
+import {withRestoredIntro} from './storefront-intro.js';
 const icon=(name)=>({search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',bag:'<path d="M5 7h14v14H5zM9 7V5a3 3 0 0 1 6 0v2"/>'}[name]);
 const svg=name=>'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">'+icon(name)+'</svg>';
 const header='<header class="topbar bare-new-header" aria-label="BAREDOT navigation"><button class="mobile-menu-toggle" type="button" aria-label="모바일 메뉴 열기" aria-expanded="false"><span></span><span></span><span></span></button><nav class="redesign-links" aria-label="상품 메뉴"><a href="/#shop">NEW</a><a href="/women/all">WOMEN</a><a href="/men/all">MEN</a><a href="/women/top">TOPS</a><a href="/women/bottom">BOTTOMS</a></nav><a class="logo" href="/" aria-label="베어닷 홈"><svg viewBox="60 430 960 285" role="img" aria-label="BARE."><image href="/assets/baredot-logo.png" width="1080" height="1080"/></svg></a><nav class="topnav" aria-label="회원·검색·장바구니"><span class="header-currency">₩ KRW</span><button type="button" class="header-search" aria-label="상품 검색">'+svg('search')+'<span>SEARCH</span></button><button class="member-trigger" type="button" aria-label="로그인">LOGIN</button><a class="cart-page-link" href="/cart" aria-label="장바구니">'+svg('bag')+'</a></nav></header>';
@@ -20,7 +21,7 @@ const dialog=document.getElementById('bare-search-dialog'),input=dialog?.querySe
 document.querySelector('.header-search')?.addEventListener('click',async()=>{dialog.showModal();input.focus();if(products){draw();return}if(loading)return;loading=true;note.textContent='상품을 불러오는 중입니다.';try{const r=await fetch('/api/products');if(!r.ok)throw Error();const data=await r.json();if(!Array.isArray(data.products))throw Error();products=data.products;note.textContent='';draw()}catch{note.textContent='상품을 불러오지 못했습니다. 닫은 뒤 다시 시도해주세요.'}finally{loading=false}});input?.addEventListener('input',draw);dialog?.querySelector('button')?.addEventListener('click',()=>dialog.close());dialog?.addEventListener('click',event=>{if(event.target===dialog)dialog.close()});
 })();</script>`;
 export function withStorefrontRedesign(html){
- // Remove retired hero code before it can create media or overlays in the new image banner.
+ // Retire old video/hero scripts; the first-visit brand intro is restored separately.
  html=html.replace(/<script[^>]*id="(?:bare-hero-demand-loading|bare-welcome-pack-script|bare-home-hero-stable-script|bare-home-intro-then-welcome-script)"[^>]*>[\s\S]*?<\/script>/g,'')
  .replace(/<div class="intro-overlay"[^>]*>[\s\S]*?<\/div><\/div>/,'')
  .replace(/<button class="mobile-menu-toggle"[\s\S]*?<\/button>/,'')
@@ -32,6 +33,6 @@ export function withStorefrontRedesign(html){
  .replace(/<section class="shop-section"[^>]*>[\s\S]*?<\/section>/,markup=>markup+'<section class="signature-panels" id="home-signature" data-custom-signature aria-label="베어닷 컬렉션"><!--BARE-SIGNATURE-PANELS--></section>')
  .replace('</head>',()=>styles+'</head>')
  .replace('</body>',()=>'<dialog class="bare-search-dialog" id="bare-search-dialog"><header><h2>SEARCH</h2><button type="button" aria-label="검색 닫기">×</button></header><input type="search" placeholder="상품명을 입력하세요" aria-label="상품 검색어"><p class="bare-search-status" role="status"></p><div class="bare-search-results"></div></dialog>'+runtime+'</body>');
- return html;
+ return withRestoredIntro(html);
 }
 export function withBannerAdminLink(html){return html.replace('</head>','<style>#hero-editor-nav,#hero-editor-open{display:none!important}</style></head>').replace('</nav>','<a href="/admin/usd-prices">USD 가격 · 미국 배송</a><a href="/admin/home-banner">홈 메인 배너</a><a href="/admin/signature-panels">홈 컬렉션 사진</a><a href="/admin/collection-banners">컬렉션 상단 배너</a><a href="/admin/collection-thumbnails">컬렉션 상품 썸네일</a></nav>')}
