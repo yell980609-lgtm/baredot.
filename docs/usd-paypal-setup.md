@@ -25,11 +25,11 @@ In Toss admin:
 ## Prices and shipping
 
 1. Open `/admin/usd-prices` and sign in with the existing admin account.
-2. Enter each product's final USD unit price. Blank means not available for USD checkout; no exchange rate is applied.
+2. On the first authenticated admin load, missing USD prices are filled and saved from the latest published USD/KRW reference rate (Frankfurter; ExchangeRate-API fallback). The KRW sale price is divided by KRW per USD and rounded up to a whole dollar. Existing USD prices are preserved. The rate, source date and number of filled products appear in admin. The import runs once; later prices remain fixed and editable. If a sufficiently recent rate cannot be verified, no prices are invented or saved. Blank prices remain unavailable for USD checkout.
 3. Review the shipping charge. Initial **$25 to the United States** is a configurable merchant policy, **not a verified carrier quotation**. Korea Post EMS official rate pages and search access were blocked in this environment. Weigh a packed order and obtain a carrier quote before relying on this as cost recovery. Import duties/taxes are not included in the displayed shipping charge and the checkout states that the recipient pays any charges.
 4. Save prices. After matching keys and sandbox validation are ready, enable USD checkout and save.
 
-No USD prices are guessed or pre-filled. USD checkout is off by default and cannot be enabled without prices and both keys. Changing the browsing currency does not alter KRW prices stored in cart items. The server ignores browser-provided prices and creates an authoritative USD quote.
+USD prices are not guessed; the one-time import requires a validated published exchange rate (at most four days old to accommodate weekends). USD checkout is off by default and cannot be enabled without prices and both keys. Changing the browsing currency does not alter KRW prices stored in cart items. The server ignores browser-provided prices and creates an authoritative USD quote.
 
 ## Storage and amounts
 
