@@ -44,3 +44,5 @@ Stock is checked when issuing a quote; the existing order save/stock update mech
 All payment requests, approval, refund, auth and storage calls in automated tests are mocked. Browser tests cover desktop/mobile currency display, cart, US address, widget `USD` amount and `PAYPAL_USD`, product/shipping data, signed approval, member ownership, cents storage, and admin price reload. Backend tests reject amount/signature/currency/MID mismatches, unavailable prices, invalid stock and unsupported destinations. No real customer payment or live refund was submitted.
 
 Reference: merchant-provided Toss foreign-payment guide screenshots, plus official `@tosspayments/tosspayments-sdk` 2.10.0 type definitions for `foreignEasyPay.products` and `.shipping` (`https://www.npmjs.com/package/@tosspayments/tosspayments-sdk`).
+
+Currency browsing is independent of PayPal checkout availability: shoppers can switch KRW/USD on product pages even while USD checkout is paused. Product route and currently available selected options are restored after a currency reload. USD payment remains gated by the server settings and matching keys.
