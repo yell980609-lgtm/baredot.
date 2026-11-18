@@ -1,3 +1,6 @@
+import {usdSettingsApi,usdQuoteApi,usdConfirmApi} from './usd-commerce.js';
+import {usdAdminPage,usdCheckoutPage,usdResultPage} from './usd-pages.js';
+import {withUsdStorefront,withUsdOrderAmounts,withUsdAdminAmounts} from './usd-storefront.js';
 import {collectionThumbnailsApi,collectionThumbnailsAdminPage,readCollectionThumbnails} from './collection-thumbnails.js';
 import {collectionBannerApi,collectionBannersAdminPage,readCollectionBanner} from './collection-banners.js';
 import {FEATURED_COLLECTIONS,featuredCollectionPage} from './featured-collections.js';
@@ -459,7 +462,8 @@ adminApi=async function(request,env,url){
         inquiries,
         metrics:{
           orders:orders.length,
-          paidAmount:orders.reduce((sum,order)=>sum+Number(order.amount||0),0),
+          paidAmount:orders.filter(order=>order.raw_payment?.bare_currency!=='USD').reduce((sum,order)=>sum+Number(order.amount||0),0),
+          paidUsdAmount:orders.filter(order=>order.raw_payment?.bare_currency==='USD').reduce((sum,order)=>sum+Number(order.amount||0),0)/100,
           todayOrders:orders.filter(order=>new Date(order.created_at)>=today).length,
           needAction:orders.filter(order=>['paid','confirmed','ready'].includes(order.fulfillment_status)).length,
           shipping:orders.filter(order=>order.fulfillment_status==='shipping').length,
@@ -1749,11 +1753,19 @@ patchHtml=function(html){return withMobileHeroLayout(bareMobileHeroLayoutBase(ht
 const bareStorefrontRedesignBase=patchHtml;
 patchHtml=function(html){return withStorefrontRedesign(bareStorefrontRedesignBase(html)).replace('</head>',signaturePanelsStyle+'</head>')};
 const bareBannerAdminProductsBase=adminProductsPage;
-adminProductsPage=function(env={}){return withBannerAdminLink(bareBannerAdminProductsBase(env))};
+adminProductsPage=function(env={}){return withUsdAdminAmounts(withBannerAdminLink(bareBannerAdminProductsBase(env)))};
 const bareBannerAdminOrdersBase=adminOrdersPage;
-adminOrdersPage=function(env={}){return withBannerAdminLink(bareBannerAdminOrdersBase(env))};
+adminOrdersPage=function(env={}){return withUsdAdminAmounts(withBannerAdminLink(bareBannerAdminOrdersBase(env)))};
 const barePublishedWorker={async fetch(request,env,ctx){
  const path=new URL(request.url).pathname;
+ const usdDeps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,products:async()=>{const r=await publicProductsApi(env),d=await r.json();if(d.message)throw Error(d.message);return d},saveOrder:saveOrderToSupabase};
+ const usdPage=html=>new Response(html,{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ if(path==='/admin/usd-prices')return usdPage(usdAdminPage(supabaseUrl(env),supabasePublicKey(env)));
+ if(path==='/api/admin/usd-settings'||path==='/api/usd-settings')return usdSettingsApi(request,env,usdDeps,path.startsWith('/api/admin/'));
+ if(path==='/api/usd/quote')return usdQuoteApi(request,env,usdDeps);
+ if(path==='/api/usd/confirm')return usdConfirmApi(request,env,usdDeps);
+ if(path==='/order/usd-checkout'||path==='/cart/usd')return usdPage(usdCheckoutPage(supabaseUrl(env),supabasePublicKey(env),path==='/cart/usd'));
+ if(path==='/order/usd-success'||path==='/order/usd-fail')return usdPage(usdResultPage(path.endsWith('success')));
  const deps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,fetch};
  if(path==='/admin/collection-thumbnails')return new Response(collectionThumbnailsAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  const thumbnailMatch=path.match(/^\/api\/admin\/site\/collection-thumbnails\/(signature|wine)$/);
@@ -1767,8 +1779,9 @@ const barePublishedWorker={async fetch(request,env,ctx){
  if(path==='/admin/home-banner')return new Response(homeBannerAdminPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  if(path==='/api/admin/site/home-banner'||path==='/api/site/home-banner')return homeBannerApi(request,env,deps,path.startsWith('/api/admin/'));
  const response=await bareStorefrontWorker.fetch(request,env,ctx);
+ if(/^\/order\/orderform(?:\.html)?$/.test(path)){const h=new Headers(response.headers);h.delete('Content-Length');return new Response(withUsdStorefront(await response.text()),{status:response.status,headers:h})}
  if(!response.headers.get('Content-Type')?.includes('text/html')||/^\/(?:api|admin|member|order)(?:\/|$)/.test(path))return response;
- const html=await response.text();
+ const html=withUsdOrderAmounts(withUsdStorefront(await response.text()));
  if(!html.includes('<!--BARE-HOME-BANNER-->'))return new Response(html,response);
  const headers=new Headers(response.headers);headers.delete('Content-Length');headers.delete('ETag');headers.delete('Last-Modified');headers.set('Cache-Control','no-store');
  const [bannerHtml,signatureHtml]=await Promise.all([applyHomeBanner(html,env,deps),applySignaturePanels('<!--BARE-SIGNATURE-PANELS-->',env,deps)]);
