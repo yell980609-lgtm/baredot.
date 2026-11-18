@@ -1,7 +1,7 @@
 // Translate store-owned interface copy locally; preserve customer input, review originals and payment diagnostics.
-export const usdLanguageHead=String.raw`<script>(()=>{try{if(!/^\/(?:admin|sandbox)(?:\/|$)/.test(location.pathname)&&localStorage.getItem('bare_currency')==='USD')document.documentElement.lang='en'}catch{}})();</script>`;
+export const usdLanguageHead=String.raw`<script>(()=>{try{if(!/^\/(?:admin(?:\.html)?|sandbox)(?:\/|$)/.test(location.pathname)&&localStorage.getItem('bare_currency')==='USD')document.documentElement.lang='en'}catch{}})();</script>`;
 export const usdLanguageScript=String.raw`<script id="bare-usd-language">(()=>{
- if(/^\/(?:admin|sandbox)(?:\/|$)/.test(location.pathname))return;
+ if(/^\/(?:admin(?:\.html)?|sandbox)(?:\/|$)/.test(location.pathname))return;
  let active=false;try{active=localStorage.getItem('bare_currency')==='USD'}catch{}if(!active)return;
  document.documentElement.lang='en';
  const pairs=[
