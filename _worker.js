@@ -1,4 +1,5 @@
-import {usdSettingsApi,usdQuoteApi,usdConfirmApi} from './usd-commerce.js';
+import {saveSandboxOrder,cancelSandboxOrder,sandboxOrdersApi,sandboxOrdersPage,sandboxStartPage} from './usd-sandbox.js';
+import {usdSettingsApi,usdQuoteApi,usdConfirmApi,verifyUsdQuote} from './usd-commerce.js';
 import {usdAdminPage,usdCheckoutPage,usdResultPage} from './usd-pages.js';
 import {withUsdStorefront,withUsdOrderAmounts,withUsdAdminAmounts} from './usd-storefront.js';
 import {collectionThumbnailsApi,collectionThumbnailsAdminPage,readCollectionThumbnails} from './collection-thumbnails.js';
@@ -1758,8 +1759,18 @@ const bareBannerAdminOrdersBase=adminOrdersPage;
 adminOrdersPage=function(env={}){return withUsdAdminAmounts(withBannerAdminLink(bareBannerAdminOrdersBase(env)))};
 const barePublishedWorker={async fetch(request,env,ctx){
  const path=new URL(request.url).pathname;
+ env={...env,BARE_PAYPAL_SANDBOX:'1',TOSS_USD_MID:env.TOSS_USD_MID||'tpbaredsw0d'};
+ if(path==='/sandbox')return new Response(sandboxStartPage(env),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ if(/^\/order\/orderform(?:\.html)?$/.test(path))return Response.redirect(new URL('/order/usd-checkout',request.url),302);
+ if(path==='/cart')return Response.redirect(new URL('/cart/usd',request.url),302);
+ if(!['GET','HEAD'].includes(request.method)&&!['/api/checkout/context','/api/usd/quote','/api/usd/confirm','/api/usd/sandbox-cancel','/api/admin/usd-settings'].includes(path))return Response.json({message:'Sandbox preview: production writes are disabled.'},{status:403});
+
  const usdDeps={base:supabaseUrl,headers:siteMediaHeaders,ensureBucket:ensureSiteMediaBucket,requireAdmin,products:async()=>{const r=await publicProductsApi(env),d=await r.json();if(d.message)throw Error(d.message);return d},saveOrder:saveOrderToSupabase};
- const usdPage=html=>new Response(html,{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ usdDeps.saveOrder=(e,p,payment)=>saveSandboxOrder(e,p,payment,usdDeps);
+ if(path==='/api/usd/sandbox-cancel')return cancelSandboxOrder(request,env,usdDeps,verifyUsdQuote);
+ if(path==='/api/admin/usd-sandbox-orders')return sandboxOrdersApi(request,env,usdDeps);
+ if(path==='/admin/usd-sandbox-orders')return new Response(sandboxOrdersPage(supabaseUrl(env),supabasePublicKey(env)),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
+ const usdPage=html=>new Response(html.replace('<body>','<body><p style="padding:12px;background:#fff2bf;text-align:center">PAYPAL SANDBOX · 테스트 전용 · 운영 주문과 재고에 반영되지 않습니다.</p>'),{headers:{'Content-Type':'text/html;charset=utf-8','Cache-Control':'no-store'}});
  if(path==='/admin/usd-prices')return usdPage(usdAdminPage(supabaseUrl(env),supabasePublicKey(env)));
  if(path==='/api/admin/usd-settings'||path==='/api/usd-settings')return usdSettingsApi(request,env,usdDeps,path.startsWith('/api/admin/'));
  if(path==='/api/usd/quote')return usdQuoteApi(request,env,usdDeps);
