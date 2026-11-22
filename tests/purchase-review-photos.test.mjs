@@ -6,7 +6,7 @@ const db=new PGlite(),env={REVIEW_LINK_SECRET:'isolated-photo-test'},item='123e4
 try{
  await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;create table orders(order_id text primary key,buyer_name text,fulfillment_status text,payment_status text);create table order_items(id uuid primary key,order_id text references orders(order_id),product_title text,option_text text);create table products(slug text primary key,name text,status text);insert into orders values('order-1','김고객','done','paid');insert into products values('top','탑','published');insert into order_items values('${item}','order-1','탑','M');`);
  for(const file of ['purchase-reviews-schema.sql','purchase-review-photos-schema.sql','purchase-review-photos-schema.sql'])await db.exec(await readFile(new URL('../'+file,import.meta.url),'utf8'));
- const storage=new Map();let uploadCount=0;
+ const storage=new Map();let uploadCount=0,bucketMode='exists',createdCount=0;
  const rest=async(_env,path,options)=>{
   if(path.startsWith('orders?'))return (await db.query('select * from orders')).rows;
   if(path.startsWith('order_items?'))return (await db.query('select id from order_items where id=$1 and order_id=$2',[new URLSearchParams(path.split('?')[1]).get('id').slice(3),new URLSearchParams(path.split('?')[1]).get('order_id').slice(3)])).rows;
@@ -18,7 +18,8 @@ try{
  };
  const deps={rest,base:()=> 'https://project.supabase.co',headers:()=>({Authorization:'Bearer server-secret'}),fetch:async(url,options={})=>{
  assert.equal(options.headers.Authorization,'Bearer server-secret');
- if(url.includes('/bucket/'))return Response.json({});
+ if(url.endsWith('/storage/v1/bucket')){createdCount++;assert.equal(JSON.parse(options.body).id,'purchase-review-photos');return bucketMode==='race'?Response.json({statusCode:'409',error:'Duplicate',message:'The resource already exists'},{status:400}):Response.json({})}
+ if(url.includes('/bucket/'))return bucketMode==='exists'?Response.json({}):bucketMode==='denied'?Response.json({message:'Forbidden'},{status:403}):Response.json({statusCode:'404',error:'not_found',message:'Bucket not found'},{status:bucketMode==='404'?404:400});
  if(url.includes('/object/list/'))return Response.json([]);
  if(options.method==='POST'&&url.includes('/object/purchase-review-photos/')){uploadCount++;storage.set(url,options.body);return Response.json({})}throw Error(url)
  }};
@@ -27,7 +28,8 @@ try{
  const upload=async(id=item,bytes=Uint8Array.from([137,80,78,71,13,10,26,10,0]))=>{const body=new FormData();body.append('itemId',id);body.append('file',new Blob([bytes],{type:'image/png'}),'photo.png');return purchaseReviewApi(new Request(origin+'/api/reviews/photos',{method:'POST',headers:auth,body}),env,deps)};
  assert.equal((await upload('123e4567-e89b-42d3-a456-426614174001')).status,403);
  assert.equal((await upload(item,new TextEncoder().encode('<svg>bad</svg>'))).status,400);
- let response=await upload();assert.equal(response.status,200);const receipt=await response.json();assert.equal(uploadCount,1);assert(storage.size===1);
+ for(const mode of ['400','404','race']){bucketMode=mode;const result=await upload();assert.equal(result.status,200,mode+' missing bucket/create race must upload');}assert.equal(createdCount,3);bucketMode='denied';const denied=await upload();assert.equal(denied.status,503);assert.equal((await denied.json()).stage,'storage-bucket');assert.equal(createdCount,3);bucketMode='exists';
+ let response=await upload();assert.equal(response.status,200);const receipt=await response.json();assert.equal(uploadCount,4);assert(storage.size===4);
  const submit=media=>purchaseReviewApi(new Request(origin+'/api/reviews/order',{method:'POST',headers:{...auth,'Content-Type':'application/json'},body:JSON.stringify({itemId:item,rating:5,text:'직접 입어보니 정말 편안하고 좋습니다.',media})}),env,deps);
  assert.equal((await submit([{...receipt,url:'https://evil.test/a.png'}])).status,400);
  assert.equal((await submit(Array(6).fill(receipt))).status,400);
