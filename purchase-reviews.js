@@ -1,3 +1,4 @@
+import {uploadReviewPhoto,validateReviewPhotos} from './purchase-review-photos.js';
 import {purchaseReviewPage} from './purchase-review-page.js';
 export {purchaseReviewPage};
 const json=(body,status=200)=>Response.json(body,{status,headers:{'cache-control':'no-store','referrer-policy':'no-referrer'}});
@@ -8,7 +9,7 @@ export async function createReviewToken(env,orderId,now=Date.now()){const payloa
 export async function readReviewToken(env,token,now=Date.now()){if(typeof token!=='string'||token.length>1000)throw Error('INVALID_TOKEN');const [payload,signature,...extra]=token.split('.');if(extra.length||!payload||!/^[a-f0-9]{64}$/.test(signature||''))throw Error('INVALID_TOKEN');const expected=await sign(env,payload);let diff=0;for(let i=0;i<64;i++)diff|=signature.charCodeAt(i)^expected.charCodeAt(i);if(diff)throw Error('INVALID_TOKEN');const data=JSON.parse(atob(payload.replace(/-/g,'+').replace(/_/g,'/')));if(typeof data.orderId!=='string'||!data.orderId||data.orderId.length>160||!Number.isFinite(data.exp)||data.exp<Math.floor(now/1000))throw Error('INVALID_TOKEN');return data.orderId}
 const eligible=o=>o?.fulfillment_status==='done'&&o?.payment_status==='paid';
 export async function adminReviewLink(request,env,orderId,{rest,requireAdmin}){try{await requireAdmin(request,env)}catch{return json({message:'관리자 로그인이 필요합니다.'},403)}if(request.method!=='POST')return json({message:'Method not allowed'},405);try{const [order]=await rest(env,'orders?select=order_id,fulfillment_status,payment_status&order_id=eq.'+encodeURIComponent(orderId)+'&limit=1');if(!eligible(order))return json({message:'결제·배송이 완료된 주문에서만 리뷰 링크를 만들 수 있습니다.'},409);await rest(env,'bare_purchase_reviews?select=id&limit=0');const token=await createReviewToken(env,orderId);return json({url:new URL('/review',request.url).href+'#token='+token,expiresInDays:30})}catch{return json({message:'리뷰 저장소 설정을 확인해주세요. purchase-reviews-schema.sql 적용이 필요합니다.'},503)}}
-export async function purchaseReviewApi(request,env,{rest}){
+export async function purchaseReviewApi(request,env,{rest,...storage}){
  const path=new URL(request.url).pathname;
  if(path.startsWith('/api/reviews/product/')){if(request.method!=='GET')return json({message:'Method not allowed'},405);let slug;try{slug=decodeURIComponent(path.slice('/api/reviews/product/'.length));if(!slug||slug.length>180)throw Error()}catch{return json({message:'상품 주소를 확인해주세요.'},400)}try{return json(await rest(env,'rpc/bare_public_product_reviews',{method:'POST',body:JSON.stringify({p_slug:slug})}))}catch{return json({message:'리뷰를 불러오지 못했습니다.'},503)}}
  if(!['GET','POST'].includes(request.method))return json({message:'Method not allowed'},405);
@@ -16,15 +17,18 @@ export async function purchaseReviewApi(request,env,{rest}){
  let orderId;try{orderId=await readReviewToken(env,(request.headers.get('authorization')||'').replace(/^Bearer\s+/i,''))}catch{return json({message:'리뷰 링크가 만료되었거나 올바르지 않습니다. 고객센터에 새 링크를 요청해주세요.'},401)}
  try{
  const [order]=await rest(env,'orders?select=order_id,fulfillment_status,payment_status&order_id=eq.'+encodeURIComponent(orderId)+'&limit=1');if(!eligible(order))return json({message:'배송완료된 구매 상품에만 리뷰를 작성할 수 있습니다. 취소·반품 처리 중인 주문은 제외됩니다.'},409);
+ if(path==='/api/reviews/photos'){if(request.method!=='POST')return json({message:'Method not allowed'},405);return uploadReviewPhoto(request,env,orderId,{rest,sign,...storage})}
  if(request.method==='GET'){
  const [items,written]=await Promise.all([rest(env,'order_items?select=id,product_title,option_text,image_url&order_id=eq.'+encodeURIComponent(orderId)+'&order=created_at.asc'),rest(env,'bare_purchase_reviews?select=order_item_id&order_id=eq.'+encodeURIComponent(orderId))]);
  const names=[...new Set(items.map(i=>i.product_title))];let products=[];if(names.length){const filter=names.map(n=>'"'+String(n).replace(/\\/g,'\\\\').replace(/"/g,'\\"')+'"').join(',');products=await rest(env,'products?select=slug,name&name=in.'+encodeURIComponent('('+filter+')')+'&limit=1000')}
- return json({items:items.map(i=>({id:i.id,title:i.product_title,option:i.option_text||'',image:i.image_url||'',written:written.some(r=>r.order_item_id===i.id),available:products.filter(p=>p.name===i.product_title).length===1}))});
+ let photoUploadAvailable=false;try{await rest(env,'bare_purchase_reviews?select=media&limit=0');photoUploadAvailable=true}catch{}
+ return json({photoUploadAvailable,items:items.map(i=>({id:i.id,title:i.product_title,option:i.option_text||'',image:i.image_url||'',written:written.some(r=>r.order_item_id===i.id),available:products.filter(p=>p.name===i.product_title).length===1}))});
  }
  if(Number(request.headers.get('content-length')||0)>12000)return json({message:'리뷰는 2,000자 이하로 입력해주세요.'},400);
  const text=await request.text();if(text.length>12000)return json({message:'리뷰는 2,000자 이하로 입력해주세요.'},400);let body;try{body=JSON.parse(text)}catch{return json({message:'입력 내용을 확인해주세요.'},400)}
  if(!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(body.itemId||'')||!Number.isInteger(body.rating)||body.rating<1||body.rating>5||typeof body.text!=='string'||[...body.text.trim()].length<10||[...body.text.trim()].length>2000)return json({message:'별점과 10~2,000자의 후기를 입력해주세요.'},400);
- await rest(env,'rpc/bare_submit_purchase_review',{method:'POST',body:JSON.stringify({p_order_id:orderId,p_item_id:body.itemId,p_rating:body.rating,p_body:body.text.trim()})});return json({ok:true,message:'소중한 후기를 남겨주셔서 감사합니다.'});
+ const media=await validateReviewPhotos(env,orderId,body.itemId,body.media,sign);if(media===null)return json({message:'첨부 사진을 다시 선택해주세요.'},400);
+ await rest(env,media.length?'rpc/bare_submit_purchase_review_with_media':'rpc/bare_submit_purchase_review',{method:'POST',body:JSON.stringify({p_order_id:orderId,p_item_id:body.itemId,p_rating:body.rating,p_body:body.text.trim(),...(media.length?{p_media:media}:{})})});return json({ok:true,message:'소중한 후기를 남겨주셔서 감사합니다.'});
  }catch(error){const message=String(error.message||'');if(/duplicate|unique|23505/i.test(message))return json({message:'이미 리뷰를 작성한 상품입니다.'},409);if(/REVIEW_ORDER_UNAVAILABLE|REVIEW_ITEM_UNAVAILABLE/.test(message))return json({message:'리뷰를 작성할 수 없는 주문 또는 상품입니다.'},409);if(/REVIEW_PRODUCT_UNLINKED/.test(message))return json({message:'구매 상품 연결을 확인해야 합니다. 고객센터로 문의해주세요.'},409);return json({message:'리뷰 저장소를 확인할 수 없습니다. 잠시 후 다시 시도해주세요.'},503)}
 }
 export async function withPurchaseReviewCounts(response,env,{rest}){if(!response.ok)return response;let data;try{data=await response.clone().json();if(!Array.isArray(data.products))return response;const counts=await rest(env,'rpc/bare_public_review_counts',{method:'POST',body:'{}'});const bySlug=new Map(counts.map(r=>[r.product_slug,Number(r.review_count||0)]));return json({...data,products:data.products.map(p=>({...p,purchase_review_count:bySlug.get(p.slug)||0}))})}catch{return response}}
